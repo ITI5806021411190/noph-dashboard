@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Telemedicine นครนายก</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #f4f7f6;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .auth-container { max-width: 400px; margin: 50px auto; }
+    .auth-card {
+      border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border: none; padding: 30px; background-color: #fff;
+    }
+    .auth-logo { font-size: 50px; color: #0d6efd; margin-bottom: 15px; }
+
+    .main-card { border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.08); border: none; }
+    .table th { text-align: center; vertical-align: middle; font-weight: 600; }
+    .table td { text-align: center; vertical-align: middle; }
+    .text-left { text-align: left !important; }
+    
+    .chart-container { position: relative; height: 300px; width: 100%; }
+    .nav-tabs .nav-link { font-weight: bold; color: #6c757d; border-radius: 10px 10px 0 0; padding: 12px 20px; }
+    .nav-tabs .nav-link.active { color: #0d6efd; border-bottom: 4px solid #0d6efd; background-color: #fff; }
+    
+    .summary-card { border-radius: 12px; color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .summary-card:hover { transform: translateY(-5px); }
+    .bg-gradient-success { background: linear-gradient(45deg, #198754, #20c997); }
+    .bg-gradient-primary { background: linear-gradient(45deg, #0d6efd, #0dcaf0); }
+    .bg-gradient-warning { background: linear-gradient(45deg, #ffc107, #fd7e14); }
+    .bg-gradient-danger { background: linear-gradient(45deg, #dc3545, #f87171); }
+    
+    .progress { height: 20px; border-radius: 10px; background-color: #e9ecef; }
+    .progress-bar { font-weight: bold; line-height: 20px; }
+    .auth-required { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="dashboardSection" class="container mt-4 mb-5" style="display: block;">
+    <div class="card main-card p-4">
+      
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+        <div>
+          <h2 class="text-primary fw-bold m-0"><i class="fa-solid fa-laptop-medical"></i> Dashboard Telemedicine</h2>
+          <h6 class="text-muted m-0 mt-1">สำนักงานสาธารณสุขจังหวัดนครนายก</h6>
+        </div>
+        
+        <div class="text-end" id="guestMenu">
+          <button class="btn btn-outline-primary fw-bold" onclick="toggleAuthView('login')">
+            <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
+          </button>
+        </div>
+        
+        <div class="text-end" id="userMenu" style="display: none;">
+          <p class="mb-1 text-secondary">ยินดีต้อนรับ, <span id="displayUserName" class="fw-bold text-dark">User</span></p>
+          <button class="btn btn-sm btn-outline-danger" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item"><button class="nav-link active" id="district-tab" data-bs-toggle="tab" data-bs-target="#district" type="button" role="tab"><i class="fa-solid fa-map-location-dot"></i> ข้อมูลรายอำเภอ</button></li>
+        <li class="nav-item"><button class="nav-link" id="hospital-tab" data-bs-toggle="tab" data-bs-target="#hospital" type="button" role="tab"><i class="fa-solid fa-hospital"></i> ข้อมูลรายโรงพยาบาล</button></li>
+      </ul>
+
+      <div id="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"><span class="visually-hidden">Loading...</span></div>
+        <p class="mt-3 fw-bold text-secondary">กำลังโหลดข้อมูล กรุณารอสักครู่...</p>
+      </div>
+
+      <div class="tab-content" id="myTabContent" style="display: none;">
+        
+        <div class="tab-pane fade show active" id="district" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-success m-0"><i class="fa-solid fa-chart-line"></i> สรุปภาพรวมรายอำเภอ</h4>
+            <button type="button" class="btn btn-success px-4 auth-required" data-bs-toggle="modal" data-bs-target="#modalDistrict"><i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล</button>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-success text-center"><h6><i class="fa-solid fa-house-medical"></i> หน่วยบริการที่เข้าร่วม</h6><h2 id="cardDistActive" class="fw-bold m-0">0/0</h2></div></div>
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-primary text-center"><h6><i class="fa-solid fa-users"></i> ยอด Telemed รวม</h6><h2 id="cardDistTotal" class="fw-bold m-0">0</h2></div></div>
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-warning text-dark text-center"><h6><i class="fa-solid fa-star"></i> ช่องทางยอดนิยม</h6><h2 id="cardDistTopChannel" class="fw-bold m-0">-</h2></div></div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-8 mb-3"><div class="card p-3 shadow-sm border-0"><h6 class="text-center mb-3">เปรียบเทียบยอดรวมแต่ละอำเภอ</h6><div class="chart-container"><canvas id="districtBarChart"></canvas></div></div></div>
+            <div class="col-md-4 mb-3"><div class="card p-3 shadow-sm border-0"><h6 class="text-center mb-3">สัดส่วนช่องทางการให้บริการ</h6><div class="chart-container"><canvas id="districtPieChart"></canvas></div></div></div>
+          </div>
+          <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover table-bordered m-0"><thead class="table-success"><tr><th>อำเภอ</th><th>หน่วยบริการทั้งหมด</th><th>ให้บริการจริง</th><th>สอน.บัดดี้</th><th>หมอพร้อม</th><th>HDC</th><th>ยอดรวมสุทธิ</th></tr></thead><tbody id="tableDistrictBody"></tbody></table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="hospital" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-primary m-0"><i class="fa-solid fa-chart-pie"></i> สรุปภาพรวมโรงพยาบาล</h4>
+            <button type="button" class="btn btn-primary px-4 auth-required" data-bs-toggle="modal" data-bs-target="#modalHospital"><i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล</button>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-danger text-center"><h6><i class="fa-solid fa-user-injured"></i> ผู้ป่วยนอก OPD รวม</h6><h2 id="cardHospOpd" class="fw-bold m-0">0</h2></div></div>
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-primary text-center"><h6><i class="fa-solid fa-video"></i> ยอด Telemed รวม</h6><h2 id="cardHospTelemed" class="fw-bold m-0">0</h2></div></div>
+            <div class="col-md-4 mb-3"><div class="summary-card bg-gradient-success text-center"><h6><i class="fa-solid fa-percent"></i> สัดส่วน Telemed ต่อ OPD</h6><h2 id="cardHospPercent" class="fw-bold m-0">0%</h2></div></div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-8 mb-3"><div class="card p-3 shadow-sm border-0"><h6 class="text-center mb-3">เปรียบเทียบยอดรวม 4 โรงพยาบาลหลัก</h6><div class="chart-container"><canvas id="hospitalBarChart"></canvas></div></div></div>
+            <div class="col-md-4 mb-3"><div class="card p-3 shadow-sm border-0"><h6 class="text-center mb-3">สัดส่วนช่องทางการให้บริการ</h6><div class="chart-container"><canvas id="hospitalPieChart"></canvas></div></div></div>
+          </div>
+          <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover table-bordered m-0"><thead class="table-primary"><tr><th>ชื่อโรงพยาบาล</th><th>ผู้ป่วยนอก (OPD)</th><th>HDC</th><th>หมอพร้อม</th><th>สอน.บัดดี้</th><th>รวม Telemed</th><th style="width: 200px;">สัดส่วน (%)</th></tr></thead><tbody id="tableHospitalBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="authSection" class="auth-container" style="display: none;">
+    
+    <div id="loginCard" class="auth-card text-center">
+      <i class="fa-solid fa-user-doctor auth-logo"></i><h3 class="fw-bold text-primary mb-4">เข้าสู่ระบบ</h3>
+      <form id="formLogin" onsubmit="handleAuth(event, 'login')">
+        <div class="input-group mb-3"><span class="input-group-text bg-light"><i class="fa-solid fa-user"></i></span><input type="text" class="form-control" name="username" placeholder="ชื่อผู้ใช้งาน" required></div>
+        <div class="input-group mb-4"><span class="input-group-text bg-light"><i class="fa-solid fa-lock"></i></span><input type="password" class="form-control" name="password" placeholder="รหัสผ่าน" required></div>
+        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3" id="btnLogin">เข้าสู่ระบบ</button>
+      </form>
+      <p class="text-muted mb-2">ยังไม่มีบัญชี? <a href="#" onclick="toggleAuthView('register')" class="text-decoration-none fw-bold">สมัครสมาชิก</a></p>
+      <hr><a href="#" onclick="cancelAuth()" class="text-decoration-none text-secondary mt-3 d-inline-block"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าแรก</a>
+    </div>
+
+    <div id="registerCard" class="auth-card text-center" style="display: none;">
+      <i class="fa-solid fa-user-plus auth-logo text-success"></i><h3 class="fw-bold text-success mb-4">สมัครสมาชิก</h3>
+      <form id="formRegister" onsubmit="handleAuth(event, 'register')">
+        <div class="input-group mb-3"><span class="input-group-text bg-light"><i class="fa-solid fa-address-card"></i></span><input type="text" class="form-control" name="regName" placeholder="ชื่อ - นามสกุล" required></div>
+        <div class="input-group mb-3"><span class="input-group-text bg-light"><i class="fa-solid fa-user"></i></span><input type="text" class="form-control" name="regUsername" placeholder="ชื่อผู้ใช้งาน" required></div>
+        <div class="input-group mb-4"><span class="input-group-text bg-light"><i class="fa-solid fa-lock"></i></span><input type="password" class="form-control" name="regPassword" placeholder="รหัสผ่าน" required></div>
+        <button type="submit" class="btn btn-success w-100 fw-bold py-2 mb-3" id="btnRegister">สมัครสมาชิกเลย</button>
+      </form>
+      <p class="text-muted mb-2">มีบัญชีอยู่แล้ว? <a href="#" onclick="toggleAuthView('login')" class="text-decoration-none fw-bold">ล็อคอิน</a></p>
+      <hr><a href="#" onclick="cancelAuth()" class="text-decoration-none text-secondary mt-3 d-inline-block"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าแรก</a>
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="modalDistrict" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-success text-white"><h5 class="modal-title">อัปเดตอำเภอ</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    <form id="formDistrict" onsubmit="submitForm(event, 'updateDistrict')">
+      <div class="mb-3"><label class="form-label fw-bold">เลือกอำเภอ</label><select class="form-select" name="districtName" required><option value="" disabled selected>เลือก...</option><option value="เมืองนครนายก">เมืองนครนายก</option><option value="ปากพลี">ปากพลี</option><option value="องครักษ์">องครักษ์</option><option value="บ้านนา">บ้านนา</option></select></div>
+      <div class="row"><div class="col-6 mb-3"><label class="form-label">ทั้งหมด</label><input type="number" class="form-control" name="totalUnit" min="0" required></div><div class="col-6 mb-3"><label class="form-label text-success fw-bold">ให้บริการจริง</label><input type="number" class="form-control" name="activeUnit" min="0" required></div></div>
+      <div class="mb-3"><label class="form-label">ยอด HDC</label><input type="number" class="form-control" name="distHdcCount" min="0" required></div><div class="mb-3"><label class="form-label text-primary">ยอด หมอพร้อม</label><input type="number" class="form-control" name="distMorpromCount" min="0" required></div><div class="mb-3"><label class="form-label text-warning text-dark">ยอด สอน.บัดดี้</label><input type="number" class="form-control" name="distBuddyCount" min="0" required></div>
+      <button type="submit" class="btn btn-success w-100 mt-2" id="btnSubmitDist">บันทึกข้อมูล</button>
+    </form>
+  </div></div></div></div>
+
+  <div class="modal fade" id="modalHospital" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title">อัปเดตโรงพยาบาล</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    <form id="formHospital" onsubmit="submitForm(event, 'updateHospital')">
+      <div class="mb-3"><label class="form-label fw-bold">เลือกโรงพยาบาล</label><select class="form-select" name="hospitalName" required><option value="" disabled selected>เลือก...</option><option value="รพ.ปากพลี">รพ.ปากพลี</option><option value="รพ.องครักษ์">รพ.องครักษ์</option><option value="รพ.บ้านนา">รพ.บ้านนา</option><option value="รพ.นครนายก">รพ.นครนายก</option></select></div>
+      <div class="mb-3"><label class="form-label text-danger fw-bold">ผู้ป่วยนอก (OPD) รวม</label><input type="number" class="form-control" name="opdCount" min="0" required></div>
+      <div class="mb-3"><label class="form-label">ยอด HDC</label><input type="number" class="form-control" name="hospHdcCount" min="0" required></div><div class="mb-3"><label class="form-label text-primary">ยอด หมอพร้อม</label><input type="number" class="form-control" name="hospMorpromCount" min="0" required></div><div class="mb-3"><label class="form-label text-warning text-dark">ยอด สอน.บัดดี้</label><input type="number" class="form-control" name="hospBuddyCount" min="0" required></div>
+      <button type="submit" class="btn btn-primary w-100 mt-2" id="btnSubmitHosp">บันทึกข้อมูล</button>
+    </form>
+  </div></div></div></div>
+
+  <script>
+    // ⚠️ นำลิงก์ Web App จาก Google Apps Script มาวางตรงนี้!!
+    const API_URL = "ใส่_URL_WEB_APP_ที่นี่"; 
+
+    var chartDistBar = null, chartDistPie = null;
+    var chartHospBar = null, chartHospPie = null;
+
+    document.addEventListener("DOMContentLoaded", function() { loadAllData(); });
+
+    function toggleAuthView(view) {
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('authSection').style.display = 'block';
+      if (view === 'login') {
+        document.getElementById('loginCard').style.display = 'block'; document.getElementById('registerCard').style.display = 'none';
+      } else {
+        document.getElementById('loginCard').style.display = 'none'; document.getElementById('registerCard').style.display = 'block';
+      }
+    }
+
+    function cancelAuth() {
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+    }
+
+    function handleLogout() {
+      Swal.fire({ title: 'ออกจากระบบ?', icon: 'question', showCancelButton: true, confirmButtonText: 'ออก', cancelButtonText: 'ยกเลิก' }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('guestMenu').style.display = 'block';
+          document.getElementById('userMenu').style.display = 'none';
+          document.querySelectorAll('.auth-required').forEach(el => el.style.display = 'none');
+          Swal.fire({ title: 'สำเร็จ', icon: 'success', timer: 1000, showConfirmButton: false });
+        }
+      });
+    }
+
+    // ฟังก์ชัน Fetch แบบ POST
+    async function apiPost(action, payload) {
+      payload.action = action;
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, // ใช้ text/plain เพื่อเลี่ยงปัญหา CORS
+          body: JSON.stringify(payload)
+        });
+        return await response.json();
+      } catch (error) {
+        throw new Error("การเชื่อมต่อเซิร์ฟเวอร์ล้มเหลว");
+      }
+    }
+
+    async function handleAuth(event, type) {
+      event.preventDefault();
+      var form = event.target;
+      var btn = type === 'login' ? document.getElementById("btnLogin") : document.getElementById("btnRegister");
+      var originalText = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> รอสักครู่...';
+      
+      var payload = Object.fromEntries(new FormData(form));
+      
+      try {
+        let res = await apiPost(type, payload);
+        btn.disabled = false; btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire({ title: 'สำเร็จ!', text: type === 'login' ? 'ยินดีต้อนรับ ' + res.name : res.message, icon: 'success', timer: 1500, showConfirmButton: false });
+          if (type === 'login') {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.getElementById('guestMenu').style.display = 'none';
+            document.getElementById('userMenu').style.display = 'block';
+            document.getElementById('displayUserName').innerText = res.name;
+            document.querySelectorAll('.auth-required').forEach(el => el.style.display = 'inline-block');
+            form.reset();
+          } else {
+            form.reset(); toggleAuthView('login');
+          }
+        } else {
+          Swal.fire('ข้อผิดพลาด', res.message, 'error');
+        }
+      } catch (err) {
+        btn.disabled = false; btn.innerHTML = originalText;
+        Swal.fire('Error', err.message, 'error');
+      }
+    }
+
+    async function submitForm(event, action) {
+      event.preventDefault();
+      var form = event.target;
+      var btn = action === 'updateDistrict' ? document.getElementById("btnSubmitDist") : document.getElementById("btnSubmitHosp");
+      var originalText = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> บันทึก...';
+      
+      var payload = Object.fromEntries(new FormData(form));
+      try {
+        let res = await apiPost(action, payload);
+        btn.disabled = false; btn.innerHTML = originalText;
+        if (res.success) {
+          bootstrap.Modal.getInstance(form.closest('.modal')).hide();
+          form.reset();
+          Swal.fire({ title: 'สำเร็จ!', text: res.message, icon: 'success' });
+          loadAllData();
+        } else {
+          Swal.fire('ข้อผิดพลาด', res.message, 'error');
+        }
+      } catch(err) {
+        btn.disabled = false; btn.innerHTML = originalText;
+        Swal.fire('Error', err.message, 'error');
+      }
+    }
+
+    // ฟังก์ชันโหลดข้อมูลผ่าน GET
+    function loadAllData() {
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("myTabContent").style.display = "none";
+      
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => renderDashboard(data))
+        .catch(err => {
+          document.getElementById("loading").innerHTML = "<p class='text-danger fw-bold'>โหลดข้อมูลล้มเหลว กรุณาตรวจสอบลิงก์ API</p>";
+        });
+    }
+
+    // ฟังก์ชันแสดงผลบนตาราง (เหมือนเดิมทุกอย่าง)
+    function renderDashboard(data) {
+      // อำเภอ
+      var tbodyDist = document.getElementById("tableDistrictBody"); tbodyDist.innerHTML = "";
+      var distLabels = []; var distValues = [];
+      var sumUnit = 0, sumActive = 0, sumDistBuddy = 0, sumDistMorprom = 0, sumDistHdc = 0, sumDistTotal = 0;
+
+      data.districtData.forEach(row => {
+        distLabels.push(row['อำเภอ']); distValues.push(Number(row['ยอดรวมสุทธิ']));
+        sumUnit += Number(row['หน่วยบริการทั้งหมด']); sumActive += Number(row['หน่วยบริการที่ให้บริการ']);
+        sumDistBuddy += Number(row['สอน.บัดดี้']); sumDistMorprom += Number(row['หมอพร้อม station']);
+        sumDistHdc += Number(row['HDC']); sumDistTotal += Number(row['ยอดรวมสุทธิ']);
+
+        tbodyDist.innerHTML += `<tr><td class='text-left fw-bold'>${row['อำเภอ']}</td><td>${row['หน่วยบริการทั้งหมด']}</td><td>${row['หน่วยบริการที่ให้บริการ']}</td><td>${Number(row['สอน.บัดดี้']).toLocaleString()}</td><td>${Number(row['หมอพร้อม station']).toLocaleString()}</td><td>${Number(row['HDC']).toLocaleString()}</td><td class='text-success fw-bold'>${Number(row['ยอดรวมสุทธิ']).toLocaleString()}</td></tr>`;
+      });
+      
+      tbodyDist.innerHTML += `<tr class="table-light fw-bold"><td class='text-left'>รวมทั้งจังหวัด</td><td>${sumUnit}</td><td class='text-success'>${sumActive}</td><td>${sumDistBuddy.toLocaleString()}</td><td>${sumDistMorprom.toLocaleString()}</td><td>${sumDistHdc.toLocaleString()}</td><td class='text-success'>${sumDistTotal.toLocaleString()}</td></tr>`;
+
+      document.getElementById("cardDistActive").innerText = sumActive + "/" + sumUnit; document.getElementById("cardDistTotal").innerText = sumDistTotal.toLocaleString();
+      var maxChannel = Math.max(sumDistBuddy, sumDistMorprom, sumDistHdc);
+      document.getElementById("cardDistTopChannel").innerText = maxChannel == sumDistHdc ? "HDC" : (maxChannel == sumDistMorprom ? "หมอพร้อม" : "สอน.บัดดี้");
+
+      drawBarChart('districtBarChart', distLabels, distValues, 'ยอด Telemed รวม (ครั้ง)', 'rgba(25, 135, 84, 0.7)', 'dist');
+      drawPieChart('districtPieChart', ['HDC', 'หมอพร้อม', 'สอน.บัดดี้'], [sumDistHdc, sumDistMorprom, sumDistBuddy], 'dist');
+
+      // โรงพยาบาล
+      var tbodyHosp = document.getElementById("tableHospitalBody"); tbodyHosp.innerHTML = "";
+      var hospLabels = []; var hospValues = [];
+      var sumOpd = 0, sumHdc = 0, sumMorprom = 0, sumBuddy = 0, sumTotalTelemed = 0;
+
+      data.hospitalData.forEach(row => {
+        hospLabels.push(row['ชื่อโรงพยาบาล']); hospValues.push(Number(row['รวม Telemed ทุกช่องทาง']));
+        sumOpd += Number(row['ผู้ป่วยนอก (OPD) ทั้งหมด']); sumHdc += Number(row['Telemed (HDC)']);
+        sumMorprom += Number(row['Telemed (หมอพร้อม)']); sumBuddy += Number(row['Telemed (สอน.บัดดี้)']); sumTotalTelemed += Number(row['รวม Telemed ทุกช่องทาง']);
+
+        var rawPct = parseFloat(row['สัดส่วน (%)']) || 0;
+        var barColor = rawPct >= 3 ? "bg-success" : (rawPct >= 1 ? "bg-primary" : "bg-warning text-dark");
+        var progressBarHtml = `<div class="d-flex align-items-center justify-content-center"><span class="me-2 fw-bold text-dark">${row['สัดส่วน (%)']}</span><div class="progress w-100" style="height: 15px;"><div class="progress-bar ${barColor}" style="width: ${rawPct*10}%;"></div></div></div>`;
+
+        tbodyHosp.innerHTML += `<tr><td class='text-left fw-bold'>${row['ชื่อโรงพยาบาล']}</td><td>${Number(row['ผู้ป่วยนอก (OPD) ทั้งหมด']).toLocaleString()}</td><td>${Number(row['Telemed (HDC)']).toLocaleString()}</td><td>${Number(row['Telemed (หมอพร้อม)']).toLocaleString()}</td><td>${Number(row['Telemed (สอน.บัดดี้)']).toLocaleString()}</td><td class='text-primary fw-bold'>${Number(row['รวม Telemed ทุกช่องทาง']).toLocaleString()}</td><td>${progressBarHtml}</td></tr>`;
+      });
+
+      var totalPercentage = sumOpd > 0 ? ((sumTotalTelemed / sumOpd) * 100).toFixed(2) + "%" : "0.00%";
+      tbodyHosp.innerHTML += `<tr class="table-light fw-bold"><td class='text-left'>รวม 4 โรงพยาบาล</td><td class='text-danger'>${sumOpd.toLocaleString()}</td><td>${sumHdc.toLocaleString()}</td><td>${sumMorprom.toLocaleString()}</td><td>${sumBuddy.toLocaleString()}</td><td class='text-primary'>${sumTotalTelemed.toLocaleString()}</td><td class='text-success'>${totalPercentage}</td></tr>`;
+
+      document.getElementById("cardHospOpd").innerText = sumOpd.toLocaleString(); document.getElementById("cardHospTelemed").innerText = sumTotalTelemed.toLocaleString(); document.getElementById("cardHospPercent").innerText = totalPercentage;
+
+      drawBarChart('hospitalBarChart', hospLabels, hospValues, 'ยอด Telemed รวม (ครั้ง)', 'rgba(13, 110, 253, 0.7)', 'hosp');
+      drawPieChart('hospitalPieChart', ['HDC', 'หมอพร้อม', 'สอน.บัดดี้'], [sumHdc, sumMorprom, sumBuddy], 'hosp');
+
+      document.getElementById("loading").style.display = "none"; document.getElementById("myTabContent").style.display = "block";
+    }
+
+    function drawBarChart(id, labels, data, title, color, type) {
+      var ctx = document.getElementById(id).getContext('2d');
+      if (type === 'dist' && chartDistBar) chartDistBar.destroy(); if (type === 'hosp' && chartHospBar) chartHospBar.destroy();
+      var newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: title, data: data, backgroundColor: color, borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }});
+      if (type === 'dist') chartDistBar = newChart; else chartHospBar = newChart;
+    }
+
+    function drawPieChart(id, labels, data, type) {
+      var ctx = document.getElementById(id).getContext('2d');
+      if (type === 'dist' && chartDistPie) chartDistPie.destroy(); if (type === 'hosp' && chartHospPie) chartHospPie.destroy();
+      var newChart = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#20c997', '#0d6efd', '#ffc107'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }});
+      if (type === 'dist') chartDistPie = newChart; else chartHospPie = newChart;
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
