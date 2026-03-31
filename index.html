@@ -91,7 +91,7 @@
       .c-label { width: 90px; font-size: 13px; font-weight: 600; color: #334155; }
       .c-track { flex-grow: 1; background-color: #f1f5f9; border-radius: 10px; height: 18px; overflow: hidden; }
       .c-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; transition: width 0.5s; }
-      .c-val { width: 90px; text-align: right; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; color: #1e293b; }
+      .c-val { width: 105px; text-align: right; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; color: #1e293b; }
       .c-val small { font-size: 11px; color: #64748b; font-weight: 500; margin-left: 2px; }
 
       /* =======================================================
@@ -364,7 +364,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ⚠️ ลิงก์ Web App API ใหม่ล่าสุดของคุณเอิทร์
+    // ⚠️ ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -584,7 +584,9 @@
       var platformTotals = { hdc:0, morprom:0, buddy:0 };
       var typeTotals = { 'รพ.': { telemed: 0, opd: 0 }, 'รพ.สต.': { telemed: 0, opd: 0 } };
 
+      // ตัวแปรใหม่เก็บข้อมูลแยกอำเภอสำหรับกราฟ เพื่อเอา OPD ไปคำนวณ %
       var distTotalsObj = {};
+      
       var tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
 
       districts.forEach(dist => {
@@ -620,7 +622,12 @@
         grandTotal.totalUnit += distSum.totalUnit; grandTotal.activeUnit += distSum.activeUnit;
         grandTotal.opdPerson += distSum.opdPerson; grandTotal.opdCount += distSum.opdCount;
         grandTotal.buddy += distSum.buddy; grandTotal.morprom += distSum.morprom; grandTotal.hdc += distSum.hdc; grandTotal.telemed += distSum.telemed;
-        distTotalsObj[dist] = distSum.telemed;
+        
+        // เก็บทั้งยอด telemed และ ยอด OPD ของอำเภอนั้นๆ เพื่อทำกราฟ
+        distTotalsObj[dist] = {
+            telemed: distSum.telemed,
+            opdCount: distSum.opdCount
+        };
 
         var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit/distSum.totalUnit)*100).toFixed(0) : 0;
         var tPctDist = distSum.opdCount > 0 ? ((distSum.telemed/distSum.opdCount)*100).toFixed(2) : "0.00";
@@ -629,7 +636,6 @@
       });
 
       var tPctGrand = grandTotal.opdCount > 0 ? ((grandTotal.telemed/grandTotal.opdCount)*100).toFixed(2) : "0.00";
-      
       document.getElementById("tableFoot").innerHTML = `<tr><td class="center fw-bold">รวมทั้งจังหวัด</td><td class="center">${grandTotal.totalUnit}</td><td class="right text-nowrap">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td><td class="center fw-bold text-success">${grandTotal.activeUnit}</td><td class="right">${grandTotal.buddy}</td><td class="right">${grandTotal.morprom.toLocaleString()}</td><td class="center">${grandTotal.hdc.toLocaleString()}</td><td class="center highlight-pink text-nowrap">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td></tr>`;
 
       var hospPct = typeTotals['รพ.'].opd > 0 ? ((typeTotals['รพ.'].telemed / typeTotals['รพ.'].opd) * 100).toFixed(2) : "0.00";
@@ -656,13 +662,24 @@
 
       var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine แยกตามอำเภอ</h3>';
       var distColors = { 'เมืองนครนายก':'#0f766e', 'ปากพลี':'#14b8a6', 'องครักษ์':'#2dd4bf', 'บ้านนา':'#99f6e4' };
-      var sortedDists = Object.keys(distTotalsObj).sort((a,b) => distTotalsObj[b] - distTotalsObj[a]);
+      
+      // เรียงลำดับจากอำเภอที่มียอด Telemed มากที่สุดไปน้อยสุด
+      var sortedDists = Object.keys(distTotalsObj).sort((a,b) => distTotalsObj[b].telemed - distTotalsObj[a].telemed);
+      
+      // หาค่ายอด Telemed สูงสุดเพื่อใช้ทำเป็นความกว้างของกราฟ 100% ให้กราฟสวยงาม
+      var maxTelemed = Math.max(...Object.values(distTotalsObj).map(d => d.telemed));
+
       sortedDists.forEach(dist => {
-        var dVal = distTotalsObj[dist];
-        var dPct = grandTotal.telemed > 0 ? ((dVal/grandTotal.telemed)*100).toFixed(1) : 0;
+        var dVal = distTotalsObj[dist].telemed;
+        var dOpd = distTotalsObj[dist].opdCount;
         
-        // เพิ่มเปอร์เซ็นต์ต่อท้ายในกราฟแยกอำเภอ
-        distChartHtml += `<div class="compact-bar"><div class="c-label">${dist}</div><div class="c-track"><div class="c-fill" style="width: ${dPct}%; background: ${distColors[dist]};"></div></div><div class="c-val">${dVal.toLocaleString()} <small>(${dPct}%)</small></div></div>`;
+        // 1. คำนวณเปอร์เซ็นต์โดยอิงจากยอด OPD (ผู้มาใช้บริการ) ของอำเภอนั้นๆ ตามคำขอ
+        var opdPct = dOpd > 0 ? ((dVal / dOpd) * 100).toFixed(2) : "0.00";
+        
+        // 2. คำนวณความกว้างของแถบสีกราฟ (อิงจากอำเภอที่ยอดเยอะที่สุด เพื่อให้กราฟดูสมมาตร)
+        var visualWidth = maxTelemed > 0 ? ((dVal / maxTelemed) * 100).toFixed(1) : 0;
+        
+        distChartHtml += `<div class="compact-bar"><div class="c-label">${dist}</div><div class="c-track"><div class="c-fill" style="width: ${visualWidth}%; background: ${distColors[dist]};"></div></div><div class="c-val">${dVal.toLocaleString()} <small>(${opdPct}%)</small></div></div>`;
       });
       document.getElementById("districtChart").innerHTML = distChartHtml;
     }
