@@ -12,34 +12,42 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
       /* =======================================================
-         THE SETUP (Dashboard Design จากคุณเอิทร์)
+         1. RESPONSIVE SETUP
          ======================================================= */
-      body { background-color: #e2e8f0; margin: 0; min-height: 100vh; padding: 20px 0; font-family: 'Noto Sans Thai', sans-serif; }
+      body { 
+        background-color: #e2e8f0; margin: 0; min-height: 100vh; padding: 20px 10px; 
+        font-family: 'Noto Sans Thai', sans-serif; 
+      }
       
-      .center-wrapper { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 40px); }
+      .center-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: calc(100vh - 40px); }
       
+      /* ปรับเปลี่ยนจากความกว้างตายตัว เป็นแบบยืดหยุ่น (Responsive) */
       .slide-container {
         background-color: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        width: 1123px; height: 794px; overflow: hidden; padding: 25px 35px; position: relative; display: flex; flex-direction: column;
-        margin: auto;
+        width: 100%; max-width: 1200px; height: auto; min-height: 90vh;
+        padding: 25px; margin: auto; display: flex; flex-direction: column;
       }
 
       @media print {
         @page { size: A4 landscape; margin: 0; }
         body { background: white; padding: 0; margin: 0; }
-        .slide-container { box-shadow: none; border-radius: 0; width: 100%; height: 100vh; padding: 10mm; }
+        .slide-container { box-shadow: none; border-radius: 0; width: 100%; max-width: 100%; height: 100vh; padding: 10mm; }
         .no-print { display: none !important; }
       }
 
-      .dashboard-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
-      .dashboard-header-text h1 { color: #0f766e; font-size: 28px; font-weight: 700; margin: 0 0 5px 0; }
+      /* =======================================================
+         2. HEADER & ACTION BUTTONS
+         ======================================================= */
+      .dashboard-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; }
+      .dashboard-header-text h1 { color: #0f766e; font-size: 26px; font-weight: 700; margin: 0 0 5px 0; }
       .dashboard-header-text p { color: #64748b; font-size: 14px; margin: 0; }
       
       .date-badge { background-color: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 50px; font-size: 13px; font-weight: 600; border: 1px solid #fde68a; margin-bottom: 8px; text-align: right;}
-      .action-buttons { display: flex; gap: 8px; }
+      .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
       .btn-custom { padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
       .btn-print { background-color: #0f766e; color: white; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); }
       .btn-print:hover { background-color: #0d9488; }
@@ -47,37 +55,48 @@
       .btn-login:hover { background-color: #0284c7; }
       .btn-update { background-color: #f59e0b; color: white; }
       .btn-update:hover { background-color: #d97706; }
+      .btn-users { background-color: #8b5cf6; color: white; }
+      .btn-users:hover { background-color: #7c3aed; }
       .btn-logout { background-color: #ef4444; color: white; }
 
-      .kpi-container { display: flex; gap: 15px; margin-bottom: 20px; height: 85px; flex-shrink: 0; }
-      .kpi-card { flex: 1; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid #0f766e; border-radius: 8px; display: flex; align-items: center; padding: 0 15px; }
+      /* =======================================================
+         3. KPI CARDS (Responsive Grid)
+         ======================================================= */
+      .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px; }
+      .kpi-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid #0f766e; border-radius: 8px; display: flex; align-items: center; padding: 15px; }
       .kpi-card:nth-child(2) { border-left-color: #0ea5e9; } .kpi-card:nth-child(3) { border-left-color: #3b82f6; } .kpi-card:nth-child(4) { border-left-color: #8b5cf6; }
-      .kpi-card i { font-size: 30px; color: #94a3b8; width: 40px; }
+      .kpi-card i { font-size: 30px; color: #94a3b8; width: 45px; }
       .kpi-card:nth-child(1) i { color: #0f766e; } .kpi-card:nth-child(2) i { color: #0ea5e9; } .kpi-card:nth-child(3) i { color: #3b82f6; } .kpi-card:nth-child(4) i { color: #8b5cf6; }
       .kpi-data { display: flex; flex-direction: column; }
-      .kpi-value { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; color: #1e293b; line-height: 1.1; display: flex; align-items: center; gap: 6px; }
+      .kpi-value { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; color: #1e293b; line-height: 1.1; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
       .kpi-value small { font-size: 14px; color: #64748b; }
       .percent-badge { font-size: 13px; color: #0284c7; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; font-weight: 600; line-height: 1; margin-bottom: 2px; }
-      .kpi-label { font-size: 13px; color: #475569; font-weight: 500; }
+      .kpi-label { font-size: 13px; color: #475569; font-weight: 500; margin-top: 4px; }
 
-      .dashboard-body { display: flex; gap: 20px; flex-grow: 1; height: calc(100% - 170px); overflow: hidden; }
-      .left-panel { flex: 0 0 32%; display: flex; flex-direction: column; gap: 15px; }
-      .right-panel { flex: 0 0 68%; display: flex; flex-direction: column; }
+      /* =======================================================
+         4. DASHBOARD BODY (Flex Wrap)
+         ======================================================= */
+      .dashboard-body { display: flex; gap: 20px; flex-wrap: wrap; }
+      .left-panel { flex: 1 1 300px; display: flex; flex-direction: column; gap: 15px; }
+      .right-panel { flex: 2 1 600px; display: flex; flex-direction: column; }
 
-      .chart-section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+      .chart-section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; flex-grow: 1; }
       .chart-section h3 { font-size: 15px; color: #1e293b; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px; }
       .chart-section h3 i { color: #0ea5e9; }
       .compact-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
       .compact-bar:last-child { margin-bottom: 0; }
-      .c-label { width: 100px; font-size: 13px; font-weight: 600; color: #334155; }
+      .c-label { width: 90px; font-size: 13px; font-weight: 600; color: #334155; }
       .c-track { flex-grow: 1; background-color: #f1f5f9; border-radius: 10px; height: 18px; overflow: hidden; }
       .c-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; transition: width 0.5s; }
       .c-val { width: 90px; text-align: right; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; color: #1e293b; }
       .c-val small { font-size: 11px; color: #64748b; font-weight: 500; margin-left: 2px; }
 
-      .table-wrapper { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+      /* =======================================================
+         5. TABLE SECTION (Overflow-x auto)
+         ======================================================= */
+      .table-wrapper { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; flex-grow: 1; overflow-x: auto; }
       .table-wrapper h3 { font-size: 15px; color: #1e293b; margin: 0 0 10px 0; display: flex; align-items: center; justify-content: space-between; }
-      .dash-table { width: 100%; border-collapse: collapse; }
+      .dash-table { width: 100%; min-width: 700px; border-collapse: collapse; }
       .dash-table th, .dash-table td { padding: 6px 4px; border: 1px solid #e2e8f0; }
       .dash-table th { background-color: #f8fafc; color: #0f766e; font-size: 13px; font-weight: 700; text-align: center; vertical-align: middle; }
       .dash-table th small { font-weight: 500; color: #64748b; display: block; font-size: 11px; }
@@ -85,7 +104,6 @@
       .dash-table .main-row td { background-color: #fafafa; }
       .dash-table .main-row td:first-child { font-weight: 700; color: #1e293b; background-color: #f1f5f9; }
       .dash-table td small { color: #64748b; font-size: 11px; font-weight: 500; margin-left: 4px; }
-      .dash-table tfoot td small { color: #047857; font-size: 11px; font-weight: 500; margin-left: 4px; }
       .dash-table .sub-row td { font-size: 12px; color: #475569; }
       .dash-table .sub-row td:first-child { padding-left: 20px; color: #64748b; font-weight: 500; }
       .dash-table tfoot th, .dash-table tfoot td { background-color: #ecfdf5; border-top: 2px solid #10b981; font-weight: 700; font-size: 13px; color: #065f46; }
@@ -94,7 +112,7 @@
       .note-text { font-size: 12px; color: #64748b; margin-top: 8px; font-style: italic; }
 
       /* Auth & Loading Styles */
-      .auth-container { max-width: 450px; margin: auto; padding-top: 50px; }
+      .auth-container { max-width: 450px; margin: auto; padding-top: 30px; }
       .auth-card { background: #fff; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 30px; }
       #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
     </style>
@@ -121,14 +139,17 @@
              
              <div class="action-buttons no-print" id="guestMenu">
                  <button class="btn-custom btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> พิมพ์รายงาน</button>
-                 <button class="btn-custom btn-login" onclick="toggleAuthView('login')"><i class="fa-solid fa-user-lock"></i> เจ้าหน้าที่</button>
+                 <button class="btn-custom btn-login" onclick="toggleAuthView('login')"><i class="fa-solid fa-user-lock"></i> สำหรับเจ้าหน้าที่</button>
              </div>
              
              <div class="action-buttons no-print" id="userMenu" style="display: none;">
-                 <span class="d-flex align-items-center me-2 fw-bold text-teal" style="font-size: 14px; color: #0f766e;" id="displayName"></span>
-                 <button class="btn-custom btn-update" data-bs-toggle="modal" data-bs-target="#updateModal"><i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล</button>
+                 <span class="d-flex align-items-center me-2 fw-bold text-teal" style="font-size: 14px; color: #0f766e;">
+                   <i class="fa-solid fa-circle-user me-1"></i> <span id="displayName"></span> (<span id="displayRole" class="text-secondary small"></span>)
+                 </span>
+                 <button class="btn-custom btn-users role-admin" style="display: none;" onclick="loadUsers()"><i class="fa-solid fa-users-gear"></i> จัดการผู้ใช้</button>
+                 <button class="btn-custom btn-update role-editor" style="display: none;" data-bs-toggle="modal" data-bs-target="#updateModal"><i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล</button>
                  <button class="btn-custom btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> พิมพ์</button>
-                 <button class="btn-custom btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> ออก</button>
+                 <button class="btn-custom btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> ออกระบบ</button>
              </div>
          </div>
       </div>
@@ -168,7 +189,7 @@
                      </tfoot>
                </table>
                <div class="note-text">
-                   ** อัปเดตข้อมูลล่าสุดแบบ Real-time ผ่านระบบ Vercel & Google Apps Script
+                   ** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time
                </div>
             </div>
          </div>
@@ -184,7 +205,7 @@
       <form id="loginForm" onsubmit="handleAuth(event, 'login')">
         <div class="input-group mb-3">
           <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
-          <input type="tel" class="form-control" name="username" placeholder="เบอร์มือถือ 10 หลัก" pattern="[0-9]{10}" required>
+          <input type="tel" class="form-control" name="username" placeholder="เบอร์มือถือ 10 หลัก (เช่น 08XXXXXXXX)" pattern="0[0-9]{9}" required>
         </div>
         <div class="input-group mb-4">
           <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
@@ -210,14 +231,14 @@
         </div>
         <div class="mb-3">
           <label class="form-label small fw-bold">2. เบอร์มือถือ (ใช้เป็น Username)</label>
-          <input type="tel" class="form-control" name="regPhone" pattern="[0-9]{10}" placeholder="08XXXXXXXX" required>
+          <input type="tel" class="form-control" name="regPhone" pattern="0[0-9]{9}" placeholder="08XXXXXXXX" required>
         </div>
         <div class="row">
-          <div class="col-6 mb-3">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label small fw-bold">3. ตำแหน่ง</label>
             <input type="text" class="form-control" name="regPosition" required>
           </div>
-          <div class="col-6 mb-3">
+          <div class="col-12 col-md-6 mb-3">
             <label class="form-label small fw-bold">4. กลุ่มงาน</label>
             <select class="form-select" name="regDepartment" required>
               <option value="" disabled selected>เลือก...</option>
@@ -249,7 +270,7 @@
         <div class="form-check mb-4">
           <input class="form-check-input" type="checkbox" name="pdpaConsent" id="pdpaCheck" required>
           <label class="form-check-label small" for="pdpaCheck">
-            ข้าพเจ้ายินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</a> ของ สสจ.นครนายก
+            ข้าพเจ้ายินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</a>
           </label>
         </div>
         <button type="submit" class="btn btn-success w-100 fw-bold py-2 mb-3" id="btnRegister">สร้างบัญชีผู้ใช้งาน</button>
@@ -309,12 +330,40 @@
     </div>
   </div>
 
+  <div class="modal fade" id="userManageModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #8b5cf6; color: white;">
+          <h5 class="modal-title fw-bold"><i class="fa-solid fa-users-gear"></i> จัดการสิทธิ์ผู้ใช้งานระบบ</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>ชื่อ-สกุล</th>
+                  <th>กลุ่มงาน</th>
+                  <th>เบอร์โทร (User)</th>
+                  <th class="text-danger">PIN (Pass)</th>
+                  <th>สิทธิ์การใช้งาน (Role)</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody">
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ⚠️ นำลิงก์ Web App จาก Google Apps Script มาวางตรงนี้!!
-    const API_URL = "https://script.google.com/macros/s/AKfycbxarzf8Sc90sz4c2j7R-yDg2vwICWiAoAXw8E33SUradvw97SBayzWS1mTJbl8lmePzMw/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxeJMwCenpzn8Nec6mYc8cphOU0V51Tm6HLjYMVBmeTvRfGtLA_rFfkEh4uL1tgu3HLTg/exec"; 
 
-    // เริ่มทำงานเมื่อโหลดหน้าเว็บ
     document.addEventListener("DOMContentLoaded", function() {
       // เซ็ตวันที่ปัจจุบัน
       var today = new Date();
@@ -322,11 +371,8 @@
       
       // ตรวจสอบสถานะล็อคอิน
       if(sessionStorage.getItem("isLoggedIn")) {
-        document.getElementById('guestMenu').style.display = 'none';
-        document.getElementById('userMenu').style.display = 'flex';
-        document.getElementById('displayName').innerText = sessionStorage.getItem("userName");
+        applyUserRole(sessionStorage.getItem("userName"), sessionStorage.getItem("userRole"));
       }
-      
       loadDashboardData();
     });
 
@@ -348,11 +394,30 @@
       }
     }
 
+    // นำสิทธิ์การใช้งานมาแสดงผลหน้าจอ
+    function applyUserRole(name, role) {
+      document.getElementById('guestMenu').style.display = 'none';
+      document.getElementById('userMenu').style.display = 'flex';
+      document.getElementById('displayName').innerText = name;
+      document.getElementById('displayRole').innerText = role;
+
+      // จัดการปุ่มตาม Role
+      document.querySelectorAll('.role-admin').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'none');
+
+      if (role === 'Super Admin') {
+        document.querySelectorAll('.role-admin').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'flex');
+      } else if (role === 'ผู้ช่วย Admin') {
+        document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'flex');
+      }
+      // ผู้ใช้งานทั่วไป จะไม่เห็นปุ่มใดๆ (ตาม default display:none)
+    }
+
     function logout() {
       Swal.fire({ title: 'ออกจากระบบ?', icon: 'question', showCancelButton: true, confirmButtonText: 'ออก', cancelButtonText: 'ยกเลิก' }).then((result) => {
         if (result.isConfirmed) {
-          sessionStorage.removeItem("isLoggedIn");
-          sessionStorage.removeItem("userName");
+          sessionStorage.clear();
           document.getElementById('guestMenu').style.display = 'flex';
           document.getElementById('userMenu').style.display = 'none';
           Swal.fire({ title: 'สำเร็จ', icon: 'success', timer: 1000, showConfirmButton: false });
@@ -392,20 +457,13 @@
           if (type === 'login') {
             sessionStorage.setItem("isLoggedIn", "true");
             sessionStorage.setItem("userName", res.name);
-            Swal.fire({ title: 'เข้าสู่ระบบสำเร็จ!', text: 'ยินดีต้อนรับ ' + res.name, icon: 'success', timer: 1500, showConfirmButton: false });
+            sessionStorage.setItem("userRole", res.role);
+            Swal.fire({ title: 'เข้าสู่ระบบสำเร็จ!', text: 'ยินดีต้อนรับ ' + res.name + ' (' + res.role + ')', icon: 'success', timer: 1500, showConfirmButton: false });
             form.reset();
-            document.getElementById('guestMenu').style.display = 'none';
-            document.getElementById('userMenu').style.display = 'flex';
-            document.getElementById('displayName').innerText = res.name;
+            applyUserRole(res.name, res.role);
             toggleAuthView('dashboard');
           } else {
-            // แจ้งเตือน PIN ที่ได้จากการสมัคร
-            Swal.fire({ 
-              title: 'สมัครสมาชิกสำเร็จ!', 
-              html: res.message.replace(/\n/g, '<br>'), 
-              icon: 'success', 
-              confirmButtonColor: '#198754' 
-            }).then(() => {
+            Swal.fire({ title: 'สมัครสมาชิกสำเร็จ!', html: res.message.replace(/\n/g, '<br>'), icon: 'success', confirmButtonColor: '#198754' }).then(() => {
               form.reset(); toggleAuthView('login');
             });
           }
@@ -434,7 +492,7 @@
           bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide();
           form.reset();
           Swal.fire({ title: 'สำเร็จ!', text: res.message, icon: 'success' });
-          loadDashboardData(); // โหลดข้อมูลใหม่
+          loadDashboardData(); 
         } else {
           Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
         }
@@ -444,10 +502,78 @@
       }
     }
 
-    // โหลดข้อมูล Dashboard จาก Google Sheet
+    // ==========================================
+    // ระบบการจัดการ User (เฉพาะ Super Admin)
+    // ==========================================
+    async function loadUsers() {
+      Swal.fire({ title: 'กำลังโหลดข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+      try {
+        let res = await apiPost('getUsers', {});
+        if (res.success) {
+          Swal.close();
+          var tbody = document.getElementById("userTableBody");
+          tbody.innerHTML = "";
+          res.users.forEach(u => {
+            var isSuperAdmin = u.role === 'Super Admin';
+            var roleSelectHtml = `
+              <select class="form-select form-select-sm" onchange="changeUserRole('${u.phone}', this.value)" ${isSuperAdmin ? 'disabled' : ''}>
+                <option value="ผู้ใช้งานทั่วไป" ${u.role === 'ผู้ใช้งานทั่วไป' ? 'selected' : ''}>ผู้ใช้งานทั่วไป</option>
+                <option value="ผู้ช่วย Admin" ${u.role === 'ผู้ช่วย Admin' ? 'selected' : ''}>ผู้ช่วย Admin</option>
+                <option value="Super Admin" ${isSuperAdmin ? 'selected' : ''} ${!isSuperAdmin ? 'disabled' : ''}>Super Admin</option>
+              </select>
+            `;
+            var deleteBtnHtml = isSuperAdmin ? `<span class="badge bg-secondary">ล็อค</span>` : `<button class="btn btn-sm btn-danger" onclick="deleteUser('${u.phone}', '${u.name}')"><i class="fa-solid fa-trash"></i></button>`;
+
+            tbody.innerHTML += `
+              <tr>
+                <td class="fw-bold">${u.name}</td>
+                <td><small class="text-muted">${u.department}</small></td>
+                <td>${u.phone}</td>
+                <td class="text-danger fw-bold">${u.pin}</td>
+                <td style="width: 180px;">${roleSelectHtml}</td>
+                <td class="text-center">${deleteBtnHtml}</td>
+              </tr>
+            `;
+          });
+          new bootstrap.Modal(document.getElementById('userManageModal')).show();
+        } else {
+          Swal.fire('Error', 'ไม่สามารถโหลดข้อมูลได้', 'error');
+        }
+      } catch(err) {
+        Swal.fire('Error', err.message, 'error');
+      }
+    }
+
+    async function changeUserRole(phone, newRole) {
+      try {
+        let res = await apiPost('changeRole', { targetPhone: phone, newRole: newRole });
+        if (res.success) {
+          Swal.fire({ title: 'สำเร็จ', text: 'เปลี่ยนสิทธิ์การใช้งานเป็น ' + newRole + ' แล้ว', icon: 'success', timer: 1500, showConfirmButton: false });
+        } else {
+          Swal.fire('Error', res.message, 'error');
+        }
+      } catch(err) { Swal.fire('Error', err.message, 'error'); }
+    }
+
+    function deleteUser(phone, name) {
+      Swal.fire({ title: 'ลบผู้ใช้?', text: "ต้องการลบ " + name + " หรือไม่?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ลบทันที' }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            let res = await apiPost('deleteUser', { targetPhone: phone });
+            if (res.success) {
+              Swal.fire('ลบสำเร็จ!', '', 'success');
+              loadUsers(); // โหลดตารางใหม่
+            }
+          } catch(err) { Swal.fire('Error', err.message, 'error'); }
+        }
+      });
+    }
+
+    // ==========================================
+    // โหลดและแสดงผล Dashboard (เหมือนเดิม)
+    // ==========================================
     function loadDashboardData() {
       document.getElementById("loadingOverlay").style.display = "flex";
-      
       fetch(API_URL)
         .then(res => res.json())
         .then(data => {
@@ -460,19 +586,14 @@
         });
     }
 
-    // เรนเดอร์ข้อมูลลงใน UI Dashboard ที่สร้างมา
     function renderDashboard(data) {
       var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
       var grandTotal = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 };
-      
       var platformTotals = { hdc:0, morprom:0, buddy:0 };
       var distTotalsObj = {};
-
-      var tbody = document.getElementById("tableBody");
-      tbody.innerHTML = "";
+      var tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
 
       districts.forEach(dist => {
-        // กรองข้อมูลของอำเภอนี้ (รพ. และ รพ.สต.)
         var rows = data.filter(r => r['อำเภอ'] === dist);
         if (rows.length === 0) return;
 
@@ -486,98 +607,49 @@
           var b = Number(r['สอน.บัดดี้']); var m = Number(r['หมอพร้อม']); var h = Number(r['HDC']);
           var tTelemed = b + m + h;
           
-          distSum.totalUnit += tUnit; distSum.activeUnit += aUnit;
-          distSum.opdPerson += opdP; distSum.opdCount += opdC;
+          distSum.totalUnit += tUnit; distSum.activeUnit += aUnit; distSum.opdPerson += opdP; distSum.opdCount += opdC;
           distSum.buddy += b; distSum.morprom += m; distSum.hdc += h; distSum.telemed += tTelemed;
-          
           platformTotals.hdc += h; platformTotals.morprom += m; platformTotals.buddy += b;
           
           var aPct = tUnit > 0 ? ((aUnit/tUnit)*100).toFixed(0) : 0;
           var tPct = opdC > 0 ? ((tTelemed/opdC)*100).toFixed(2) : "0.00";
 
-          subRowsHtml += `
-            <tr class="sub-row">
-              <td>- ${type} <small>(${tPct}%)</small></td>
-              <td class="center">${tUnit}</td>
-              <td class="right">${opdP.toLocaleString()} / ${opdC.toLocaleString()}</td>
-              <td class="center highlight-pink">${aUnit} <small>(${aPct}%)</small></td>
-              <td class="right">${b}</td>
-              <td class="right">${m}</td>
-              <td class="center">${h === 0 ? '-' : h}</td>
-              <td class="center highlight-pink">${tTelemed.toLocaleString()} <small>(${tPct}%)</small></td>
-            </tr>`;
+          subRowsHtml += `<tr class="sub-row"><td>- ${type} <small>(${tPct}%)</small></td><td class="center">${tUnit}</td><td class="right">${opdP.toLocaleString()} / ${opdC.toLocaleString()}</td><td class="center highlight-pink">${aUnit} <small>(${aPct}%)</small></td><td class="right">${b}</td><td class="right">${m}</td><td class="center">${h === 0 ? '-' : h}</td><td class="center highlight-pink">${tTelemed.toLocaleString()} <small>(${tPct}%)</small></td></tr>`;
         });
 
         grandTotal.totalUnit += distSum.totalUnit; grandTotal.activeUnit += distSum.activeUnit;
         grandTotal.opdPerson += distSum.opdPerson; grandTotal.opdCount += distSum.opdCount;
         grandTotal.buddy += distSum.buddy; grandTotal.morprom += distSum.morprom; grandTotal.hdc += distSum.hdc; grandTotal.telemed += distSum.telemed;
-        
         distTotalsObj[dist] = distSum.telemed;
 
         var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit/distSum.totalUnit)*100).toFixed(0) : 0;
         var tPctDist = distSum.opdCount > 0 ? ((distSum.telemed/distSum.opdCount)*100).toFixed(2) : "0.00";
 
-        // แถวหลักของอำเภอ
-        tbody.innerHTML += `
-          <tr class="main-row">
-            <td>${dist}</td>
-            <td class="center">${distSum.totalUnit}</td>
-            <td class="right">${distSum.opdPerson.toLocaleString()} / ${distSum.opdCount.toLocaleString()}</td>
-            <td class="center highlight-pink">${distSum.activeUnit} <small>(${aPctDist}%)</small></td>
-            <td class="right">${distSum.buddy}</td>
-            <td class="right">${distSum.morprom.toLocaleString()}</td>
-            <td class="center">${distSum.hdc}</td>
-            <td class="center highlight-pink">${distSum.telemed.toLocaleString()} <small>(${tPctDist}%)</small></td>
-          </tr>` + subRowsHtml;
+        tbody.innerHTML += `<tr class="main-row"><td>${dist}</td><td class="center">${distSum.totalUnit}</td><td class="right">${distSum.opdPerson.toLocaleString()} / ${distSum.opdCount.toLocaleString()}</td><td class="center highlight-pink">${distSum.activeUnit} <small>(${aPctDist}%)</small></td><td class="right">${distSum.buddy}</td><td class="right">${distSum.morprom.toLocaleString()}</td><td class="center">${distSum.hdc}</td><td class="center highlight-pink">${distSum.telemed.toLocaleString()} <small>(${tPctDist}%)</small></td></tr>` + subRowsHtml;
       });
 
-      // แถวผลรวม (Footer)
       var tPctGrand = grandTotal.opdCount > 0 ? ((grandTotal.telemed/grandTotal.opdCount)*100).toFixed(2) : "0.00";
-      document.getElementById("tableFoot").innerHTML = `
-        <tr>
-          <td class="center">รวม</td>
-          <td class="center">${grandTotal.totalUnit}</td>
-          <td class="right">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td>
-          <td class="center highlight-pink">${grandTotal.activeUnit}</td>
-          <td class="right">${grandTotal.buddy}</td>
-          <td class="right">${grandTotal.morprom.toLocaleString()}</td>
-          <td class="center">${grandTotal.hdc.toLocaleString()}</td>
-          <td class="center highlight-pink">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td>
-        </tr>`;
+      document.getElementById("tableFoot").innerHTML = `<tr><td class="center">รวม</td><td class="center">${grandTotal.totalUnit}</td><td class="right">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.activeUnit}</td><td class="right">${grandTotal.buddy}</td><td class="right">${grandTotal.morprom.toLocaleString()}</td><td class="center">${grandTotal.hdc.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td></tr>`;
 
-      // อัปเดต KPI Cards
       document.getElementById("kpiCards").innerHTML = `
         <div class="kpi-card"><i class="fa-solid fa-users"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.opdPerson.toLocaleString()} <small>คน</small></span><span class="kpi-label">ผู้รับบริการ OPD รวม (${grandTotal.opdCount.toLocaleString()} ครั้ง)</span></div></div>
         <div class="kpi-card"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.telemed.toLocaleString()} <span class="percent-badge">${tPctGrand}%</span></span><span class="kpi-label">บริการแพทย์ทางไกล (ครั้ง)</span></div></div>
-        <div class="kpi-card"><i class="fa-solid fa-hospital"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.activeUnit}<small>/${grandTotal.totalUnit}</small> <span class="percent-badge">${((grandTotal.activeUnit/grandTotal.totalUnit)*100).toFixed(2)}%</span></span><span class="kpi-label">หน่วยบริการที่เปิดระบบ (แห่ง)</span></div></div>
+        <div class="kpi-card"><i class="fa-solid fa-hospital"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.activeUnit}<small>/${grandTotal.totalUnit}</small> <span class="percent-badge">${((grandTotal.activeUnit/grandTotal.totalUnit)*100).toFixed(2)}%</span></span><span class="kpi-label">หน่วยบริการเปิดระบบ (แห่ง)</span></div></div>
         <div class="kpi-card"><i class="fa-solid fa-laptop-medical"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.hdc.toLocaleString()}</span><span class="kpi-label">ใช้งานผ่านระบบ HDC สูงสุด (ครั้ง)</span></div></div>
       `;
 
-      // อัปเดตกราฟแท่งแพลตฟอร์ม
       var hdcPct = grandTotal.telemed > 0 ? ((platformTotals.hdc/grandTotal.telemed)*100).toFixed(1) : 0;
       var morPct = grandTotal.telemed > 0 ? ((platformTotals.morprom/grandTotal.telemed)*100).toFixed(1) : 0;
       var budPct = grandTotal.telemed > 0 ? ((platformTotals.buddy/grandTotal.telemed)*100).toFixed(1) : 0;
-      document.getElementById("platformChart").innerHTML = `
-        <h3><i class="fa-solid fa-chart-pie"></i> สัดส่วนแพลตฟอร์ม (ครั้ง)</h3>
-        <div class="compact-bar"><div class="c-label">HDC (รพ.)</div><div class="c-track"><div class="c-fill" style="width: ${hdcPct}%; background: #0ea5e9;"></div></div><div class="c-val">${platformTotals.hdc.toLocaleString()} <small>(${hdcPct}%)</small></div></div>
-        <div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width: ${morPct}%; background: #38bdf8;"></div></div><div class="c-val">${platformTotals.morprom.toLocaleString()} <small>(${morPct}%)</small></div></div>
-        <div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width: ${budPct}%; background: #94a3b8;"></div></div><div class="c-val">${platformTotals.buddy.toLocaleString()} <small>(${budPct}%)</small></div></div>
-      `;
+      document.getElementById("platformChart").innerHTML = `<h3><i class="fa-solid fa-chart-pie"></i> สัดส่วนแพลตฟอร์ม (ครั้ง)</h3><div class="compact-bar"><div class="c-label">HDC (รพ.)</div><div class="c-track"><div class="c-fill" style="width: ${hdcPct}%; background: #0ea5e9;"></div></div><div class="c-val">${platformTotals.hdc.toLocaleString()} <small>(${hdcPct}%)</small></div></div><div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width: ${morPct}%; background: #38bdf8;"></div></div><div class="c-val">${platformTotals.morprom.toLocaleString()} <small>(${morPct}%)</small></div></div><div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width: ${budPct}%; background: #94a3b8;"></div></div><div class="c-val">${platformTotals.buddy.toLocaleString()} <small>(${budPct}%)</small></div></div>`;
 
-      // อัปเดตกราฟแท่งอำเภอ
       var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine แยกตามอำเภอ</h3>';
       var distColors = { 'เมืองนครนายก':'#0f766e', 'ปากพลี':'#14b8a6', 'องครักษ์':'#2dd4bf', 'บ้านนา':'#99f6e4' };
-      // เรียงลำดับจากมากไปน้อย
       var sortedDists = Object.keys(distTotalsObj).sort((a,b) => distTotalsObj[b] - distTotalsObj[a]);
       sortedDists.forEach(dist => {
         var dVal = distTotalsObj[dist];
         var dPct = grandTotal.telemed > 0 ? ((dVal/grandTotal.telemed)*100).toFixed(1) : 0;
-        distChartHtml += `
-          <div class="compact-bar">
-             <div class="c-label">${dist}</div>
-             <div class="c-track"><div class="c-fill" style="width: ${dPct}%; background: ${distColors[dist]};"></div></div>
-             <div class="c-val">${dVal.toLocaleString()}</div>
-          </div>`;
+        distChartHtml += `<div class="compact-bar"><div class="c-label">${dist}</div><div class="c-track"><div class="c-fill" style="width: ${dPct}%; background: ${distColors[dist]};"></div></div><div class="c-val">${dVal.toLocaleString()}</div></div>`;
       });
       document.getElementById("districtChart").innerHTML = distChartHtml;
     }
