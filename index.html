@@ -25,7 +25,6 @@
       
       .center-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: calc(100vh - 40px); }
       
-      /* ปรับเปลี่ยนจากความกว้างตายตัว เป็นแบบยืดหยุ่น (Responsive) */
       .slide-container {
         background-color: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         width: 100%; max-width: 1200px; height: auto; min-height: 90vh;
@@ -270,7 +269,7 @@
         <div class="form-check mb-4">
           <input class="form-check-input" type="checkbox" name="pdpaConsent" id="pdpaCheck" required>
           <label class="form-check-label small" for="pdpaCheck">
-            ข้าพเจ้ายินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</a>
+            ข้าพเจ้ายินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</a> ของ สสจ.นครนายก
           </label>
         </div>
         <button type="submit" class="btn btn-success w-100 fw-bold py-2 mb-3" id="btnRegister">สร้างบัญชีผู้ใช้งาน</button>
@@ -411,7 +410,7 @@
       } else if (role === 'ผู้ช่วย Admin') {
         document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'flex');
       }
-      // ผู้ใช้งานทั่วไป จะไม่เห็นปุ่มใดๆ (ตาม default display:none)
+      // ผู้ใช้งานทั่วไป จะไม่เห็นปุ่มอัปเดตและปุ่มจัดการผู้ใช้
     }
 
     function logout() {
@@ -526,11 +525,11 @@
 
             tbody.innerHTML += `
               <tr>
-                <td class="fw-bold">${u.name}</td>
+                <td class="fw-bold text-nowrap">${u.name}</td>
                 <td><small class="text-muted">${u.department}</small></td>
-                <td>${u.phone}</td>
+                <td class="text-nowrap">${u.phone}</td>
                 <td class="text-danger fw-bold">${u.pin}</td>
-                <td style="width: 180px;">${roleSelectHtml}</td>
+                <td style="min-width: 150px;">${roleSelectHtml}</td>
                 <td class="text-center">${deleteBtnHtml}</td>
               </tr>
             `;
@@ -562,7 +561,7 @@
             let res = await apiPost('deleteUser', { targetPhone: phone });
             if (res.success) {
               Swal.fire('ลบสำเร็จ!', '', 'success');
-              loadUsers(); // โหลดตารางใหม่
+              loadUsers(); 
             }
           } catch(err) { Swal.fire('Error', err.message, 'error'); }
         }
@@ -570,7 +569,7 @@
     }
 
     // ==========================================
-    // โหลดและแสดงผล Dashboard (เหมือนเดิม)
+    // โหลดและแสดงผล Dashboard 
     // ==========================================
     function loadDashboardData() {
       document.getElementById("loadingOverlay").style.display = "flex";
@@ -590,6 +589,13 @@
       var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
       var grandTotal = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 };
       var platformTotals = { hdc:0, morprom:0, buddy:0 };
+      
+      // เก็บยอดรวมทั้งหมดของ รพ. และ รพ.สต. ในทั้งจังหวัด
+      var typeTotals = {
+        'รพ.': { telemed: 0, opd: 0 },
+        'รพ.สต.': { telemed: 0, opd: 0 }
+      };
+
       var distTotalsObj = {};
       var tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
 
@@ -611,6 +617,15 @@
           distSum.buddy += b; distSum.morprom += m; distSum.hdc += h; distSum.telemed += tTelemed;
           platformTotals.hdc += h; platformTotals.morprom += m; platformTotals.buddy += b;
           
+          // บวกเข้ายอดรวมแยกประเภทระดับจังหวัด
+          if (type === 'รพ.') {
+            typeTotals['รพ.'].telemed += tTelemed;
+            typeTotals['รพ.'].opd += opdC;
+          } else if (type === 'รพ.สต.') {
+            typeTotals['รพ.สต.'].telemed += tTelemed;
+            typeTotals['รพ.สต.'].opd += opdC;
+          }
+
           var aPct = tUnit > 0 ? ((aUnit/tUnit)*100).toFixed(0) : 0;
           var tPct = opdC > 0 ? ((tTelemed/opdC)*100).toFixed(2) : "0.00";
 
@@ -625,15 +640,26 @@
         var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit/distSum.totalUnit)*100).toFixed(0) : 0;
         var tPctDist = distSum.opdCount > 0 ? ((distSum.telemed/distSum.opdCount)*100).toFixed(2) : "0.00";
 
-        tbody.innerHTML += `<tr class="main-row"><td>${dist}</td><td class="center">${distSum.totalUnit}</td><td class="right">${distSum.opdPerson.toLocaleString()} / ${distSum.opdCount.toLocaleString()}</td><td class="center highlight-pink">${distSum.activeUnit} <small>(${aPctDist}%)</small></td><td class="right">${distSum.buddy}</td><td class="right">${distSum.morprom.toLocaleString()}</td><td class="center">${distSum.hdc}</td><td class="center highlight-pink">${distSum.telemed.toLocaleString()} <small>(${tPctDist}%)</small></td></tr>` + subRowsHtml;
+        tbody.innerHTML += `<tr class="main-row"><td>${dist}</td><td class="center">${distSum.totalUnit}</td><td class="right text-nowrap">${distSum.opdPerson.toLocaleString()} / ${distSum.opdCount.toLocaleString()}</td><td class="center highlight-pink">${distSum.activeUnit} <small>(${aPctDist}%)</small></td><td class="right">${distSum.buddy}</td><td class="right">${distSum.morprom.toLocaleString()}</td><td class="center">${distSum.hdc}</td><td class="center highlight-pink">${distSum.telemed.toLocaleString()} <small>(${tPctDist}%)</small></td></tr>` + subRowsHtml;
       });
 
       var tPctGrand = grandTotal.opdCount > 0 ? ((grandTotal.telemed/grandTotal.opdCount)*100).toFixed(2) : "0.00";
-      document.getElementById("tableFoot").innerHTML = `<tr><td class="center">รวม</td><td class="center">${grandTotal.totalUnit}</td><td class="right">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.activeUnit}</td><td class="right">${grandTotal.buddy}</td><td class="right">${grandTotal.morprom.toLocaleString()}</td><td class="center">${grandTotal.hdc.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td></tr>`;
+      document.getElementById("tableFoot").innerHTML = `<tr><td class="center">รวม</td><td class="center">${grandTotal.totalUnit}</td><td class="right text-nowrap">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.activeUnit}</td><td class="right">${grandTotal.buddy}</td><td class="right">${grandTotal.morprom.toLocaleString()}</td><td class="center">${grandTotal.hdc.toLocaleString()}</td><td class="center highlight-pink">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td></tr>`;
+
+      // คำนวณเปอร์เซ็นต์แยก รพ. กับ รพ.สต. เพื่อใส่ในการ์ด
+      var hospPct = typeTotals['รพ.'].opd > 0 ? ((typeTotals['รพ.'].telemed / typeTotals['รพ.'].opd) * 100).toFixed(2) : "0.00";
+      var rpstPct = typeTotals['รพ.สต.'].opd > 0 ? ((typeTotals['รพ.สต.'].telemed / typeTotals['รพ.สต.'].opd) * 100).toFixed(2) : "0.00";
 
       document.getElementById("kpiCards").innerHTML = `
         <div class="kpi-card"><i class="fa-solid fa-users"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.opdPerson.toLocaleString()} <small>คน</small></span><span class="kpi-label">ผู้รับบริการ OPD รวม (${grandTotal.opdCount.toLocaleString()} ครั้ง)</span></div></div>
-        <div class="kpi-card"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.telemed.toLocaleString()} <span class="percent-badge">${tPctGrand}%</span></span><span class="kpi-label">บริการแพทย์ทางไกล (ครั้ง)</span></div></div>
+        <div class="kpi-card">
+          <i class="fa-solid fa-stethoscope"></i>
+          <div class="kpi-data">
+            <span class="kpi-value">${grandTotal.telemed.toLocaleString()} <span class="percent-badge">${tPctGrand}%</span></span>
+            <span class="kpi-label">บริการแพทย์ทางไกล (ครั้ง)</span>
+            <span style="font-size: 11px; color: #0284c7; font-weight: 600; margin-top: 2px;">รพ. ${hospPct}% | รพ.สต. ${rpstPct}%</span>
+          </div>
+        </div>
         <div class="kpi-card"><i class="fa-solid fa-hospital"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.activeUnit}<small>/${grandTotal.totalUnit}</small> <span class="percent-badge">${((grandTotal.activeUnit/grandTotal.totalUnit)*100).toFixed(2)}%</span></span><span class="kpi-label">หน่วยบริการเปิดระบบ (แห่ง)</span></div></div>
         <div class="kpi-card"><i class="fa-solid fa-laptop-medical"></i><div class="kpi-data"><span class="kpi-value">${grandTotal.hdc.toLocaleString()}</span><span class="kpi-label">ใช้งานผ่านระบบ HDC สูงสุด (ครั้ง)</span></div></div>
       `;
