@@ -208,11 +208,11 @@
       <form id="loginForm" onsubmit="handleAuth(event, 'login')">
         <div class="input-group mb-3">
           <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
-          <input type="tel" class="form-control" name="username" placeholder="เบอร์มือถือ 10 หลัก (เช่น 08XXXXXXXX)" pattern="0[0-9]{9}" required>
+          <input type="tel" class="form-control" name="username" placeholder="เบอร์มือถือ 10 หลัก (เช่น 08XXXXXXXX)" maxlength="10" minlength="10" pattern="0[0-9]{9}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required>
         </div>
         <div class="input-group mb-4">
           <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
-          <input type="password" class="form-control" name="password" placeholder="รหัส PIN 6 หลัก" pattern="[0-9]{6}" required>
+          <input type="password" class="form-control" name="password" placeholder="รหัส PIN 6 หลัก" maxlength="6" minlength="6" pattern="[0-9]{6}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);" required>
         </div>
         <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3" style="background-color: #0f766e; border:none;" id="btnLogin">เข้าสู่ระบบ</button>
       </form>
@@ -234,7 +234,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label small fw-bold">2. เบอร์มือถือ (ใช้เป็น Username)</label>
-          <input type="tel" class="form-control" name="regPhone" pattern="0[0-9]{9}" placeholder="08XXXXXXXX" required>
+          <input type="tel" class="form-control" name="regPhone" placeholder="08XXXXXXXX" maxlength="10" minlength="10" pattern="0[0-9]{9}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required>
         </div>
         <div class="row">
           <div class="col-12 col-md-6 mb-3">
@@ -364,8 +364,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ⚠️ ลิงก์ Web App API ของคุณเอิทร์
-    const API_URL = "https://script.google.com/macros/s/AKfycbxeJMwCenpzn8Nec6mYc8cphOU0V51Tm6HLjYMVBmeTvRfGtLA_rFfkEh4uL1tgu3HLTg/exec"; 
+    // ⚠️ ลิงก์ Web App API ใหม่ล่าสุดของคุณเอิทร์
+    const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
     document.addEventListener("DOMContentLoaded", function() {
       var today = new Date();
@@ -614,7 +614,6 @@
           var aPct = tUnit > 0 ? ((aUnit/tUnit)*100).toFixed(0) : 0;
           var tPct = opdC > 0 ? ((tTelemed/opdC)*100).toFixed(2) : "0.00";
 
-          // เอาคลาส highlight-pink ออกจาก td ของ aUnit (เปิดให้บริการ)
           subRowsHtml += `<tr class="sub-row"><td class="text-nowrap">- ${type} <small>(${tPct}%)</small></td><td class="center">${tUnit}</td><td class="right text-nowrap">${opdP.toLocaleString()} / ${opdC.toLocaleString()}</td><td class="center">${aUnit} <small>(${aPct}%)</small></td><td class="right">${b}</td><td class="right">${m}</td><td class="center">${h === 0 ? '-' : h}</td><td class="center highlight-pink text-nowrap">${tTelemed.toLocaleString()} <small>(${tPct}%)</small></td></tr>`;
         });
 
@@ -626,13 +625,11 @@
         var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit/distSum.totalUnit)*100).toFixed(0) : 0;
         var tPctDist = distSum.opdCount > 0 ? ((distSum.telemed/distSum.opdCount)*100).toFixed(2) : "0.00";
 
-        // เอาคลาส highlight-pink ออกจาก td ของ aUnit (เปิดให้บริการ)
         tbody.innerHTML += `<tr class="main-row"><td class="text-nowrap">${dist}</td><td class="center">${distSum.totalUnit}</td><td class="right text-nowrap">${distSum.opdPerson.toLocaleString()} / ${distSum.opdCount.toLocaleString()}</td><td class="center">${distSum.activeUnit} <small>(${aPctDist}%)</small></td><td class="right">${distSum.buddy}</td><td class="right">${distSum.morprom.toLocaleString()}</td><td class="center">${distSum.hdc}</td><td class="center highlight-pink text-nowrap">${distSum.telemed.toLocaleString()} <small>(${tPctDist}%)</small></td></tr>` + subRowsHtml;
       });
 
       var tPctGrand = grandTotal.opdCount > 0 ? ((grandTotal.telemed/grandTotal.opdCount)*100).toFixed(2) : "0.00";
       
-      // เอาคลาส highlight-pink ออกจาก td ของ aUnit (เปิดให้บริการ) และจัดตัวหนาไว้
       document.getElementById("tableFoot").innerHTML = `<tr><td class="center fw-bold">รวมทั้งจังหวัด</td><td class="center">${grandTotal.totalUnit}</td><td class="right text-nowrap">${grandTotal.opdPerson.toLocaleString()} / ${grandTotal.opdCount.toLocaleString()}</td><td class="center fw-bold text-success">${grandTotal.activeUnit}</td><td class="right">${grandTotal.buddy}</td><td class="right">${grandTotal.morprom.toLocaleString()}</td><td class="center">${grandTotal.hdc.toLocaleString()}</td><td class="center highlight-pink text-nowrap">${grandTotal.telemed.toLocaleString()} <small style="color: #9d174d;">(${tPctGrand}%)</small></td></tr>`;
 
       var hospPct = typeTotals['รพ.'].opd > 0 ? ((typeTotals['รพ.'].telemed / typeTotals['รพ.'].opd) * 100).toFixed(2) : "0.00";
@@ -663,7 +660,9 @@
       sortedDists.forEach(dist => {
         var dVal = distTotalsObj[dist];
         var dPct = grandTotal.telemed > 0 ? ((dVal/grandTotal.telemed)*100).toFixed(1) : 0;
-        distChartHtml += `<div class="compact-bar"><div class="c-label">${dist}</div><div class="c-track"><div class="c-fill" style="width: ${dPct}%; background: ${distColors[dist]};"></div></div><div class="c-val">${dVal.toLocaleString()}</div></div>`;
+        
+        // เพิ่มเปอร์เซ็นต์ต่อท้ายในกราฟแยกอำเภอ
+        distChartHtml += `<div class="compact-bar"><div class="c-label">${dist}</div><div class="c-track"><div class="c-fill" style="width: ${dPct}%; background: ${distColors[dist]};"></div></div><div class="c-val">${dVal.toLocaleString()} <small>(${dPct}%)</small></div></div>`;
       });
       document.getElementById("districtChart").innerHTML = distChartHtml;
     }
