@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -150,19 +152,55 @@
             white-space: nowrap;
         }
         
-        .btn-image { background-color: #0f766e; color: white; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); }
-        .btn-image:hover { background-color: #0d9488; }
-        .btn-csv { background-color: #10b981; color: white; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
-        .btn-csv:hover { background-color: #059669; }
-        .btn-login { background-color: #0ea5e9; color: white; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2); }
-        .btn-login:hover { background-color: #0284c7; }
-        .btn-update { background-color: #f59e0b; color: white; }
-        .btn-update:hover { background-color: #d97706; }
-        .btn-users { background-color: #8b5cf6; color: white; }
-        .btn-users:hover { background-color: #7c3aed; }
-        .btn-logs { background-color: #64748b; color: white; }
-        .btn-logs:hover { background-color: #475569; }
-        .btn-logout { background-color: #ef4444; color: white; }
+        .btn-image { 
+            background-color: #0f766e; 
+            color: white; 
+            box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); 
+        }
+        .btn-image:hover { 
+            background-color: #0d9488; 
+        }
+        .btn-csv { 
+            background-color: #10b981; 
+            color: white; 
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); 
+        }
+        .btn-csv:hover { 
+            background-color: #059669; 
+        }
+        .btn-login { 
+            background-color: #0ea5e9; 
+            color: white; 
+            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2); 
+        }
+        .btn-login:hover { 
+            background-color: #0284c7; 
+        }
+        .btn-update { 
+            background-color: #f59e0b; 
+            color: white; 
+        }
+        .btn-update:hover { 
+            background-color: #d97706; 
+        }
+        .btn-users { 
+            background-color: #8b5cf6; 
+            color: white; 
+        }
+        .btn-users:hover { 
+            background-color: #7c3aed; 
+        }
+        .btn-logs { 
+            background-color: #475569; 
+            color: white; 
+        }
+        .btn-logs:hover { 
+            background-color: #334155; 
+        }
+        .btn-logout { 
+            background-color: #ef4444; 
+            color: white; 
+        }
 
         /* =======================================================
            3. KPI CARDS
@@ -397,8 +435,12 @@
             font-size: 14px; 
             color: #065f46; 
         }
-        .center { text-align: center; } 
-        .right { text-align: right; }
+        .center { 
+            text-align: center; 
+        } 
+        .right { 
+            text-align: right; 
+        }
         .highlight-pink { 
             background-color: #fce7f3 !important; 
             color: #9d174d !important; 
@@ -750,7 +792,7 @@
   </div>
 
   <script>
-    // ⚠️ ลิงก์ Web App API
+    // ⚠️ ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -797,7 +839,7 @@
             element.style.margin = origMargin;
             Swal.fire('Error', 'สร้างรูปภาพไม่สำเร็จ: ' + err.message, 'error');
         });
-      }, 800); // ดีเลย์ให้กราฟขยายตัวเสร็จก่อนแคปภาพ
+      }, 800);
     }
 
     function toggleAuthView(view) {
@@ -926,7 +968,12 @@
         btn.disabled = false; 
         btn.innerHTML = originalText;
         if (res.success) { 
-            bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide(); 
+            
+            // ปิด Modal ให้ถูกต้อง ไม่ให้ Error
+            var updateModalEl = document.getElementById('updateModal');
+            var updateModal = window.bootstrap.Modal.getInstance(updateModalEl);
+            if(updateModal) { updateModal.hide(); }
+
             form.reset(); 
             Swal.fire({ title: 'สำเร็จ!', text: res.message, icon: 'success' }); 
             loadDashboardData(); 
@@ -981,7 +1028,11 @@
                  <td class="text-center">${deleteBtnHtml}</td>
               </tr>`;
           });
-          new bootstrap.Modal(document.getElementById('userManageModal')).show();
+          
+          var userModalEl = document.getElementById('userManageModal');
+          var userModal = window.bootstrap.Modal.getInstance(userModalEl) || new window.bootstrap.Modal(userModalEl);
+          userModal.show();
+
         } else { 
             Swal.fire('Error', 'ไม่สามารถโหลดข้อมูลได้', 'error'); 
         }
@@ -1053,7 +1104,12 @@
                 </tr>`;
             });
           }
-          new bootstrap.Modal(document.getElementById('logModal')).show();
+
+          // เปิด Modal ของ Log แบบปลอดภัย
+          var logModalEl = document.getElementById('logModal');
+          var logModal = window.bootstrap.Modal.getInstance(logModalEl) || new window.bootstrap.Modal(logModalEl);
+          logModal.show();
+
         } else { 
             Swal.fire('Error', 'ไม่สามารถโหลดประวัติได้', 'error'); 
         }
