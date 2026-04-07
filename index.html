@@ -488,6 +488,7 @@
                  <button class="btn-custom btn-users role-admin" style="display: none;" onclick="loadUsers()">
                      <i class="fa-solid fa-users-gear"></i> จัดการผู้ใช้
                  </button>
+                 
                  <button class="btn-custom btn-upload role-editor" style="display: none;" onclick="document.getElementById('fileUpload').click()">
                      <i class="fa-solid fa-file-arrow-up"></i> อัปโหลด Excel
                  </button>
@@ -500,7 +501,6 @@
                  <button class="btn-custom btn-excel" onclick="exportToExcel()">
                      <i class="fa-solid fa-file-excel"></i> ส่งออก Excel
                  </button>
-                 
                  <button class="btn-custom btn-image" onclick="downloadImage()">
                      <i class="fa-solid fa-image"></i> ดาวน์โหลดรูปภาพ
                  </button>
@@ -765,8 +765,11 @@
   </div>
 
   <script>
-    // ⚠️ ลิงก์ Web App API
+    // ลิงก์ Web App API 
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
+
+    // ตัวแปรสำหรับเก็บข้อมูล Dashboard ปัจจุบันเอาไว้ใช้เปรียบเทียบ
+    let currentDashboardData = [];
 
     document.addEventListener("DOMContentLoaded", function() {
       if(sessionStorage.getItem("isLoggedIn")) { 
@@ -775,7 +778,6 @@
       loadDashboardData();
     });
 
-    // ฟังก์ชันดาวน์โหลดเป็นรูปภาพ A4 พร้อมซ่อนปุ่ม
     function downloadImage() {
       Swal.fire({ 
           title: 'กำลังสร้างรูปภาพ...', 
@@ -789,7 +791,6 @@
       var origMaxWidth = element.style.maxWidth; 
       var origMargin = element.style.margin;
       
-      // ซ่อนปุ่มทั้งหมดก่อนสร้างภาพ
       var guestMenu = document.getElementById('guestMenu');
       var userMenu = document.getElementById('userMenu');
       var origGuestDisplay = guestMenu.style.display;
@@ -797,14 +798,12 @@
       guestMenu.style.display = 'none';
       userMenu.style.display = 'none';
       
-      // บังคับขยายขนาดคอนเทนเนอร์ให้กว้าง 1123px (A4 Landscape)
       element.style.width = '1123px'; 
       element.style.maxWidth = '1123px'; 
       element.style.margin = '0';
       
       setTimeout(() => {
         html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-            // คืนค่าโครงสร้างและปุ่มเมนูหลังสร้างภาพเสร็จ
             element.style.width = origWidth; 
             element.style.maxWidth = origMaxWidth; 
             element.style.margin = origMargin;
@@ -832,13 +831,15 @@
       if (view === 'dashboard') { 
           document.getElementById('authSection').style.display = 'none'; 
           document.getElementById('dashboardSection').style.display = 'flex'; 
-      } else { 
+      }
+      else { 
           document.getElementById('dashboardSection').style.display = 'none'; 
           document.getElementById('authSection').style.display = 'block';
         if (view === 'login') { 
             document.getElementById('loginCard').style.display = 'block'; 
             document.getElementById('registerCard').style.display = 'none'; 
-        } else { 
+        }
+        else { 
             document.getElementById('loginCard').style.display = 'none'; 
             document.getElementById('registerCard').style.display = 'block'; 
         }
@@ -857,7 +858,8 @@
       if (role === 'Super Admin') { 
           document.querySelectorAll('.role-admin').forEach(el => el.style.display = 'flex'); 
           document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'flex'); 
-      } else if (role === 'ผู้ช่วย Admin') { 
+      }
+      else if (role === 'ผู้ช่วย Admin') { 
           document.querySelectorAll('.role-editor').forEach(el => el.style.display = 'flex'); 
       }
     }
@@ -953,6 +955,7 @@
             var updateModalEl = document.getElementById('updateModal');
             var updateModal = bootstrap.Modal.getInstance(updateModalEl);
             if(updateModal) { updateModal.hide(); }
+
             form.reset(); 
             Swal.fire({ title: 'สำเร็จ!', text: res.message, icon: 'success' }); 
             loadDashboardData(); 
@@ -967,13 +970,13 @@
     }
 
     // ==========================================
-    // ระบบอ่านไฟล์ Excel ด้วย SheetJS (Bulk Upload)
+    // ระบบอ่านไฟล์ Excel ด้วย SheetJS (Bulk Upload) พร้อมพรีวิวเปรียบเทียบ
     // ==========================================
     function handleFileUpload(event) {
       var file = event.target.files[0];
       if (!file) return;
       
-      Swal.fire({ title: 'กำลังอ่านไฟล์ Excel...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+      Swal.fire({ title: 'กำลังวิเคราะห์ข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
       
       var reader = new FileReader();
       reader.onload = function(e) {
@@ -985,7 +988,7 @@
           var json = XLSX.utils.sheet_to_json(worksheet, {header: 1}); 
           
           var updateData = [];
-          // ข้าม Header แถวแรก เริ่มที่ 1
+          
           for(var i=1; i<json.length; i++) { 
             var row = json[i];
             if(row.length >= 8 && row[0]) {
@@ -1004,18 +1007,59 @@
           }
           
           if (updateData.length === 0) {
-             Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลในไฟล์ หรือรูปแบบไม่ถูกต้อง', 'error');
+             Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลในไฟล์ หรือรูปแบบคอลัมน์ไม่ถูกต้อง', 'error');
              event.target.value = "";
              return;
           }
 
+          // สร้าง UI เปรียบเทียบ (Before vs After)
+          let changesHtml = '<div style="max-height: 400px; overflow-y: auto; text-align: left; font-size: 13px;">';
+          let hasChanges = false;
+          
+          updateData.forEach(newItem => {
+              // ค้นหาข้อมูลเดิมจากที่บันทึกไว้ในตัวแปร currentDashboardData
+              let oldItem = currentDashboardData.find(r => r['อำเภอ'] === newItem.districtName && r['ประเภท'] === newItem.unitType);
+              
+              if (oldItem) {
+                  let diffs = [];
+                  if (Number(oldItem['หน่วยบริการทั้งหมด']) !== newItem.totalUnit) diffs.push(`หน่วยบริการทั้งหมด: ${Number(oldItem['หน่วยบริการทั้งหมด']).toLocaleString()} ➔ <b class="text-danger">${newItem.totalUnit.toLocaleString()}</b>`);
+                  if (Number(oldItem['ให้บริการจริง']) !== newItem.activeUnit) diffs.push(`เปิดให้บริการ: ${Number(oldItem['ให้บริการจริง']).toLocaleString()} ➔ <b class="text-danger">${newItem.activeUnit.toLocaleString()}</b>`);
+                  if (Number(oldItem['OPD_คน']) !== newItem.opdPerson) diffs.push(`OPD (คน): ${Number(oldItem['OPD_คน']).toLocaleString()} ➔ <b class="text-danger">${newItem.opdPerson.toLocaleString()}</b>`);
+                  if (Number(oldItem['OPD_ครั้ง']) !== newItem.opdCount) diffs.push(`OPD (ครั้ง): ${Number(oldItem['OPD_ครั้ง']).toLocaleString()} ➔ <b class="text-danger">${newItem.opdCount.toLocaleString()}</b>`);
+                  if (Number(oldItem['HDC']) !== newItem.hdcCount) diffs.push(`HDC: ${Number(oldItem['HDC']).toLocaleString()} ➔ <b class="text-danger">${newItem.hdcCount.toLocaleString()}</b>`);
+                  if (Number(oldItem['หมอพร้อม']) !== newItem.morpromCount) diffs.push(`หมอพร้อม: ${Number(oldItem['หมอพร้อม']).toLocaleString()} ➔ <b class="text-danger">${newItem.morpromCount.toLocaleString()}</b>`);
+                  if (Number(oldItem['สอน.บัดดี้']) !== newItem.buddyCount) diffs.push(`สอน.บัดดี้: ${Number(oldItem['สอน.บัดดี้']).toLocaleString()} ➔ <b class="text-danger">${newItem.buddyCount.toLocaleString()}</b>`);
+                  
+                  if (diffs.length > 0) {
+                      hasChanges = true;
+                      changesHtml += `<div class="mb-2 p-2 border rounded bg-light">
+                          <strong class="text-primary">${newItem.districtName} (${newItem.unitType})</strong><br>
+                          ${diffs.join('<br>')}
+                      </div>`;
+                  }
+              }
+          });
+          
+          changesHtml += '</div>';
+
+          // หากข้อมูลเหมือนเดิมทุกประการ ไม่ต้องอัปเดตให้เปลืองทรัพยากร
+          if (!hasChanges) {
+              Swal.fire('ไม่มีข้อมูลเปลี่ยนแปลง', 'ข้อมูลในไฟล์ Excel ตรงกับฐานข้อมูลปัจจุบัน 100%', 'info');
+              event.target.value = "";
+              return;
+          }
+
+          // แสดงหน้าต่างเปรียบเทียบให้ผู้อัปโหลดดูก่อนยืนยัน
           Swal.fire({
-            title: 'ยืนยันอัปโหลดไฟล์ Excel?',
-            text: "พบข้อมูลจำนวน " + updateData.length + " รายการ",
-            icon: 'question',
+            title: 'ยืนยันการอัปเดตข้อมูล?',
+            html: '<p class="text-danger fw-bold mb-2">พบรายการที่เปลี่ยนแปลงดังนี้:</p>' + changesHtml,
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'อัปเดตข้อมูล',
-            cancelButtonText: 'ยกเลิก'
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-check"></i> ยืนยันอัปเดตข้อมูล',
+            cancelButtonText: 'ยกเลิก',
+            width: '600px'
           }).then(async (result) => {
             if (result.isConfirmed) {
               Swal.fire({ title: 'กำลังบันทึกข้อมูลแบบกลุ่ม...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
@@ -1032,7 +1076,7 @@
                 Swal.fire('Error', err.message, 'error');
               }
             }
-            event.target.value = ""; // Clear input
+            event.target.value = ""; 
           });
 
         } catch (err) {
@@ -1114,8 +1158,13 @@
         if (result.isConfirmed) {
           try { 
               let res = await apiPost('deleteUser', { targetPhone: phone, editorName: sessionStorage.getItem("userName") });
-              if (res.success) { Swal.fire('ลบสำเร็จ!', '', 'success'); loadUsers(); }
-          } catch(err) { Swal.fire('Error', err.message, 'error'); }
+              if (res.success) { 
+                  Swal.fire('ลบสำเร็จ!', '', 'success'); 
+                  loadUsers(); 
+              }
+          } catch(err) { 
+              Swal.fire('Error', err.message, 'error'); 
+          }
         }
       });
     }
@@ -1165,12 +1214,8 @@
       }
     }
 
-    // ==========================================
-    // ระบบส่งออกเป็นไฟล์ Excel แทน CSV 
-    // ==========================================
     function exportToExcel() {
       var table = document.getElementById("mainTable"); 
-      // ใช้คำสั่งของ SheetJS แปลงตาราง HTML เป็น Excel ตรงๆ เพื่อแก้ปัญหาภาษาต่างด้าว
       var wb = XLSX.utils.table_to_book(table, {sheet: "Dashboard"}); 
       var today = new Date().toISOString().slice(0, 10);
       XLSX.writeFile(wb, "รายงาน_Telemedicine_" + today + ".xlsx");
@@ -1182,6 +1227,10 @@
         .then(res => res.json())
         .then(response => {
           document.getElementById("dashboardSection").style.display = "flex";
+          
+          // บันทึกข้อมูลที่เพิ่งดึงมาลงในตัวแปรแบบ Global เอาไว้เทียบตอนอัปโหลด
+          currentDashboardData = response.data;
+          
           renderDashboard(response.data);
           
           document.getElementById('currentDateBadge').innerHTML = '<i class="fa-regular fa-calendar-check"></i> ข้อมูล ณ วันที่ ' + response.lastUpdated;
