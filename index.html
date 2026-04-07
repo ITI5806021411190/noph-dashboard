@@ -369,6 +369,7 @@
             font-size: 11px; 
         }
         
+        /* เน้นตัวเลขระดับอำเภอให้เด่นขึ้น */
         .dash-table .main-row td { 
             background-color: #f0fdf4 !important; 
             font-size: 13.5px; 
@@ -478,6 +479,9 @@
              </div>
              
              <div class="action-buttons no-print" id="guestMenu">
+                 <button class="btn-custom btn-compare" onclick="openCompareModal()">
+                     <i class="fa-solid fa-code-compare"></i> เทียบข้อมูล วันนี้-เมื่อวาน
+                 </button>
                  <button class="btn-custom btn-image" onclick="downloadImage()">
                      <i class="fa-solid fa-image"></i> ดาวน์โหลดรูปภาพ
                  </button>
@@ -501,11 +505,9 @@
                      <i class="fa-solid fa-file-arrow-up"></i> อัปโหลด Excel
                  </button>
                  <input type="file" id="fileUpload" style="display:none" accept=".xlsx, .xls" onchange="handleFileUpload(event)">
-                 
                  <button class="btn-custom btn-update role-editor" style="display: none;" data-bs-toggle="modal" data-bs-target="#updateModal">
                      <i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล
                  </button>
-                 
                  <button class="btn-custom btn-compare" onclick="openCompareModal()">
                      <i class="fa-solid fa-code-compare"></i> เทียบข้อมูล วันนี้-เมื่อวาน
                  </button>
@@ -552,10 +554,8 @@
                      <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
                   </tr>
                </thead>
-               <tbody id="tableBody">
-                  </tbody>
-               <tfoot id="tableFoot">
-                  </tfoot>
+               <tbody id="tableBody"></tbody>
+               <tfoot id="tableFoot"></tfoot>
             </table>
             <div class="note-text mt-2">
                 <span id="footerNote">** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time</span>
@@ -566,6 +566,7 @@
   </div>
 
   <div class="container auth-container" id="authSection" style="display: none;">
+    
     <div id="loginCard" class="auth-card text-center">
       <i class="fa-solid fa-shield-halved mb-3" style="font-size: 50px; color: #0ea5e9;"></i>
       <h3 class="fw-bold mb-4" style="color: #0f766e;">เข้าสู่ระบบเจ้าหน้าที่</h3>
@@ -610,8 +611,23 @@
             <select class="form-select" name="regDepartment" required>
               <option value="" disabled selected>เลือก...</option>
               <option value="กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">พัฒนายุทธศาสตร์ฯ</option>
-              <option value="กลุ่มงานสุขภาพดิจิทัล">สุขภาพดิจิทัล</option>
+              <option value="กลุ่มงานกฎหมาย">กฎหมาย</option>
+              <option value="กลุ่มงานบริหารทรัพยากรบุคคล">บริหารทรัพยากรบุคคล</option>
+              <option value="กลุ่มงานบริหารฯ (งานการเงิน)">บริหารฯ (การเงิน)</option>
+              <option value="กลุ่มงานประกันสุขภาพ">ประกันสุขภาพ</option>
+              <option value="กลุ่มงานทันตสาธารณสุข">ทันตสาธารณสุข</option>
+              <option value="กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ">พัฒนาคุณภาพฯ</option>
+              <option value="กลุ่มงาน คบส.">คบส.</option>
               <option value="กลุ่มงานควบคุมโรคติดต่อ">ควบคุมโรคติดต่อ</option>
+              <option value="กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย">อนามัยสิ่งแวดล้อมฯ</option>
+              <option value="กลุ่มงานส่งเสริมสุขภาพ">ส่งเสริมสุขภาพ</option>
+              <option value="กลุ่มงานควบคุมโรคไม่ติดต่อ">ควบคุมโรคไม่ติดต่อ</option>
+              <option value="กลุ่มงานสุขภาพจิตและยาเสพติด">สุขภาพจิตและยาเสพติด</option>
+              <option value="กลุ่มงานบริหารฯ (งานธุรการ)">บริหารฯ (ธุรการ)</option>
+              <option value="กลุ่มงานบริหารฯ (งานพัสดุ)">บริหารฯ (พัสดุ)</option>
+              <option value="สำนักเลขานุการและอำนวยการ">สำนักเลขานุการฯ</option>
+              <option value="กลุ่มงานบริหารฯ (งานโสตฯ)">บริหารฯ (โสตฯ)</option>
+              <option value="กลุ่มงานสุขภาพดิจิทัล">สุขภาพดิจิทัล</option>
             </select>
           </div>
         </div>
@@ -639,34 +655,11 @@
         <div class="modal-body">
           <form id="updateForm" onsubmit="handleUpdate(event)">
             <div class="row mb-3">
-              <div class="col-6">
-                  <label class="form-label fw-bold small">เลือกอำเภอ</label>
-                  <select class="form-select" name="districtName" required>
-                      <option value="" disabled selected>เลือก...</option>
-                      <option value="เมืองนครนายก">เมืองนครนายก</option>
-                      <option value="ปากพลี">ปากพลี</option>
-                      <option value="องครักษ์">องครักษ์</option>
-                      <option value="บ้านนา">บ้านนา</option>
-                  </select>
-              </div>
-              <div class="col-6">
-                  <label class="form-label fw-bold small">ประเภทหน่วยบริการ</label>
-                  <select class="form-select" name="unitType" required>
-                      <option value="" disabled selected>เลือก...</option>
-                      <option value="รพ.">รพ. (โรงพยาบาล)</option>
-                      <option value="รพ.สต.">รพ.สต.</option>
-                  </select>
-              </div>
-            </div>
-            <hr>
-            <div class="row mb-3">
-              <div class="col-6"><label class="form-label small">จำนวนแห่ง (ทั้งหมด)</label><input type="number" class="form-control" name="totalUnit" min="0" required></div>
-              <div class="col-6"><label class="form-label small text-success fw-bold">ให้บริการ Telemed (แห่ง)</label><input type="number" class="form-control" name="activeUnit" min="0" required></div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-6"><label class="form-label small">ผู้มาใช้บริการ (คน)</label><input type="number" class="form-control" name="opdPerson" min="0" required></div>
-              <div class="col-6"><label class="form-label small text-danger fw-bold">ผู้มาใช้บริการ (ครั้ง)</label><input type="number" class="form-control" name="opdCount" min="0" required></div>
-            </div>
+              <div class="col-6"><label class="form-label fw-bold small">เลือกอำเภอ</label><select class="form-select" name="districtName" required><option value="" disabled selected>เลือก...</option><option value="เมืองนครนายก">เมืองนครนายก</option><option value="ปากพลี">ปากพลี</option><option value="องครักษ์">องครักษ์</option><option value="บ้านนา">บ้านนา</option></select></div>
+              <div class="col-6"><label class="form-label fw-bold small">ประเภทหน่วยบริการ</label><select class="form-select" name="unitType" required><option value="" disabled selected>เลือก...</option><option value="รพ.">รพ. (โรงพยาบาล)</option><option value="รพ.สต.">รพ.สต.</option></select></div>
+            </div><hr>
+            <div class="row mb-3"><div class="col-6"><label class="form-label small">จำนวนแห่ง (ทั้งหมด)</label><input type="number" class="form-control" name="totalUnit" min="0" required></div><div class="col-6"><label class="form-label small text-success fw-bold">ให้บริการ Telemed (แห่ง)</label><input type="number" class="form-control" name="activeUnit" min="0" required></div></div>
+            <div class="row mb-3"><div class="col-6"><label class="form-label small">ผู้มาใช้บริการ (คน)</label><input type="number" class="form-control" name="opdPerson" min="0" required></div><div class="col-6"><label class="form-label small text-danger fw-bold">ผู้มาใช้บริการ (ครั้ง)</label><input type="number" class="form-control" name="opdCount" min="0" required></div></div>
             <div class="mb-3"><label class="form-label small fw-bold">ยอด Telemed ผ่าน HDC</label><input type="number" class="form-control" name="hdcCount" min="0" required></div>
             <div class="mb-3"><label class="form-label small fw-bold text-primary">ยอด หมอพร้อม Station</label><input type="number" class="form-control" name="morpromCount" min="0" required></div>
             <div class="mb-3"><label class="form-label small fw-bold" style="color:#64748b;">ยอด สอน.บัดดี้</label><input type="number" class="form-control" name="buddyCount" min="0" required></div>
@@ -688,14 +681,7 @@
           <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
             <table class="table table-hover mb-0">
               <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
-                <tr>
-                    <th>ชื่อ-สกุล</th>
-                    <th>กลุ่มงาน</th>
-                    <th>เบอร์โทร (User)</th>
-                    <th class="text-danger">PIN (Pass)</th>
-                    <th>สิทธิ์การใช้งาน (Role)</th>
-                    <th>จัดการ</th>
-                </tr>
+                <tr><th>ชื่อ-สกุล</th><th>กลุ่มงาน</th><th>เบอร์โทร (User)</th><th class="text-danger">PIN (Pass)</th><th>สิทธิ์การใช้งาน (Role)</th><th>จัดการ</th></tr>
               </thead>
               <tbody id="userTableBody"></tbody>
             </table>
@@ -716,12 +702,7 @@
           <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
             <table class="table table-hover mb-0">
               <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
-                <tr>
-                    <th style="width: 20%;">วัน-เวลา</th>
-                    <th style="width: 20%;">ผู้ดำเนินการ</th>
-                    <th style="width: 15%;">การกระทำ</th>
-                    <th style="width: 45%;">รายละเอียด</th>
-                </tr>
+                <tr><th style="width: 20%;">วัน-เวลา</th><th style="width: 20%;">ผู้ดำเนินการ</th><th style="width: 15%;">การกระทำ</th><th style="width: 45%;">รายละเอียด</th></tr>
               </thead>
               <tbody id="logTableBody"></tbody>
             </table>
@@ -765,10 +746,8 @@
   </div>
 
   <script>
-    // ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
-    // ตัวแปร Global สำหรับเก็บข้อมูล History ทั้งหมด
     let appHistoryData = {};
     let availableDates = [];
 
@@ -779,7 +758,6 @@
       loadDashboardData();
     });
 
-    // ดาวน์โหลดรูปและซ่อนปุ่ม + Dropdown
     function downloadImage() {
       Swal.fire({ 
           title: 'กำลังสร้างรูปภาพ...', 
@@ -961,7 +939,6 @@
         let res = await apiPost('updateData', payload);
         btn.disabled = false; 
         btn.innerHTML = originalText;
-        
         if (res.success) { 
             var updateModalEl = document.getElementById('updateModal');
             var updateModal = bootstrap.Modal.getInstance(updateModalEl);
@@ -1020,7 +997,7 @@
           }
 
           var currentTargetDate = document.getElementById('dateFilter').value;
-          var currentData = appHistoryData[currentTargetDate];
+          var currentData = appHistoryData[currentTargetDate] || [];
           
           let changesHtml = '<div style="max-height: 400px; overflow-y: auto; text-align: left; font-size: 13px;">';
           let hasChanges = false;
@@ -1045,6 +1022,10 @@
                               ${diffs.join('<br>')}
                           </div>`;
                   }
+              } else {
+                  // กรณีเป็นข้อมูลใหม่ที่ไม่เคยมีมาก่อน
+                  hasChanges = true;
+                  changesHtml += `<div class="mb-2 p-2 border rounded bg-light"><strong class="text-success">เพิ่มข้อมูลใหม่: ${newItem.districtName} (${newItem.unitType})</strong></div>`;
               }
           });
           changesHtml += '</div>';
@@ -1117,6 +1098,7 @@
             var isSuperAdmin = u.role === 'Super Admin';
             var roleSelectHtml = `<select class="form-select form-select-sm" onchange="changeUserRole('${u.phone}', this.value)" ${isSuperAdmin ? 'disabled' : ''}><option value="ผู้ใช้งานทั่วไป" ${u.role === 'ผู้ใช้งานทั่วไป' ? 'selected' : ''}>ผู้ใช้งานทั่วไป</option><option value="ผู้ช่วย Admin" ${u.role === 'ผู้ช่วย Admin' ? 'selected' : ''}>ผู้ช่วย Admin</option><option value="Super Admin" ${isSuperAdmin ? 'selected' : ''} ${!isSuperAdmin ? 'disabled' : ''}>Super Admin</option></select>`;
             var deleteBtnHtml = isSuperAdmin ? `<span class="badge bg-secondary">ล็อค</span>` : `<button class="btn btn-sm btn-danger" onclick="deleteUser('${u.phone}', '${u.name}')"><i class="fa-solid fa-trash"></i></button>`;
+            
             tbody.innerHTML += `
               <tr>
                  <td class="fw-bold text-nowrap">${u.name}</td>
@@ -1241,13 +1223,18 @@
           
           var select = document.getElementById("dateFilter");
           select.innerHTML = "";
-          availableDates.forEach((date, index) => {
-              var label = index === 0 ? date + " (ปัจจุบัน)" : date;
-              select.innerHTML += `<option value="${date}">${label}</option>`;
-          });
+          
+          if (availableDates.length === 0) {
+              select.innerHTML = `<option value="">ไม่มีข้อมูล</option>`;
+          } else {
+              availableDates.forEach((date, index) => {
+                  var label = index === 0 ? date + " (ปัจจุบัน)" : date;
+                  select.innerHTML += `<option value="${date}">${label}</option>`;
+              });
+          }
           
           document.getElementById('updateTimeText').innerText = response.lastUpdatedStr;
-          document.getElementById('footerNote').innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard (ดึงข้อมูลล่าสุดเมื่อ ' + response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '') + ')';
+          document.getElementById('footerNote').innerHTML = '** ข้อมูลอัปเดตล่าสุดผ่านระบบจัดการ Dashboard (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '') + ')';
           
           changeDateView(); 
           
@@ -1260,7 +1247,11 @@
 
     function changeDateView() {
         var selectedDate = document.getElementById('dateFilter').value;
-        var dataToRender = appHistoryData[selectedDate];
+        if (!selectedDate) {
+            renderDashboard([], null);
+            return;
+        }
+        var dataToRender = appHistoryData[selectedDate] || [];
         
         var currentIndex = availableDates.indexOf(selectedDate);
         var prevDate = currentIndex + 1 < availableDates.length ? availableDates[currentIndex + 1] : null;
@@ -1493,8 +1484,8 @@
         }
         
         var prevDate = availableDates[currentIndex + 1];
-        var currentData = appHistoryData[selectedDate];
-        var prevData = appHistoryData[prevDate];
+        var currentData = appHistoryData[selectedDate] || [];
+        var prevData = appHistoryData[prevDate] || [];
         
         var tbody = document.getElementById("compareTableBody");
         tbody.innerHTML = "";
@@ -1504,6 +1495,7 @@
             ['รพ.', 'รพ.สต.'].forEach(type => {
                 var cRow = currentData.find(r => r['อำเภอ'] === dist && r['ประเภท'] === type);
                 var pRow = prevData.find(r => r['อำเภอ'] === dist && r['ประเภท'] === type);
+                
                 if(cRow && pRow) {
                     var cOpd = Number(cRow['OPD_ครั้ง']) || 0;
                     var pOpd = Number(pRow['OPD_ครั้ง']) || 0;
