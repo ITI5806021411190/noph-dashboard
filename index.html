@@ -481,6 +481,9 @@
                  <button class="btn-custom btn-compare" onclick="openCompareModal()">
                      <i class="fa-solid fa-code-compare"></i> เทียบข้อมูล วันนี้-เมื่อวาน
                  </button>
+                 <button class="btn-custom btn-csv" onclick="exportToCSV()">
+                     <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
+                 </button>
                  <button class="btn-custom btn-image" onclick="downloadImage()">
                      <i class="fa-solid fa-image"></i> ดาวน์โหลดรูปภาพ
                  </button>
@@ -636,15 +639,11 @@
         </div>
         <div class="form-check mb-4">
           <input class="form-check-input" type="checkbox" name="pdpaConsent" id="pdpaCheck" required>
-          <label class="form-check-label small" for="pdpaCheck">
-            ข้าพเจ้ายินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</a> ของ สสจ.นครนายก
-          </label>
+          <label class="form-check-label small" for="pdpaCheck">ยินยอมตาม <a href="https://nayok.moph.go.th/web/wp-content/uploads/2026/02/17-%E0%B8%84%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1%E0%B8%84%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B8%A5.pdf" target="_blank" class="fw-bold text-success">นโยบาย (PDPA)</a></label>
         </div>
         <button type="submit" class="btn btn-success w-100 fw-bold py-2 mb-3" id="btnRegister">สร้างบัญชีผู้ใช้งาน</button>
       </form>
-      <div class="text-center">
-        <a href="#" onclick="toggleAuthView('login')" class="text-decoration-none text-secondary small"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าล็อคอิน</a>
-      </div>
+      <div class="text-center"><a href="#" onclick="toggleAuthView('login')" class="text-decoration-none text-secondary small"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าล็อคอิน</a></div>
     </div>
   </div>
 
@@ -658,59 +657,14 @@
         <div class="modal-body">
           <form id="updateForm" onsubmit="handleUpdate(event)">
             <div class="row mb-3">
-              <div class="col-6">
-                <label class="form-label fw-bold small">เลือกอำเภอ</label>
-                <select class="form-select" name="districtName" required>
-                  <option value="" disabled selected>เลือก...</option>
-                  <option value="เมืองนครนายก">เมืองนครนายก</option>
-                  <option value="ปากพลี">ปากพลี</option>
-                  <option value="องครักษ์">องครักษ์</option>
-                  <option value="บ้านนา">บ้านนา</option>
-                </select>
-              </div>
-              <div class="col-6">
-                <label class="form-label fw-bold small">ประเภทหน่วยบริการ</label>
-                <select class="form-select" name="unitType" required>
-                  <option value="" disabled selected>เลือก...</option>
-                  <option value="รพ.">รพ. (โรงพยาบาล)</option>
-                  <option value="รพ.สต.">รพ.สต.</option>
-                </select>
-              </div>
-            </div>
-            <hr>
-            <div class="row mb-3">
-              <div class="col-6">
-                  <label class="form-label small">จำนวนแห่ง (ทั้งหมด)</label>
-                  <input type="number" class="form-control" name="totalUnit" min="0" required>
-              </div>
-              <div class="col-6">
-                  <label class="form-label small text-success fw-bold">ให้บริการ Telemed (แห่ง)</label>
-                  <input type="number" class="form-control" name="activeUnit" min="0" required>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-6">
-                  <label class="form-label small">ผู้มาใช้บริการ (คน)</label>
-                  <input type="number" class="form-control" name="opdPerson" min="0" required>
-              </div>
-              <div class="col-6">
-                  <label class="form-label small text-danger fw-bold">ผู้มาใช้บริการ (ครั้ง)</label>
-                  <input type="number" class="form-control" name="opdCount" min="0" required>
-              </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold">ยอด Telemed ผ่าน HDC</label>
-                <input type="number" class="form-control" name="hdcCount" min="0" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-primary">ยอด หมอพร้อม Station</label>
-                <input type="number" class="form-control" name="morpromCount" min="0" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold" style="color:#64748b;">ยอด สอน.บัดดี้</label>
-                <input type="number" class="form-control" name="buddyCount" min="0" required>
-            </div>
-            
+              <div class="col-6"><label class="form-label fw-bold small">เลือกอำเภอ</label><select class="form-select" name="districtName" required><option value="" disabled selected>เลือก...</option><option value="เมืองนครนายก">เมืองนครนายก</option><option value="ปากพลี">ปากพลี</option><option value="องครักษ์">องครักษ์</option><option value="บ้านนา">บ้านนา</option></select></div>
+              <div class="col-6"><label class="form-label fw-bold small">ประเภทหน่วยบริการ</label><select class="form-select" name="unitType" required><option value="" disabled selected>เลือก...</option><option value="รพ.">รพ. (โรงพยาบาล)</option><option value="รพ.สต.">รพ.สต.</option></select></div>
+            </div><hr>
+            <div class="row mb-3"><div class="col-6"><label class="form-label small">จำนวนแห่ง (ทั้งหมด)</label><input type="number" class="form-control" name="totalUnit" min="0" required></div><div class="col-6"><label class="form-label small text-success fw-bold">ให้บริการ Telemed (แห่ง)</label><input type="number" class="form-control" name="activeUnit" min="0" required></div></div>
+            <div class="row mb-3"><div class="col-6"><label class="form-label small">ผู้มาใช้บริการ (คน)</label><input type="number" class="form-control" name="opdPerson" min="0" required></div><div class="col-6"><label class="form-label small text-danger fw-bold">ผู้มาใช้บริการ (ครั้ง)</label><input type="number" class="form-control" name="opdCount" min="0" required></div></div>
+            <div class="mb-3"><label class="form-label small fw-bold">ยอด Telemed ผ่าน HDC</label><input type="number" class="form-control" name="hdcCount" min="0" required></div>
+            <div class="mb-3"><label class="form-label small fw-bold text-primary">ยอด หมอพร้อม Station</label><input type="number" class="form-control" name="morpromCount" min="0" required></div>
+            <div class="mb-3"><label class="form-label small fw-bold" style="color:#64748b;">ยอด สอน.บัดดี้</label><input type="number" class="form-control" name="buddyCount" min="0" required></div>
             <button type="submit" class="btn btn-warning w-100 fw-bold mt-2 text-white" id="btnUpdate">บันทึกข้อมูลเข้าฐานข้อมูล</button>
           </form>
         </div>
@@ -729,17 +683,9 @@
           <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
             <table class="table table-hover mb-0">
               <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
-                <tr>
-                  <th>ชื่อ-สกุล</th>
-                  <th>กลุ่มงาน</th>
-                  <th>เบอร์โทร (User)</th>
-                  <th class="text-danger">PIN (Pass)</th>
-                  <th>สิทธิ์การใช้งาน (Role)</th>
-                  <th>จัดการ</th>
-                </tr>
+                <tr><th>ชื่อ-สกุล</th><th>กลุ่มงาน</th><th>เบอร์โทร (User)</th><th class="text-danger">PIN (Pass)</th><th>สิทธิ์การใช้งาน (Role)</th><th>จัดการ</th></tr>
               </thead>
-              <tbody id="userTableBody">
-                </tbody>
+              <tbody id="userTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -758,15 +704,9 @@
           <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
             <table class="table table-hover mb-0">
               <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
-                <tr>
-                  <th style="width: 20%;">วัน-เวลา</th>
-                  <th style="width: 20%;">ผู้ดำเนินการ</th>
-                  <th style="width: 15%;">การกระทำ</th>
-                  <th style="width: 45%;">รายละเอียด</th>
-                </tr>
+                <tr><th style="width: 20%;">วัน-เวลา</th><th style="width: 20%;">ผู้ดำเนินการ</th><th style="width: 15%;">การกระทำ</th><th style="width: 45%;">รายละเอียด</th></tr>
               </thead>
-              <tbody id="logTableBody">
-                 </tbody>
+              <tbody id="logTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -808,12 +748,26 @@
   </div>
 
   <script>
-    // ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
-    // ตัวแปร Global สำหรับเก็บข้อมูล History ทั้งหมด
     let appHistoryData = {};
     let availableDates = [];
+
+    // ฟังก์ชันกรองข้อมูลที่ซ้ำกันออก (เลือกตัวที่อัปเดตล่าสุด)
+    function getUniqueData(dataArray) {
+        if (!dataArray || dataArray.length === 0) return [];
+        let unique = [];
+        let seen = {};
+        for (let i = dataArray.length - 1; i >= 0; i--) {
+            let r = dataArray[i];
+            let key = r['อำเภอ'] + '_' + r['ประเภท'];
+            if (!seen[key]) {
+                seen[key] = true;
+                unique.unshift(r); 
+            }
+        }
+        return unique;
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
       if(sessionStorage.getItem("isLoggedIn")) { 
@@ -822,7 +776,6 @@
       loadDashboardData();
     });
 
-    // ดาวน์โหลดรูปและซ่อนปุ่ม + Dropdown
     function downloadImage() {
       Swal.fire({ 
           title: 'กำลังสร้างรูปภาพ...', 
@@ -1062,7 +1015,7 @@
           }
 
           var currentTargetDate = document.getElementById('dateFilter').value;
-          var currentData = appHistoryData[currentTargetDate] || [];
+          var currentData = getUniqueData(appHistoryData[currentTargetDate]);
           
           let changesHtml = '<div style="max-height: 400px; overflow-y: auto; text-align: left; font-size: 13px;">';
           let hasChanges = false;
@@ -1269,7 +1222,7 @@
     }
 
     // ==========================================
-    // ฟังก์ชัน Export CSV แบบบังคับเข้ารหัส UTF-8 BOM
+    // ฟังก์ชัน Export CSV แบบบังคับเข้ารหัส UTF-8 BOM ที่สะอาด
     // ==========================================
     function exportToCSV() {
       var table = document.getElementById("mainTable"); 
@@ -1279,21 +1232,20 @@
       for (var i = 0; i < rows.length; i++) {
         var row = [], cols = rows[i].querySelectorAll("td, th");
         for (var j = 0; j < cols.length; j++) { 
-            // คัดลอก Node เพื่อไม่ให้กระทบตารางจริงหน้าเว็บ
+            // คัดลอก Node เพื่อจัดการข้อมูลก่อนดึง Text ออกมา
             var clone = cols[j].cloneNode(true);
             
-            // ลบ element ที่เป็นตัวเลขเปรียบเทียบ (สีเขียว/แดง) ออกให้หมด
+            // ลบ span.diff-marker ทิ้ง (ตัวเลขสีเขียว/แดงที่เอาไว้เปรียบเทียบจะได้ไม่ไปโผล่ในรายงาน)
             var diffSpans = clone.querySelectorAll('.diff-marker');
             diffSpans.forEach(el => el.remove()); 
             
-            // ดึงเฉพาะ Text จริง ลบลูกน้ำ ป้องกันไฟล์ CSV โครงสร้างพัง
             var text = clone.innerText.replace(/"/g, '""').replace(/\n/g, ' ').trim(); 
             row.push('"' + text + '"'); 
         }
         csvArray.push(row.join(","));
       }
       
-      // เพิ่ม \uFEFF (Byte Order Mark) บังคับ Excel อ่านเป็น UTF-8 (แก้ภาษาต่างด้าว 100%)
+      // เพิ่ม \uFEFF (Byte Order Mark) บังคับ Excel ให้อ่านภาษาไทย (UTF-8) ได้สมบูรณ์
       var csvBlob = new Blob(["\uFEFF" + csvArray.join("\n")], { type: "text/csv;charset=utf-8;" });
       var link = document.createElement("a"); 
       var url = URL.createObjectURL(csvBlob); 
@@ -1354,15 +1306,20 @@
             renderDashboard([], null);
             return;
         }
-        var dataToRender = appHistoryData[selectedDate] || [];
+        
+        // วิ่งเข้าฟังก์ชันล้างความซ้ำซ้อนให้ข้อมูลหน้าเว็บ
+        var dataToRender = getUniqueData(appHistoryData[selectedDate]);
         
         var currentIndex = availableDates.indexOf(selectedDate);
         var prevDate = currentIndex + 1 < availableDates.length ? availableDates[currentIndex + 1] : null;
-        var prevData = prevDate ? appHistoryData[prevDate] : null;
+        
+        // กรองความซ้ำซ้อนให้ข้อมูลของวันก่อนหน้าด้วยเช่นกัน
+        var prevData = prevDate ? getUniqueData(appHistoryData[prevDate]) : null;
         
         renderDashboard(dataToRender, prevData);
     }
 
+    // ฟังก์ชันคำนวณ +/-
     function getDiffHtml(currVal, prevVal) {
         if (prevVal === undefined || prevVal === null) return '';
         var diff = currVal - prevVal;
@@ -1587,8 +1544,8 @@
         }
         
         var prevDate = availableDates[currentIndex + 1];
-        var currentData = appHistoryData[selectedDate] || [];
-        var prevData = appHistoryData[prevDate] || [];
+        var currentData = getUniqueData(appHistoryData[selectedDate]);
+        var prevData = getUniqueData(appHistoryData[prevDate]);
         
         var tbody = document.getElementById("compareTableBody");
         tbody.innerHTML = "";
