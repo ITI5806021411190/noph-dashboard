@@ -33,7 +33,7 @@
             display: flex; 
             justify-content: center; 
             align-items: flex-start; 
-            min-height: calc(100vh - 40px); 
+            min-height: calc(100vh - 80px); 
         }
         
         .slide-container { 
@@ -160,8 +160,10 @@
         
         .btn-image { background-color: #0f766e; color: white; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); }
         .btn-image:hover { background-color: #0d9488; }
-        .btn-csv { background-color: #10b981; color: white; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
-        .btn-csv:hover { background-color: #059669; }
+        .btn-excel { background-color: #10b981; color: white; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+        .btn-excel:hover { background-color: #059669; }
+        .btn-csv { background-color: #f43f5e; color: white; box-shadow: 0 2px 4px rgba(244, 63, 94, 0.2); }
+        .btn-csv:hover { background-color: #e11d48; }
         .btn-compare { background-color: #06b6d4; color: white; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2); }
         .btn-compare:hover { background-color: #0891b2; }
         .btn-upload { background-color: #0284c7; color: white; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
@@ -347,7 +349,7 @@
         }
         .dash-table { 
             width: 100%; 
-            min-width: 800px; 
+            min-width: 900px; 
             border-collapse: collapse; 
         }
         .dash-table th, .dash-table td { 
@@ -474,15 +476,18 @@
              <div class="date-badge" id="currentDateBadge">
                  <i class="fa-regular fa-calendar-check"></i> ข้อมูล ณ วันที่ : 
                  <select id="dateFilter" class="form-select form-select-sm d-inline-block w-auto mx-2 text-primary fw-bold" style="border-color:#d97706; background-color:transparent;" onchange="changeDateView()"></select>
-                 <span id="updateTimeText" class="fw-normal"></span>
+                 
+                 <div class="form-check form-switch d-inline-block ms-2 no-print" style="margin-bottom:0;">
+                     <input class="form-check-input" type="checkbox" id="diffToggle" checked onchange="toggleDiff()">
+                     <label class="form-check-label text-muted small" for="diffToggle" style="font-size:11px;">เทียบรายวัน</label>
+                 </div>
+                 
+                 <span id="updateTimeText" class="fw-normal ms-2 d-none d-md-inline-block"></span>
              </div>
              
              <div class="action-buttons no-print" id="guestMenu">
                  <button class="btn-custom btn-compare" onclick="openCompareModal()">
                      <i class="fa-solid fa-code-compare"></i> เทียบข้อมูล วันนี้-เมื่อวาน
-                 </button>
-                 <button class="btn-custom btn-csv" onclick="exportToCSV()">
-                     <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
                  </button>
                  <button class="btn-custom btn-image" onclick="downloadImage()">
                      <i class="fa-solid fa-image"></i> ดาวน์โหลดรูปภาพ
@@ -514,9 +519,15 @@
                  <button class="btn-custom btn-compare" onclick="openCompareModal()">
                      <i class="fa-solid fa-code-compare"></i> เทียบข้อมูล วันนี้-เมื่อวาน
                  </button>
+                 
+                 <button class="btn-custom btn-excel" onclick="exportToExcel()">
+                     <i class="fa-solid fa-file-excel"></i> ส่งออก Excel
+                 </button>
+                 
                  <button class="btn-custom btn-csv" onclick="exportToCSV()">
                      <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
                  </button>
+
                  <button class="btn-custom btn-image" onclick="downloadImage()">
                      <i class="fa-solid fa-image"></i> ดาวน์โหลดรูปภาพ
                  </button>
@@ -548,12 +559,14 @@
                <thead>
                   <tr>
                      <th style="width: 15%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
-                     <th style="width: 10%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
-                     <th style="width: 20%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
+                     <th style="width: 8%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
+                     <th style="width: 18%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
                      <th style="width: 12%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
-                     <th style="width: 9%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
-                     <th style="width: 9%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
-                     <th style="width: 10%;">HDC<br><small>(ครั้ง)</small></th>
+                     <th style="width: 8%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
+                     <th style="width: 8%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
+                     <th style="width: 8%;">HDC<br><small>(ครั้ง)</small></th>
+                     <th style="width: 7%;">Slot<br><small>(คิว)</small></th>
+                     <th style="width: 7%;">ยอดจอง<br><small>(คิว)</small></th>
                      <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
                   </tr>
                </thead>
@@ -565,6 +578,10 @@
             </div>
          </div>
       </div>
+    </div>
+    
+    <div class="text-center mt-3 mb-2 text-muted" style="font-size: 12px;">
+        <i class="fa-solid fa-laptop-code"></i> พัฒนาและดูแลระบบโดย กลุ่มงานสุขภาพดิจิทัล สสจ.นครนายก
     </div>
   </div>
 
@@ -613,23 +630,8 @@
             <select class="form-select" name="regDepartment" required>
               <option value="" disabled selected>เลือก...</option>
               <option value="กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">พัฒนายุทธศาสตร์ฯ</option>
-              <option value="กลุ่มงานกฎหมาย">กฎหมาย</option>
-              <option value="กลุ่มงานบริหารทรัพยากรบุคคล">บริหารทรัพยากรบุคคล</option>
-              <option value="กลุ่มงานบริหารฯ (งานการเงิน)">บริหารฯ (การเงิน)</option>
-              <option value="กลุ่มงานประกันสุขภาพ">ประกันสุขภาพ</option>
-              <option value="กลุ่มงานทันตสาธารณสุข">ทันตสาธารณสุข</option>
-              <option value="กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ">พัฒนาคุณภาพฯ</option>
-              <option value="กลุ่มงาน คบส.">คบส.</option>
-              <option value="กลุ่มงานควบคุมโรคติดต่อ">ควบคุมโรคติดต่อ</option>
-              <option value="กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย">อนามัยสิ่งแวดล้อมฯ</option>
-              <option value="กลุ่มงานส่งเสริมสุขภาพ">ส่งเสริมสุขภาพ</option>
-              <option value="กลุ่มงานควบคุมโรคไม่ติดต่อ">ควบคุมโรคไม่ติดต่อ</option>
-              <option value="กลุ่มงานสุขภาพจิตและยาเสพติด">สุขภาพจิตและยาเสพติด</option>
-              <option value="กลุ่มงานบริหารฯ (งานธุรการ)">บริหารฯ (ธุรการ)</option>
-              <option value="กลุ่มงานบริหารฯ (งานพัสดุ)">บริหารฯ (พัสดุ)</option>
-              <option value="สำนักเลขานุการและอำนวยการ">สำนักเลขานุการฯ</option>
-              <option value="กลุ่มงานบริหารฯ (งานโสตฯ)">บริหารฯ (โสตฯ)</option>
               <option value="กลุ่มงานสุขภาพดิจิทัล">สุขภาพดิจิทัล</option>
+              <option value="กลุ่มงานควบคุมโรคติดต่อ">ควบคุมโรคติดต่อ</option>
             </select>
           </div>
         </div>
@@ -665,6 +667,10 @@
             <div class="mb-3"><label class="form-label small fw-bold">ยอด Telemed ผ่าน HDC</label><input type="number" class="form-control" name="hdcCount" min="0" required></div>
             <div class="mb-3"><label class="form-label small fw-bold text-primary">ยอด หมอพร้อม Station</label><input type="number" class="form-control" name="morpromCount" min="0" required></div>
             <div class="mb-3"><label class="form-label small fw-bold" style="color:#64748b;">ยอด สอน.บัดดี้</label><input type="number" class="form-control" name="buddyCount" min="0" required></div>
+            <div class="row mb-3">
+              <div class="col-6"><label class="form-label small fw-bold">จำนวนการเปิด Slot</label><input type="number" class="form-control" name="slotCount" min="0" required></div>
+              <div class="col-6"><label class="form-label small fw-bold">จำนวนการจอง</label><input type="number" class="form-control" name="bookingCount" min="0" required></div>
+            </div>
             <button type="submit" class="btn btn-warning w-100 fw-bold mt-2 text-white" id="btnUpdate">บันทึกข้อมูลเข้าฐานข้อมูล</button>
           </form>
         </div>
@@ -748,12 +754,17 @@
   </div>
 
   <script>
+    // ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
+    // ตัวแปร Global สำหรับเก็บข้อมูล History ทั้งหมด
     let appHistoryData = {};
     let availableDates = [];
+    
+    // ตัวแปรสำหรับคุมการเปิด/ปิดไฮไลต์ (Toggle) 🟢/🔴
+    let showDiffMode = true; 
 
-    // ฟังก์ชันกรองข้อมูลที่ซ้ำกันออก (เลือกตัวที่อัปเดตล่าสุด)
+    // กรองข้อมูลที่ซ้ำกันออก
     function getUniqueData(dataArray) {
         if (!dataArray || dataArray.length === 0) return [];
         let unique = [];
@@ -775,6 +786,12 @@
       }
       loadDashboardData();
     });
+    
+    // ฟังก์ชันจัดการ Toggle เปรียบเทียบข้อมูล
+    function toggleDiff() {
+        showDiffMode = document.getElementById('diffToggle').checked;
+        changeDateView(); // สั่งให้วาดกราฟและตารางใหม่ตามสถานะ Toggle
+    }
 
     function downloadImage() {
       Swal.fire({ 
@@ -957,6 +974,7 @@
         let res = await apiPost('updateData', payload);
         btn.disabled = false; 
         btn.innerHTML = originalText;
+        
         if (res.success) { 
             var updateModalEl = document.getElementById('updateModal');
             var updateModal = bootstrap.Modal.getInstance(updateModalEl);
@@ -1003,7 +1021,9 @@
                 opdCount: Number(row[5]) || 0,
                 hdcCount: Number(row[6]) || 0, 
                 morpromCount: Number(row[7]) || 0, 
-                buddyCount: Number(row[8]) || 0
+                buddyCount: Number(row[8]) || 0,
+                slotCount: Number(row[9]) || 0, 
+                bookingCount: Number(row[10]) || 0
               });
             }
           }
@@ -1031,6 +1051,8 @@
                   if (Number(oldItem['HDC']) !== newItem.hdcCount) diffs.push(`HDC: ${Number(oldItem['HDC']).toLocaleString()} ➔ <b class="text-danger">${newItem.hdcCount.toLocaleString()}</b>`);
                   if (Number(oldItem['หมอพร้อม']) !== newItem.morpromCount) diffs.push(`หมอพร้อม: ${Number(oldItem['หมอพร้อม']).toLocaleString()} ➔ <b class="text-danger">${newItem.morpromCount.toLocaleString()}</b>`);
                   if (Number(oldItem['สอน.บัดดี้']) !== newItem.buddyCount) diffs.push(`สอน.บัดดี้: ${Number(oldItem['สอน.บัดดี้']).toLocaleString()} ➔ <b class="text-danger">${newItem.buddyCount.toLocaleString()}</b>`);
+                  if (Number(oldItem['Slot'] || 0) !== newItem.slotCount) diffs.push(`Slot: ${Number(oldItem['Slot']||0).toLocaleString()} ➔ <b class="text-danger">${newItem.slotCount.toLocaleString()}</b>`);
+                  if (Number(oldItem['จอง'] || 0) !== newItem.bookingCount) diffs.push(`จอง: ${Number(oldItem['จอง']||0).toLocaleString()} ➔ <b class="text-danger">${newItem.bookingCount.toLocaleString()}</b>`);
                   
                   if (diffs.length > 0) {
                       hasChanges = true;
@@ -1221,9 +1243,19 @@
       }
     }
 
-    // ==========================================
-    // ฟังก์ชัน Export CSV แบบบังคับเข้ารหัส UTF-8 BOM ที่สะอาด
-    // ==========================================
+    function exportToExcel() {
+      var table = document.getElementById("mainTable"); 
+      
+      var cloneTable = table.cloneNode(true);
+      var diffSpans = cloneTable.querySelectorAll('.diff-marker');
+      diffSpans.forEach(el => el.remove());
+      
+      var wb = XLSX.utils.table_to_book(cloneTable, {sheet: "Dashboard"}); 
+      var today = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, "รายงาน_Telemedicine_" + today + ".xlsx");
+    }
+
+    // ฟังก์ชัน Export CSV แบบบังคับเข้ารหัส UTF-8 BOM
     function exportToCSV() {
       var table = document.getElementById("mainTable"); 
       var rows = table.querySelectorAll("tr"); 
@@ -1232,20 +1264,15 @@
       for (var i = 0; i < rows.length; i++) {
         var row = [], cols = rows[i].querySelectorAll("td, th");
         for (var j = 0; j < cols.length; j++) { 
-            // คัดลอก Node เพื่อจัดการข้อมูลก่อนดึง Text ออกมา
             var clone = cols[j].cloneNode(true);
-            
-            // ลบ span.diff-marker ทิ้ง (ตัวเลขสีเขียว/แดงที่เอาไว้เปรียบเทียบจะได้ไม่ไปโผล่ในรายงาน)
             var diffSpans = clone.querySelectorAll('.diff-marker');
             diffSpans.forEach(el => el.remove()); 
-            
             var text = clone.innerText.replace(/"/g, '""').replace(/\n/g, ' ').trim(); 
             row.push('"' + text + '"'); 
         }
         csvArray.push(row.join(","));
       }
       
-      // เพิ่ม \uFEFF (Byte Order Mark) บังคับ Excel ให้อ่านภาษาไทย (UTF-8) ได้สมบูรณ์
       var csvBlob = new Blob(["\uFEFF" + csvArray.join("\n")], { type: "text/csv;charset=utf-8;" });
       var link = document.createElement("a"); 
       var url = URL.createObjectURL(csvBlob); 
@@ -1307,21 +1334,18 @@
             return;
         }
         
-        // วิ่งเข้าฟังก์ชันล้างความซ้ำซ้อนให้ข้อมูลหน้าเว็บ
         var dataToRender = getUniqueData(appHistoryData[selectedDate]);
         
         var currentIndex = availableDates.indexOf(selectedDate);
         var prevDate = currentIndex + 1 < availableDates.length ? availableDates[currentIndex + 1] : null;
         
-        // กรองความซ้ำซ้อนให้ข้อมูลของวันก่อนหน้าด้วยเช่นกัน
         var prevData = prevDate ? getUniqueData(appHistoryData[prevDate]) : null;
         
         renderDashboard(dataToRender, prevData);
     }
 
-    // ฟังก์ชันคำนวณ +/-
     function getDiffHtml(currVal, prevVal) {
-        if (prevVal === undefined || prevVal === null) return '';
+        if (!showDiffMode || prevVal === undefined || prevVal === null) return '';
         var diff = currVal - prevVal;
         if (diff > 0) return `<span class="diff-marker text-success ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> ${diff.toLocaleString()}</span>`;
         if (diff < 0) return `<span class="diff-marker text-danger ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${Math.abs(diff).toLocaleString()}</span>`;
@@ -1330,14 +1354,14 @@
 
     function renderDashboard(data, prevData) {
       var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
-      var grandTotal = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 };
+      var grandTotal = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, slot:0, booking:0, telemed:0 };
       var platformTotals = { hdc:0, morprom:0, buddy:0 };
       var typeTotals = { 'รพ.': { telemed: 0, opd: 0 }, 'รพ.สต.': { telemed: 0, opd: 0 } };
       var distTotalsObj = {};
       var tbody = document.getElementById("tableBody"); 
       tbody.innerHTML = "";
 
-      var prevGrandTotal = prevData ? { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 } : null;
+      var prevGrandTotal = prevData ? { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, slot:0, booking:0, telemed:0 } : null;
       if (prevData) {
           prevData.forEach(r => {
              prevGrandTotal.opdPerson += Number(r['OPD_คน']) || 0;
@@ -1345,6 +1369,8 @@
              prevGrandTotal.activeUnit += Number(r['ให้บริการจริง']) || 0;
              prevGrandTotal.totalUnit += Number(r['หน่วยบริการทั้งหมด']) || 0;
              prevGrandTotal.hdc += Number(r['HDC']) || 0;
+             prevGrandTotal.slot += Number(r['Slot']) || 0;
+             prevGrandTotal.booking += Number(r['จอง']) || 0;
              var t = (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
              prevGrandTotal.telemed += t;
           });
@@ -1354,8 +1380,8 @@
         var rows = data.filter(r => r['อำเภอ'] === dist);
         if (rows.length === 0) return;
 
-        var distSum = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 };
-        var prevDistSum = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, telemed:0 };
+        var distSum = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, slot:0, booking:0, telemed:0 };
+        var prevDistSum = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, buddy:0, morprom:0, hdc:0, slot:0, booking:0, telemed:0 };
         var subRowsHtml = "";
 
         rows.forEach(r => {
@@ -1367,6 +1393,8 @@
           var b = Number(r['สอน.บัดดี้']); 
           var m = Number(r['หมอพร้อม']); 
           var h = Number(r['HDC']);
+          var slotCount = Number(r['Slot']) || 0;
+          var bookingCount = Number(r['จอง']) || 0;
           var tTelemed = b + m + h;
           
           distSum.totalUnit += tUnit; 
@@ -1376,7 +1404,10 @@
           distSum.buddy += b; 
           distSum.morprom += m; 
           distSum.hdc += h; 
+          distSum.slot += slotCount;
+          distSum.booking += bookingCount;
           distSum.telemed += tTelemed;
+          
           platformTotals.hdc += h; 
           platformTotals.morprom += m; 
           platformTotals.buddy += b;
@@ -1392,7 +1423,7 @@
           var aPct = tUnit > 0 ? ((aUnit/tUnit)*100).toFixed(0) : 0;
           var tPct = opdC > 0 ? ((tTelemed/opdC)*100).toFixed(2) : "0.00";
 
-          var p_opdP = null, p_opdC = null, p_aUnit = null, p_b = null, p_m = null, p_h = null, p_tTelemed = null;
+          var p_opdP = null, p_opdC = null, p_aUnit = null, p_b = null, p_m = null, p_h = null, p_slot = null, p_booking = null, p_tTelemed = null;
           if (prevData) {
               var pr = prevData.find(x => x['อำเภอ'] === dist && x['ประเภท'] === type);
               if (pr) {
@@ -1402,6 +1433,8 @@
                   p_b = Number(pr['สอน.บัดดี้']) || 0; 
                   p_m = Number(pr['หมอพร้อม']) || 0; 
                   p_h = Number(pr['HDC']) || 0;
+                  p_slot = Number(pr['Slot']) || 0;
+                  p_booking = Number(pr['จอง']) || 0;
                   p_tTelemed = p_b + p_m + p_h;
                   
                   prevDistSum.opdPerson += p_opdP; 
@@ -1410,6 +1443,8 @@
                   prevDistSum.buddy += p_b; 
                   prevDistSum.morprom += p_m;
                   prevDistSum.hdc += p_h; 
+                  prevDistSum.slot += p_slot;
+                  prevDistSum.booking += p_booking;
                   prevDistSum.telemed += p_tTelemed;
               }
           }
@@ -1423,6 +1458,8 @@
                  <td class="right">${b}${getDiffHtml(b, p_b)}</td>
                  <td class="right">${m}${getDiffHtml(m, p_m)}</td>
                  <td class="center">${h === 0 ? '-' : h}${getDiffHtml(h, p_h)}</td>
+                 <td class="right">${slotCount}${getDiffHtml(slotCount, p_slot)}</td>
+                 <td class="right">${bookingCount}${getDiffHtml(bookingCount, p_booking)}</td>
                  <td class="center highlight-pink text-nowrap">${tTelemed.toLocaleString()}${getDiffHtml(tTelemed, p_tTelemed)} <small>(${tPct}%)</small></td>
              </tr>`;
         });
@@ -1434,6 +1471,8 @@
         grandTotal.buddy += distSum.buddy; 
         grandTotal.morprom += distSum.morprom; 
         grandTotal.hdc += distSum.hdc; 
+        grandTotal.slot += distSum.slot;
+        grandTotal.booking += distSum.booking;
         grandTotal.telemed += distSum.telemed;
         
         distTotalsObj[dist] = { telemed: distSum.telemed, opdCount: distSum.opdCount };
@@ -1450,6 +1489,8 @@
                  <td class="right">${distSum.buddy}${getDiffHtml(distSum.buddy, prevData?prevDistSum.buddy:null)}</td>
                  <td class="right">${distSum.morprom.toLocaleString()}${getDiffHtml(distSum.morprom, prevData?prevDistSum.morprom:null)}</td>
                  <td class="center">${distSum.hdc}${getDiffHtml(distSum.hdc, prevData?prevDistSum.hdc:null)}</td>
+                 <td class="right">${distSum.slot.toLocaleString()}${getDiffHtml(distSum.slot, prevData?prevDistSum.slot:null)}</td>
+                 <td class="right">${distSum.booking.toLocaleString()}${getDiffHtml(distSum.booking, prevData?prevDistSum.booking:null)}</td>
                  <td class="center highlight-pink text-nowrap">${distSum.telemed.toLocaleString()}${getDiffHtml(distSum.telemed, prevData?prevDistSum.telemed:null)} <small>(${tPctDist}%)</small></td>
              </tr>` + subRowsHtml;
       });
@@ -1465,6 +1506,8 @@
              <td class="right">${grandTotal.buddy}${getDiffHtml(grandTotal.buddy, prevData?prevGrandTotal.buddy:null)}</td>
              <td class="right">${grandTotal.morprom.toLocaleString()}${getDiffHtml(grandTotal.morprom, prevData?prevGrandTotal.morprom:null)}</td>
              <td class="center">${grandTotal.hdc.toLocaleString()}${getDiffHtml(grandTotal.hdc, prevData?prevGrandTotal.hdc:null)}</td>
+             <td class="right">${grandTotal.slot.toLocaleString()}${getDiffHtml(grandTotal.slot, prevData?prevGrandTotal.slot:null)}</td>
+             <td class="right">${grandTotal.booking.toLocaleString()}${getDiffHtml(grandTotal.booking, prevData?prevGrandTotal.booking:null)}</td>
              <td class="center highlight-pink text-nowrap">${grandTotal.telemed.toLocaleString()}${getDiffHtml(grandTotal.telemed, prevData?prevGrandTotal.telemed:null)} <small style="color: #9d174d;">(${tPctGrand}%)</small></td>
           </tr>`;
 
