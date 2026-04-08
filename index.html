@@ -136,7 +136,6 @@
             display: flex; 
             align-items: center; 
             gap: 6px;
-            flex-wrap: wrap;
         }
         
         .action-buttons { 
@@ -564,10 +563,8 @@
                      <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
                      <th style="width: 7%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
                      <th style="width: 7%;">HDC<br><small>(ครั้ง)</small></th>
-                     
                      <th style="width: 7%;">Slot ที่เปิดให้จอง<br><small>(คิว)</small></th>
                      <th style="width: 7%;">ยอดการจอง<br><small>(คิว)</small></th>
-                     
                      <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
                   </tr>
                </thead>
@@ -631,10 +628,26 @@
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label small fw-bold">4. กลุ่มงาน</label>
             <select class="form-select" name="regDepartment" required>
-              <option value="" disabled selected>เลือก...</option>
-              <option value="กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">พัฒนายุทธศาสตร์ฯ</option>
-              <option value="กลุ่มงานสุขภาพดิจิทัล">สุขภาพดิจิทัล</option>
-              <option value="กลุ่มงานควบคุมโรคติดต่อ">ควบคุมโรคติดต่อ</option>
+                <option value="" disabled selected>เลือก...</option>
+                <option value="01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข</option>
+                <option value="02 กลุ่มงานกฎหมาย">02 กลุ่มงานกฎหมาย</option>
+                <option value="03 กลุ่มงานบริหารทรัพยากรบุคคล">03 กลุ่มงานบริหารทรัพยากรบุคคล</option>
+                <option value="04 กลุ่มงานบริหารฯ (งานการเงิน)">04 กลุ่มงานบริหารฯ (งานการเงิน)</option>
+                <option value="05 กลุ่มงานประกันสุขภาพ">05 กลุ่มงานประกันสุขภาพ</option>
+                <option value="06 กลุ่มงานทันตสาธารณสุข">06 กลุ่มงานทันตสาธารณสุข</option>
+                <option value="07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ">07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ</option>
+                <option value="08 กลุ่มงาน คบส.">08 กลุ่มงาน คบส.</option>
+                <option value="09 กลุ่มงานควบคุมโรคติดต่อ">09 กลุ่มงานควบคุมโรคติดต่อ</option>
+                <option value="10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย">10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย</option>
+                <option value="11 กลุ่มงานส่งเสริมสุขภาพ">11 กลุ่มงานส่งเสริมสุขภาพ</option>
+                <option value="12 กลุ่มงานควบคุมโรคไม่ติดต่อ">12 กลุ่มงานควบคุมโรคไม่ติดต่อ</option>
+                <option value="13 กลุ่มงานสุขภาพจิตและยาเสพติด">13 กลุ่มงานสุขภาพจิตและยาเสพติด</option>
+                <option value="41 กลุ่มงานบริหารฯ (งานธุรการ)">41 กลุ่มงานบริหารฯ (งานธุรการ)</option>
+                <option value="42 กลุ่มงานบริหารฯ (งานพัสดุ)">42 กลุ่มงานบริหารฯ (งานพัสดุ)</option>
+                <option value="43 สำนักเลขานุการและอำนวยการ">43 สำนักเลขานุการและอำนวยการ</option>
+                <option value="45 กลุ่มงานบริหารฯ (งานโสตฯ)">45 กลุ่มงานบริหารฯ (งานโสตฯ)</option>
+                <option value="66 นพ.สสจ.นย.">66 นพ.สสจ.นย.</option>
+                <option value="99 กลุ่มงานสุขภาพดิจิทัล">99 กลุ่มงานสุขภาพดิจิทัล</option>
             </select>
           </div>
         </div>
@@ -765,12 +778,10 @@
   </div>
 
   <script>
-    // ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
     let appHistoryData = {};
     let availableDates = [];
-    
     let showDiffMode = true; 
 
     function getUniqueData(dataArray) {
@@ -1134,10 +1145,10 @@
                             diffs.push(`สอน.บัดดี้: ${Number(oldItem['สอน.บัดดี้']).toLocaleString()} ➔ <b class="text-danger">${newItem.buddyCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['Slot'] || 0) !== newItem.slotCount) {
-                            diffs.push(`Slot ที่เปิดให้จอง (คิว): ${Number(oldItem['Slot'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.slotCount.toLocaleString()}</b>`);
+                            diffs.push(`Slot ที่เปิดให้จอง: ${Number(oldItem['Slot'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.slotCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['จอง'] || 0) !== newItem.bookingCount) {
-                            diffs.push(`ยอดการจอง (คิว): ${Number(oldItem['จอง'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.bookingCount.toLocaleString()}</b>`);
+                            diffs.push(`ยอดการจอง: ${Number(oldItem['จอง'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.bookingCount.toLocaleString()}</b>`);
                         }
                         
                         if (diffs.length > 0) {
@@ -1465,15 +1476,18 @@
                     }
                 }
                 
+                // ดึงเฉพาะเวลามาใส่ Badge แจ้งเตือนสีแดงด้านบน
                 var updateTimeText = document.getElementById('updateTimeText');
                 if (updateTimeText) {
-                    updateTimeText.innerHTML = `<i class="fa-regular fa-clock"></i> อัปเดตเมื่อ: ${response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '')}`;
+                    var timeOnly = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
+                    updateTimeText.innerHTML = `<i class="fa-regular fa-clock"></i> อัปเดตเมื่อ: ${timeOnly}`;
                 }
                 
+                // อัปเดตหมายเหตุด้านล่างสุดของตาราง
                 var footerNote = document.getElementById('footerNote');
                 if (footerNote) {
-                    var timeOnly = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
-                    footerNote.innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnly + ')';
+                    var timeOnlyFoot = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
+                    footerNote.innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnlyFoot + ')';
                 }
                 
                 changeDateView(); 
