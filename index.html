@@ -136,6 +136,7 @@
             display: flex; 
             align-items: center; 
             gap: 6px;
+            flex-wrap: wrap;
         }
         
         .action-buttons { 
@@ -159,71 +160,23 @@
             white-space: nowrap;
         }
         
-        .btn-image { 
-            background-color: #0f766e; 
-            color: white; 
-            box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); 
-        }
-        .btn-image:hover { 
-            background-color: #0d9488; 
-        }
-        .btn-csv { 
-            background-color: #f43f5e; 
-            color: white; 
-            box-shadow: 0 2px 4px rgba(244, 63, 94, 0.2); 
-        }
-        .btn-csv:hover { 
-            background-color: #e11d48; 
-        }
-        .btn-compare { 
-            background-color: #06b6d4; 
-            color: white; 
-            box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2); 
-        }
-        .btn-compare:hover { 
-            background-color: #0891b2; 
-        }
-        .btn-upload { 
-            background-color: #0284c7; 
-            color: white; 
-            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); 
-        }
-        .btn-upload:hover { 
-            background-color: #0369a1; 
-        }
-        .btn-login { 
-            background-color: #0ea5e9; 
-            color: white; 
-            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2); 
-        }
-        .btn-login:hover { 
-            background-color: #0284c7; 
-        }
-        .btn-update { 
-            background-color: #f59e0b; 
-            color: white; 
-        }
-        .btn-update:hover { 
-            background-color: #d97706; 
-        }
-        .btn-users { 
-            background-color: #8b5cf6; 
-            color: white; 
-        }
-        .btn-users:hover { 
-            background-color: #7c3aed; 
-        }
-        .btn-logs { 
-            background-color: #475569; 
-            color: white; 
-        }
-        .btn-logs:hover { 
-            background-color: #334155; 
-        }
-        .btn-logout { 
-            background-color: #ef4444; 
-            color: white; 
-        }
+        .btn-image { background-color: #0f766e; color: white; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); }
+        .btn-image:hover { background-color: #0d9488; }
+        .btn-csv { background-color: #f43f5e; color: white; box-shadow: 0 2px 4px rgba(244, 63, 94, 0.2); }
+        .btn-csv:hover { background-color: #e11d48; }
+        .btn-compare { background-color: #06b6d4; color: white; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2); }
+        .btn-compare:hover { background-color: #0891b2; }
+        .btn-upload { background-color: #0284c7; color: white; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+        .btn-upload:hover { background-color: #0369a1; }
+        .btn-login { background-color: #0ea5e9; color: white; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2); }
+        .btn-login:hover { background-color: #0284c7; }
+        .btn-update { background-color: #f59e0b; color: white; }
+        .btn-update:hover { background-color: #d97706; }
+        .btn-users { background-color: #8b5cf6; color: white; }
+        .btn-users:hover { background-color: #7c3aed; }
+        .btn-logs { background-color: #475569; color: white; }
+        .btn-logs:hover { background-color: #334155; }
+        .btn-logout { background-color: #ef4444; color: white; }
 
         /* =======================================================
            3. KPI CARDS
@@ -244,33 +197,19 @@
             padding: 15px; 
             min-height: 90px;
         }
-        .kpi-card:nth-child(2) { 
-            border-left-color: #0ea5e9; 
-        } 
-        .kpi-card:nth-child(3) { 
-            border-left-color: #3b82f6; 
-        } 
-        .kpi-card:nth-child(4) { 
-            border-left-color: #8b5cf6; 
-        }
+        .kpi-card:nth-child(2) { border-left-color: #0ea5e9; } 
+        .kpi-card:nth-child(3) { border-left-color: #3b82f6; } 
+        .kpi-card:nth-child(4) { border-left-color: #8b5cf6; }
         .kpi-card i { 
             font-size: 30px; 
             color: #94a3b8; 
             width: 45px; 
             flex-shrink: 0;
         }
-        .kpi-card:nth-child(1) i { 
-            color: #0f766e; 
-        } 
-        .kpi-card:nth-child(2) i { 
-            color: #0ea5e9; 
-        } 
-        .kpi-card:nth-child(3) i { 
-            color: #3b82f6; 
-        } 
-        .kpi-card:nth-child(4) i { 
-            color: #8b5cf6; 
-        }
+        .kpi-card:nth-child(1) i { color: #0f766e; } 
+        .kpi-card:nth-child(2) i { color: #0ea5e9; } 
+        .kpi-card:nth-child(3) i { color: #3b82f6; } 
+        .kpi-card:nth-child(4) i { color: #8b5cf6; }
         .kpi-data { 
             display: flex; 
             flex-direction: column; 
@@ -410,7 +349,7 @@
         }
         .dash-table { 
             width: 100%; 
-            min-width: 900px; 
+            min-width: 950px; 
             border-collapse: collapse; 
         }
         .dash-table th, .dash-table td { 
@@ -536,7 +475,8 @@
          <div class="header-actions">
              <div class="date-badge" id="currentDateBadge">
                  <i class="fa-regular fa-calendar-check"></i> ข้อมูล ณ วันที่ : 
-                 <select id="dateFilter" class="form-select form-select-sm d-inline-block w-auto mx-2 text-primary fw-bold" style="border-color:#d97706; background-color:transparent;" onchange="changeDateView()"></select>
+                 <select id="dateFilter" class="form-select form-select-sm d-inline-block w-auto mx-1 text-primary fw-bold" style="border-color:#d97706; background-color:transparent;" onchange="changeDateView()"></select>
+                 <span id="updateTimeText" class="badge bg-danger ms-1" style="font-size: 12px; padding: 6px 10px; font-weight: 500;"></span>
              </div>
              
              <div class="action-buttons no-print">
@@ -619,13 +559,15 @@
                   <tr>
                      <th style="width: 15%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
                      <th style="width: 8%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
-                     <th style="width: 18%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
-                     <th style="width: 12%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
-                     <th style="width: 8%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
-                     <th style="width: 8%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
-                     <th style="width: 8%;">HDC<br><small>(ครั้ง)</small></th>
-                     <th style="width: 7%;">Slot<br><small>(คิว)</small></th>
-                     <th style="width: 7%;">ยอดจอง<br><small>(คิว)</small></th>
+                     <th style="width: 16%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
+                     <th style="width: 11%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
+                     <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
+                     <th style="width: 7%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
+                     <th style="width: 7%;">HDC<br><small>(ครั้ง)</small></th>
+                     
+                     <th style="width: 7%;">Slot ที่เปิดให้จอง<br><small>(คิว)</small></th>
+                     <th style="width: 7%;">ยอดการจอง<br><small>(คิว)</small></th>
+                     
                      <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
                   </tr>
                </thead>
@@ -796,8 +738,8 @@
                   <th rowspan="2" class="align-middle">อำเภอ / ประเภท</th>
                   <th colspan="3">ยอดผู้ใช้บริการ OPD (ครั้ง)</th>
                   <th colspan="3" class="table-info">ยอด Telemedicine รวม (ครั้ง)</th>
-                  <th colspan="3" class="table-warning">Slot (คิว)</th>
-                  <th colspan="3" class="table-success">ยอดจอง (คิว)</th>
+                  <th colspan="3" class="table-warning">Slot ที่เปิดให้จอง (คิว)</th>
+                  <th colspan="3" class="table-success">ยอดการจอง (คิว)</th>
                 </tr>
                 <tr>
                   <th>ข้อมูลเดิม</th>
@@ -821,30 +763,25 @@
       </div>
     </div>
   </div>
+
   <script>
     // ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
-    // ตัวแปร Global สำหรับเก็บข้อมูล History ทั้งหมด
     let appHistoryData = {};
     let availableDates = [];
     
-    // ควบคุมการเปิด-ปิด โหมดเปรียบเทียบใน Dashboard (ค่าเริ่มต้น = เปิด)
     let showDiffMode = true; 
 
-    // กรองข้อมูลที่ซ้ำกันออก (เลือกตัวที่อัปเดตล่าสุด)
     function getUniqueData(dataArray) {
         if (!dataArray || dataArray.length === 0) {
             return [];
         }
-        
         let unique = [];
         let seen = {};
-        
         for (let i = dataArray.length - 1; i >= 0; i--) {
             let r = dataArray[i];
             let key = r['อำเภอ'] + '_' + r['ประเภท'];
-            
             if (!seen[key]) {
                 seen[key] = true;
                 unique.unshift(r); 
@@ -860,7 +797,6 @@
         loadDashboardData();
     });
 
-    // สลับโหมดเปรียบเทียบ (เพิ่ม/ลด)
     function toggleDiff() {
         var toggleElement = document.getElementById('diffToggle');
         if (toggleElement) {
@@ -869,7 +805,6 @@
         }
     }
 
-    // ฟังก์ชันดาวน์โหลดเป็นรูปภาพ A4 พร้อมซ่อนปุ่ม
     function downloadImage() {
         Swal.fire({ 
             title: 'กำลังสร้างรูปภาพ...', 
@@ -885,7 +820,6 @@
         var origMaxWidth = element.style.maxWidth; 
         var origMargin = element.style.margin;
         
-        // ซ่อนปุ่มต่างๆ
         var guestMenu = document.getElementById('guestMenu'); 
         var userMenu = document.getElementById('userMenu');
         var diffToggleLabel = document.getElementById('diffToggle') ? document.getElementById('diffToggle').closest('label') : null; 
@@ -909,14 +843,12 @@
             dateFilter.style.display = 'none';
         }
         
-        // บังคับขยายขนาด
         element.style.width = '1123px'; 
         element.style.maxWidth = '1123px'; 
         element.style.margin = '0';
         
         setTimeout(() => {
             html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                // คืนค่าโครงสร้าง
                 element.style.width = origWidth; 
                 element.style.maxWidth = origMaxWidth; 
                 element.style.margin = origMargin;
@@ -941,7 +873,6 @@
                 link.click(); 
                 Swal.close();
             }).catch(err => {
-                // คืนค่าหาก Error
                 element.style.width = origWidth; 
                 element.style.maxWidth = origMaxWidth; 
                 element.style.margin = origMargin;
@@ -1203,10 +1134,10 @@
                             diffs.push(`สอน.บัดดี้: ${Number(oldItem['สอน.บัดดี้']).toLocaleString()} ➔ <b class="text-danger">${newItem.buddyCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['Slot'] || 0) !== newItem.slotCount) {
-                            diffs.push(`Slot: ${Number(oldItem['Slot'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.slotCount.toLocaleString()}</b>`);
+                            diffs.push(`Slot ที่เปิดให้จอง (คิว): ${Number(oldItem['Slot'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.slotCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['จอง'] || 0) !== newItem.bookingCount) {
-                            diffs.push(`จอง: ${Number(oldItem['จอง'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.bookingCount.toLocaleString()}</b>`);
+                            diffs.push(`ยอดการจอง (คิว): ${Number(oldItem['จอง'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.bookingCount.toLocaleString()}</b>`);
                         }
                         
                         if (diffs.length > 0) {
@@ -1536,13 +1467,13 @@
                 
                 var updateTimeText = document.getElementById('updateTimeText');
                 if (updateTimeText) {
-                    updateTimeText.innerText = response.lastUpdatedStr;
+                    updateTimeText.innerHTML = `<i class="fa-regular fa-clock"></i> อัปเดตเมื่อ: ${response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '')}`;
                 }
                 
                 var footerNote = document.getElementById('footerNote');
                 if (footerNote) {
                     var timeOnly = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
-                    footerNote.innerHTML = '** ข้อมูลอัปเดตล่าสุดผ่านระบบจัดการ Dashboard (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnly + ')';
+                    footerNote.innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnly + ')';
                 }
                 
                 changeDateView(); 
