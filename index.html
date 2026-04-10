@@ -50,7 +50,6 @@
             flex-direction: column; 
         }
 
-        /* ล็อคมาตราส่วนให้พิมพ์หน้า A4 แนวนอนได้พอดี */
         @media print {
             @page { 
                 size: A4 landscape; 
@@ -159,6 +158,16 @@
             white-space: nowrap;
         }
         
+        .btn-outline-teal {
+            color: #0f766e;
+            border-color: #0f766e;
+        }
+        .btn-outline-teal:hover, .btn-check:checked + .btn-outline-teal {
+            background-color: #0f766e;
+            color: white;
+            border-color: #0f766e;
+        }
+
         .btn-image { background-color: #0f766e; color: white; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2); }
         .btn-image:hover { background-color: #0d9488; }
         .btn-csv { background-color: #f43f5e; color: white; box-shadow: 0 2px 4px rgba(244, 63, 94, 0.2); }
@@ -199,6 +208,11 @@
         .kpi-card:nth-child(2) { border-left-color: #0ea5e9; } 
         .kpi-card:nth-child(3) { border-left-color: #3b82f6; } 
         .kpi-card:nth-child(4) { border-left-color: #8b5cf6; }
+        
+        .kpi-card-target { border-left-color: #f59e0b; background-color: #fffbeb; }
+        .kpi-card-success { border-left-color: #10b981; background-color: #f0fdf4; }
+        .kpi-card-danger { border-left-color: #ef4444; background-color: #fef2f2; }
+
         .kpi-card i { 
             font-size: 30px; 
             color: #94a3b8; 
@@ -209,6 +223,11 @@
         .kpi-card:nth-child(2) i { color: #0ea5e9; } 
         .kpi-card:nth-child(3) i { color: #3b82f6; } 
         .kpi-card:nth-child(4) i { color: #8b5cf6; }
+        
+        .kpi-card-target i { color: #d97706; }
+        .kpi-card-success i { color: #059669; }
+        .kpi-card-danger i { color: #dc2626; }
+
         .kpi-data { 
             display: flex; 
             flex-direction: column; 
@@ -470,6 +489,15 @@
          <div class="dashboard-header-text">
              <h1>สรุปผลการดำเนินงาน Telemedicine จังหวัดนครนายก</h1>
              <p>ข้อมูลการให้บริการผู้ป่วยนอก (OPD) และระบบการแพทย์ทางไกล จำแนกระดับ อำเภอ | รพ. และ รพ.สต.</p>
+             
+             <div class="btn-group mt-3 no-print" role="group">
+               <input type="radio" class="btn-check" name="viewToggle" id="viewDaily" autocomplete="off" checked onchange="switchView('daily')">
+               <label class="btn btn-outline-teal fw-bold px-4" for="viewDaily"><i class="fa-solid fa-calendar-day"></i> สรุปผลรายวัน</label>
+             
+               <input type="radio" class="btn-check" name="viewToggle" id="viewKpi" autocomplete="off" onchange="switchView('kpi')">
+               <label class="btn btn-outline-teal fw-bold px-4" for="viewKpi"><i class="fa-solid fa-bullseye"></i> เป้าหมาย KPI (+30%)</label>
+             </div>
+
          </div>
          <div class="header-actions">
              <div class="date-badge" id="currentDateBadge">
@@ -536,52 +564,96 @@
          </div>
       </div>
 
-      <div class="kpi-container" id="kpiCards">
-         </div>
+      <div id="viewDailyContainer">
+          <div class="kpi-container" id="kpiCards">
+             </div>
 
-      <div class="dashboard-body">
-         <div class="charts-row">
-            <div class="chart-section" id="platformChart">
-               <h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>
-            </div>
-            <div class="chart-section" id="districtChart">
-               <h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine แยกตามอำเภอ</h3>
-            </div>
-         </div>
+          <div class="dashboard-body">
+             <div class="charts-row">
+                <div class="chart-section" id="platformChart">
+                   <h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>
+                </div>
+                <div class="chart-section" id="districtChart">
+                   <h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine แยกตามอำเภอ</h3>
+                </div>
+             </div>
 
-         <div class="table-wrapper">
-            <h3>
-                <span><i class="fa-solid fa-table-list" style="color:#0f766e; margin-right: 8px;"></i> ตารางข้อมูลการให้บริการจำแนกรายหน่วยบริการ</span>
-            </h3>
-            <table class="dash-table" id="mainTable">
-               <thead>
-                  <tr>
-                     <th style="width: 15%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
-                     <th style="width: 8%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
-                     <th style="width: 16%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
-                     <th style="width: 11%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
-                     <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
-                     <th style="width: 7%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
-                     <th style="width: 7%;">HDC<br><small>(ครั้ง)</small></th>
-                     <th style="width: 7%;">Slot ที่เปิดให้จอง<br><small>(คิว)</small></th>
-                     <th style="width: 7%;">ยอดการจอง<br><small>(คิว)</small></th>
-                     <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
-                  </tr>
-               </thead>
-               <tbody id="tableBody"></tbody>
-               <tfoot id="tableFoot"></tfoot>
-            </table>
-            
-            <div class="text-center mt-4 pt-3 border-top">
-                <div class="note-text d-inline-block mb-2" style="font-size: 13px;">
-                    <span id="footerNote" class="text-danger fw-bold">** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time</span>
-                </div>
-                <div class="text-muted d-block fw-bold" style="font-size: 12px;">
-                    <i class="fa-solid fa-laptop-code"></i> พัฒนาและดูแลระบบโดย กลุ่มงานสุขภาพดิจิทัล สสจ.นครนายก
-                </div>
-            </div>
-         </div>
+             <div class="table-wrapper">
+                <h3>
+                    <span><i class="fa-solid fa-table-list" style="color:#0f766e; margin-right: 8px;"></i> ตารางข้อมูลการให้บริการจำแนกรายหน่วยบริการ</span>
+                </h3>
+                <table class="dash-table" id="mainTable">
+                   <thead>
+                      <tr>
+                         <th style="width: 15%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
+                         <th style="width: 8%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
+                         <th style="width: 16%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
+                         <th style="width: 11%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
+                         <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
+                         <th style="width: 7%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
+                         <th style="width: 7%;">HDC<br><small>(ครั้ง)</small></th>
+                         <th style="width: 7%;">Slot ที่เปิดให้จอง<br><small>(คิว)</small></th>
+                         <th style="width: 7%;">ยอดการจอง<br><small>(คิว)</small></th>
+                         <th style="width: 15%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
+                      </tr>
+                   </thead>
+                   <tbody id="tableBody"></tbody>
+                   <tfoot id="tableFoot"></tfoot>
+                </table>
+             </div>
+          </div>
       </div>
+
+      <div id="viewKpiContainer" style="display: none;">
+          
+          <div class="alert alert-info border-0 shadow-sm mb-4">
+              <i class="fa-solid fa-circle-info me-2"></i> <b>การวิเคราะห์เป้าหมาย:</b> ระบบจะทำการดึงข้อมูล <b>จุดเริ่มต้นที่มีในระบบ (Baseline)</b> มาคำนวณหาสัดส่วนการให้บริการ แล้วบวกเป้าหมายเพิ่มขึ้น 30% เพื่อนำมาเปรียบเทียบกับ <b>ผลงานในปัจจุบัน (Current)</b>
+          </div>
+
+          <div class="kpi-container" id="kpiTargetCards">
+             </div>
+
+          <div class="dashboard-body">
+             <div class="charts-row">
+                <div class="chart-section" style="flex: 2 1 500px;">
+                   <h3><i class="fa-solid fa-chart-column"></i> กราฟเปรียบเทียบผลงานรายอำเภอ (Baseline vs ปัจจุบัน)</h3>
+                   <div style="position: relative; height: 300px; width: 100%;">
+                       <canvas id="kpiBarChart"></canvas>
+                   </div>
+                </div>
+             </div>
+
+             <div class="table-wrapper">
+                <h3>
+                    <span><i class="fa-solid fa-ranking-star" style="color:#0f766e; margin-right: 8px;"></i> สรุปผลการประเมินรายอำเภอ (เป้าหมาย +30%)</span>
+                </h3>
+                <table class="dash-table" id="kpiTable">
+                   <thead>
+                      <tr>
+                         <th style="width: 20%;">อำเภอ</th>
+                         <th style="width: 15%;">ฐานเดิม (Baseline)</th>
+                         <th style="width: 15%;" class="table-warning">เป้าหมายที่ต้องทำได้</th>
+                         <th style="width: 15%;">ผลงานปัจจุบัน</th>
+                         <th style="width: 15%;">ผลต่างเทียบเป้าหมาย</th>
+                         <th style="width: 20%;">สถานะการประเมิน</th>
+                      </tr>
+                   </thead>
+                   <tbody id="kpiTableBody"></tbody>
+                   <tfoot id="kpiTableFoot"></tfoot>
+                </table>
+             </div>
+          </div>
+      </div>
+      
+      <div class="text-center mt-4 pt-3 border-top">
+          <div class="note-text d-inline-block mb-2" style="font-size: 13px;">
+              <span id="footerNote" class="text-danger fw-bold">** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time</span>
+          </div>
+          <div class="text-muted d-block fw-bold" style="font-size: 12px;">
+              <i class="fa-solid fa-laptop-code"></i> พัฒนาและดูแลระบบโดย กลุ่มงานสุขภาพดิจิทัล สสจ.นครนายก
+          </div>
+      </div>
+      
     </div>
   </div>
 
@@ -628,26 +700,26 @@
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label small fw-bold">4. กลุ่มงาน</label>
             <select class="form-select" name="regDepartment" required>
-                <option value="" disabled selected>เลือก...</option>
-                <option value="01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข</option>
-                <option value="02 กลุ่มงานกฎหมาย">02 กลุ่มงานกฎหมาย</option>
-                <option value="03 กลุ่มงานบริหารทรัพยากรบุคคล">03 กลุ่มงานบริหารทรัพยากรบุคคล</option>
-                <option value="04 กลุ่มงานบริหารฯ (งานการเงิน)">04 กลุ่มงานบริหารฯ (งานการเงิน)</option>
-                <option value="05 กลุ่มงานประกันสุขภาพ">05 กลุ่มงานประกันสุขภาพ</option>
-                <option value="06 กลุ่มงานทันตสาธารณสุข">06 กลุ่มงานทันตสาธารณสุข</option>
-                <option value="07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ">07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ</option>
-                <option value="08 กลุ่มงาน คบส.">08 กลุ่มงาน คบส.</option>
-                <option value="09 กลุ่มงานควบคุมโรคติดต่อ">09 กลุ่มงานควบคุมโรคติดต่อ</option>
-                <option value="10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย">10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย</option>
-                <option value="11 กลุ่มงานส่งเสริมสุขภาพ">11 กลุ่มงานส่งเสริมสุขภาพ</option>
-                <option value="12 กลุ่มงานควบคุมโรคไม่ติดต่อ">12 กลุ่มงานควบคุมโรคไม่ติดต่อ</option>
-                <option value="13 กลุ่มงานสุขภาพจิตและยาเสพติด">13 กลุ่มงานสุขภาพจิตและยาเสพติด</option>
-                <option value="41 กลุ่มงานบริหารฯ (งานธุรการ)">41 กลุ่มงานบริหารฯ (งานธุรการ)</option>
-                <option value="42 กลุ่มงานบริหารฯ (งานพัสดุ)">42 กลุ่มงานบริหารฯ (งานพัสดุ)</option>
-                <option value="43 สำนักเลขานุการและอำนวยการ">43 สำนักเลขานุการและอำนวยการ</option>
-                <option value="45 กลุ่มงานบริหารฯ (งานโสตฯ)">45 กลุ่มงานบริหารฯ (งานโสตฯ)</option>
-                <option value="66 นพ.สสจ.นย.">66 นพ.สสจ.นย.</option>
-                <option value="99 กลุ่มงานสุขภาพดิจิทัล">99 กลุ่มงานสุขภาพดิจิทัล</option>
+              <option value="" disabled selected>เลือก...</option>
+              <option value="01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข">01 กลุ่มงานพัฒนายุทธศาสตร์สาธารณสุข</option>
+              <option value="02 กลุ่มงานกฎหมาย">02 กลุ่มงานกฎหมาย</option>
+              <option value="03 กลุ่มงานบริหารทรัพยากรบุคคล">03 กลุ่มงานบริหารทรัพยากรบุคคล</option>
+              <option value="04 กลุ่มงานบริหารฯ (งานการเงิน)">04 กลุ่มงานบริหารฯ (งานการเงิน)</option>
+              <option value="05 กลุ่มงานประกันสุขภาพ">05 กลุ่มงานประกันสุขภาพ</option>
+              <option value="06 กลุ่มงานทันตสาธารณสุข">06 กลุ่มงานทันตสาธารณสุข</option>
+              <option value="07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ">07 กลุ่มงานพัฒนาคุณภาพและรูปแบบบริการ</option>
+              <option value="08 กลุ่มงาน คบส.">08 กลุ่มงาน คบส.</option>
+              <option value="09 กลุ่มงานควบคุมโรคติดต่อ">09 กลุ่มงานควบคุมโรคติดต่อ</option>
+              <option value="10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย">10 กลุ่มงานอนามัยสิ่งแวดล้อมและอาชีวอนามัย</option>
+              <option value="11 กลุ่มงานส่งเสริมสุขภาพ">11 กลุ่มงานส่งเสริมสุขภาพ</option>
+              <option value="12 กลุ่มงานควบคุมโรคไม่ติดต่อ">12 กลุ่มงานควบคุมโรคไม่ติดต่อ</option>
+              <option value="13 กลุ่มงานสุขภาพจิตและยาเสพติด">13 กลุ่มงานสุขภาพจิตและยาเสพติด</option>
+              <option value="41 กลุ่มงานบริหารฯ (งานธุรการ)">41 กลุ่มงานบริหารฯ (งานธุรการ)</option>
+              <option value="42 กลุ่มงานบริหารฯ (งานพัสดุ)">42 กลุ่มงานบริหารฯ (งานพัสดุ)</option>
+              <option value="43 สำนักเลขานุการและอำนวยการ">43 สำนักเลขานุการและอำนวยการ</option>
+              <option value="45 กลุ่มงานบริหารฯ (งานโสตฯ)">45 กลุ่มงานบริหารฯ (งานโสตฯ)</option>
+              <option value="66 นพ.สสจ.นย.">66 นพ.สสจ.นย.</option>
+              <option value="99 กลุ่มงานสุขภาพดิจิทัล">99 กลุ่มงานสุขภาพดิจิทัล</option>
             </select>
           </div>
         </div>
@@ -776,14 +848,17 @@
       </div>
     </div>
   </div>
-
   <script>
+    // ⚠️ ลิงก์ Web App API ของคุณเอิทร์
     const API_URL = "https://script.google.com/macros/s/AKfycbzJkrl6OWHwJDrURQJY-oC7mSGhqOV0dSs2cb_Tl8mEMHYc-XFBWV0i1TEcJBkOqy-Smw/exec"; 
 
+    // ตัวแปร Global สำหรับเก็บข้อมูล 
     let appHistoryData = {};
     let availableDates = [];
     let showDiffMode = true; 
+    let kpiChartInstance = null; // ตัวแปรเก็บกราฟ KPI
 
+    // ฟังก์ชันกรองข้อมูลที่ซ้ำกันออก (เลือกตัวที่อัปเดตล่าสุด)
     function getUniqueData(dataArray) {
         if (!dataArray || dataArray.length === 0) {
             return [];
@@ -808,6 +883,19 @@
         loadDashboardData();
     });
 
+    // สลับโหมดการแสดงผล (รายวัน vs KPI)
+    function switchView(viewType) {
+        if (viewType === 'daily') {
+            document.getElementById('viewDailyContainer').style.display = 'block';
+            document.getElementById('viewKpiContainer').style.display = 'none';
+        } else if (viewType === 'kpi') {
+            document.getElementById('viewDailyContainer').style.display = 'none';
+            document.getElementById('viewKpiContainer').style.display = 'block';
+            renderKpiDashboard();
+        }
+    }
+
+    // เปิดปิดไฮไลต์เปรียบเทียบ
     function toggleDiff() {
         var toggleElement = document.getElementById('diffToggle');
         if (toggleElement) {
@@ -816,6 +904,7 @@
         }
     }
 
+    // ฟังก์ชันสร้างรูปภาพ (ซ่อนปุ่มอัตโนมัติ)
     function downloadImage() {
         Swal.fire({ 
             title: 'กำลังสร้างรูปภาพ...', 
@@ -834,25 +923,20 @@
         var guestMenu = document.getElementById('guestMenu'); 
         var userMenu = document.getElementById('userMenu');
         var diffToggleLabel = document.getElementById('diffToggle') ? document.getElementById('diffToggle').closest('label') : null; 
+        var viewToggleGroup = document.querySelector('.btn-group');
         
         var origGuestDisplay = guestMenu ? guestMenu.style.display : 'none'; 
         var origUserDisplay = userMenu ? userMenu.style.display : 'none';
         var origDiffToggleDisplay = diffToggleLabel ? diffToggleLabel.style.display : 'none';
+        var origViewToggleDisplay = viewToggleGroup ? viewToggleGroup.style.display : 'none';
         
-        if (guestMenu) {
-            guestMenu.style.display = 'none'; 
-        }
-        if (userMenu) {
-            userMenu.style.display = 'none';
-        }
-        if (diffToggleLabel) {
-            diffToggleLabel.style.display = 'none';
-        }
+        if (guestMenu) { guestMenu.style.display = 'none'; }
+        if (userMenu) { userMenu.style.display = 'none'; }
+        if (diffToggleLabel) { diffToggleLabel.style.display = 'none'; }
+        if (viewToggleGroup) { viewToggleGroup.style.display = 'none'; }
         
         var dateFilter = document.getElementById('dateFilter');
-        if (dateFilter) {
-            dateFilter.style.display = 'none';
-        }
+        if (dateFilter) { dateFilter.style.display = 'none'; }
         
         element.style.width = '1123px'; 
         element.style.maxWidth = '1123px'; 
@@ -864,18 +948,11 @@
                 element.style.maxWidth = origMaxWidth; 
                 element.style.margin = origMargin;
                 
-                if (guestMenu) {
-                    guestMenu.style.display = origGuestDisplay; 
-                }
-                if (userMenu) {
-                    userMenu.style.display = origUserDisplay;
-                }
-                if (diffToggleLabel) {
-                    diffToggleLabel.style.display = origDiffToggleDisplay;
-                }
-                if (dateFilter) {
-                    dateFilter.style.display = 'inline-block';
-                }
+                if (guestMenu) { guestMenu.style.display = origGuestDisplay; }
+                if (userMenu) { userMenu.style.display = origUserDisplay; }
+                if (diffToggleLabel) { diffToggleLabel.style.display = origDiffToggleDisplay; }
+                if (viewToggleGroup) { viewToggleGroup.style.display = origViewToggleDisplay; }
+                if (dateFilter) { dateFilter.style.display = 'inline-block'; }
                 
                 var link = document.createElement('a');
                 var selectedDate = dateFilter ? dateFilter.value : 'latest';
@@ -888,18 +965,11 @@
                 element.style.maxWidth = origMaxWidth; 
                 element.style.margin = origMargin;
                 
-                if (guestMenu) {
-                    guestMenu.style.display = origGuestDisplay; 
-                }
-                if (userMenu) {
-                    userMenu.style.display = origUserDisplay;
-                }
-                if (diffToggleLabel) {
-                    diffToggleLabel.style.display = origDiffToggleDisplay;
-                }
-                if (dateFilter) {
-                    dateFilter.style.display = 'inline-block';
-                }
+                if (guestMenu) { guestMenu.style.display = origGuestDisplay; }
+                if (userMenu) { userMenu.style.display = origUserDisplay; }
+                if (diffToggleLabel) { diffToggleLabel.style.display = origDiffToggleDisplay; }
+                if (viewToggleGroup) { viewToggleGroup.style.display = origViewToggleDisplay; }
+                if (dateFilter) { dateFilter.style.display = 'inline-block'; }
                 
                 Swal.fire('Error', 'สร้างรูปภาพไม่สำเร็จ: ' + err.message, 'error');
             });
@@ -1050,7 +1120,6 @@
                         updateModal.hide(); 
                     }
                 }
-                
                 form.reset(); 
                 Swal.fire({ title: 'สำเร็จ!', text: res.message, icon: 'success' }); 
                 loadDashboardData(); 
@@ -1394,7 +1463,9 @@
 
     function exportToCSV() {
         var table = document.getElementById("mainTable"); 
-        if (!table) return;
+        if (!table) {
+            return;
+        }
         
         var rows = table.querySelectorAll("tr"); 
         var csvArray = [];
@@ -1476,18 +1547,18 @@
                     }
                 }
                 
-                // ดึงเฉพาะเวลามาใส่ Badge แจ้งเตือนสีแดงด้านบน
                 var updateTimeText = document.getElementById('updateTimeText');
                 if (updateTimeText) {
                     var timeOnly = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
                     updateTimeText.innerHTML = `<i class="fa-regular fa-clock"></i> อัปเดตเมื่อ: ${timeOnly}`;
                 }
                 
-                // อัปเดตหมายเหตุด้านล่างสุดของตาราง
-                var footerNote = document.getElementById('footerNote');
-                if (footerNote) {
+                var footerNotes = document.querySelectorAll('#footerNote');
+                if (footerNotes.length > 0) {
                     var timeOnlyFoot = response.lastUpdatedStr.replace('อัปเดตล่าสุด เมื่อเวลา ', '');
-                    footerNote.innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnlyFoot + ')';
+                    footerNotes.forEach(el => {
+                        el.innerHTML = '** ข้อมูลปรับปรุงล่าสุดผ่านระบบจัดการ Dashboard แบบ Real-time (อัปเดตฐานข้อมูลล่าสุดเมื่อ ' + timeOnlyFoot + ')';
+                    });
                 }
                 
                 changeDateView(); 
@@ -1525,6 +1596,11 @@
         var prevData = prevDate ? getUniqueData(appHistoryData[prevDate]) : null;
         
         renderDashboard(dataToRender, prevData);
+        
+        // อัปเดตฝั่ง KPI Dashboard ด้วย ถ้าเปิดหน้านั้นอยู่
+        if (document.getElementById('viewKpiContainer').style.display === 'block') {
+            renderKpiDashboard();
+        }
     }
 
     function getDiffHtml(currVal, prevVal) {
@@ -1817,6 +1893,211 @@
         var districtChart = document.getElementById("districtChart");
         if (districtChart) {
             districtChart.innerHTML = distChartHtml;
+        }
+    }
+
+    // ==========================================
+    // ฟังก์ชันใหม่: เรนเดอร์หน้า KPI เป้าหมาย (+30%)
+    // ==========================================
+    function renderKpiDashboard() {
+        if (availableDates.length === 0) {
+            return;
+        }
+        
+        var selectedDate = document.getElementById('dateFilter').value;
+        if (!selectedDate) {
+            selectedDate = availableDates[0];
+        }
+        
+        // ฐานข้อมูลเริ่มต้น คือ วันที่เก่าที่สุดที่มีในระบบ
+        var baselineDate = availableDates[availableDates.length - 1]; 
+        
+        // ข้อมูลปัจจุบัน (ตามที่เลือกใน Dropdown)
+        var currentDate = selectedDate;
+        
+        var baselineRaw = appHistoryData[baselineDate] || [];
+        var currentRaw = appHistoryData[currentDate] || [];
+        
+        var baseData = getUniqueData(baselineRaw);
+        var currData = getUniqueData(currentRaw);
+        
+        var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
+        
+        var baseTotalOpd = 0;
+        var baseTotalTelemed = 0;
+        
+        var currTotalOpd = 0;
+        var currTotalTelemed = 0;
+        
+        var kpiTbody = document.getElementById("kpiTableBody");
+        if (kpiTbody) {
+            kpiTbody.innerHTML = "";
+        }
+        
+        var chartLabels = [];
+        var chartBaseData = [];
+        var chartCurrData = [];
+        var chartTargetData = [];
+
+        districts.forEach(dist => {
+            var bRows = baseData.filter(r => r['อำเภอ'] === dist);
+            var bOpd = 0;
+            var bTel = 0;
+            bRows.forEach(r => {
+                bOpd += Number(r['OPD_ครั้ง']) || 0;
+                bTel += (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
+            });
+            var bPct = bOpd > 0 ? (bTel / bOpd) * 100 : 0;
+            
+            var cRows = currData.filter(r => r['อำเภอ'] === dist);
+            var cOpd = 0;
+            var cTel = 0;
+            cRows.forEach(r => {
+                cOpd += Number(r['OPD_ครั้ง']) || 0;
+                cTel += (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
+            });
+            var cPct = cOpd > 0 ? (cTel / cOpd) * 100 : 0;
+            
+            // เป้าหมายคือ +30% จากฐานเดิม
+            var targetPct = bPct * 1.30;
+            
+            var diffPct = cPct - targetPct;
+            var isPass = cPct >= targetPct;
+            
+            baseTotalOpd += bOpd;
+            baseTotalTelemed += bTel;
+            currTotalOpd += cOpd;
+            currTotalTelemed += cTel;
+            
+            chartLabels.push(dist);
+            chartBaseData.push(bPct.toFixed(2));
+            chartCurrData.push(cPct.toFixed(2));
+            chartTargetData.push(targetPct.toFixed(2));
+            
+            var statusHtml = isPass 
+                ? `<span class="badge bg-success"><i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์</span>` 
+                : `<span class="badge bg-danger"><i class="fa-solid fa-circle-xmark"></i> ต้องพัฒนา</span>`;
+                
+            var diffHtml = diffPct >= 0 
+                ? `<span class="text-success fw-bold">+${diffPct.toFixed(2)}%</span>` 
+                : `<span class="text-danger fw-bold">${diffPct.toFixed(2)}%</span>`;
+
+            if (kpiTbody) {
+                kpiTbody.innerHTML += `
+                    <tr class="center align-middle">
+                        <td class="text-start fw-bold">${dist}</td>
+                        <td class="text-secondary">${bPct.toFixed(2)}%</td>
+                        <td class="table-warning fw-bold">${targetPct.toFixed(2)}%</td>
+                        <td class="fw-bold" style="color: #0f766e;">${cPct.toFixed(2)}%</td>
+                        <td>${diffHtml}</td>
+                        <td>${statusHtml}</td>
+                    </tr>
+                `;
+            }
+        });
+
+        // สรุปรวมระดับจังหวัด
+        var bTotalPct = baseTotalOpd > 0 ? (baseTotalTelemed / baseTotalOpd) * 100 : 0;
+        var cTotalPct = currTotalOpd > 0 ? (currTotalTelemed / currTotalOpd) * 100 : 0;
+        var tTotalPct = bTotalPct * 1.30;
+        var totalDiff = cTotalPct - tTotalPct;
+        var totalPass = cTotalPct >= tTotalPct;
+
+        var kpiTfoot = document.getElementById("kpiTableFoot");
+        if (kpiTfoot) {
+            kpiTfoot.innerHTML = `
+                <tr class="center align-middle">
+                    <td class="text-start fw-bold">รวมทั้งจังหวัด</td>
+                    <td>${bTotalPct.toFixed(2)}%</td>
+                    <td class="fw-bold" style="color: #d97706;">${tTotalPct.toFixed(2)}%</td>
+                    <td class="fw-bold" style="color: #065f46;">${cTotalPct.toFixed(2)}%</td>
+                    <td>${totalDiff >= 0 ? '<span class="text-success fw-bold">+' + totalDiff.toFixed(2) + '%</span>' : '<span class="text-danger fw-bold">' + totalDiff.toFixed(2) + '%</span>'}</td>
+                    <td>${totalPass ? '<span class="badge bg-success"><i class="fa-solid fa-star"></i> บรรลุเป้าหมายจังหวัด</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ถึงเป้าหมาย</span>'}</td>
+                </tr>
+            `;
+        }
+
+        // อัปเดต KPI Cards ด้านบน
+        var kpiTargetCards = document.getElementById("kpiTargetCards");
+        if (kpiTargetCards) {
+            kpiTargetCards.innerHTML = `
+                <div class="kpi-card">
+                   <i class="fa-solid fa-flag-flag"></i>
+                   <div class="kpi-data">
+                      <span class="kpi-value">${bTotalPct.toFixed(2)}%</span>
+                      <span class="kpi-label">ฐานเดิม (Baseline)</span>
+                   </div>
+                </div>
+                <div class="kpi-card kpi-card-target">
+                   <i class="fa-solid fa-bullseye"></i>
+                   <div class="kpi-data">
+                      <span class="kpi-value" style="color:#d97706;">${tTotalPct.toFixed(2)}%</span>
+                      <span class="kpi-label">เป้าหมายจังหวัด (+30%)</span>
+                   </div>
+                </div>
+                <div class="kpi-card ${totalPass ? 'kpi-card-success' : 'kpi-card-danger'}">
+                   <i class="fa-solid ${totalPass ? 'fa-award' : 'fa-chart-line'}"></i>
+                   <div class="kpi-data">
+                      <span class="kpi-value" style="color:${totalPass ? '#059669' : '#dc2626'};">${cTotalPct.toFixed(2)}%</span>
+                      <span class="kpi-label">ผลงานปัจจุบัน (Current)</span>
+                   </div>
+                </div>
+            `;
+        }
+
+        // วาดกราฟแท่งเปรียบเทียบ
+        var ctx = document.getElementById('kpiBarChart');
+        if (ctx) {
+            if (kpiChartInstance) {
+                kpiChartInstance.destroy();
+            }
+            kpiChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'ฐานเดิม (Baseline) %',
+                            data: chartBaseData,
+                            backgroundColor: '#cbd5e1',
+                            borderColor: '#94a3b8',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'เป้าหมาย (+30%) %',
+                            data: chartTargetData,
+                            backgroundColor: '#fde68a',
+                            borderColor: '#f59e0b',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'ผลงานปัจจุบัน %',
+                            data: chartCurrData,
+                            backgroundColor: '#5eead4',
+                            borderColor: '#14b8a6',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'สัดส่วน Telemedicine (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
         }
     }
 
