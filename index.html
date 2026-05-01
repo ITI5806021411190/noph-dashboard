@@ -1637,11 +1637,23 @@
             loadingOverlay.style.display = "flex";
         }
         
-        fetch(API_URL)
-            .then(res => res.json())
+        fetch(API_URL + '?v=' + Date.now(), { cache: 'no-store' })
+            .then(async res => {
+                const text = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseErr) {
+                    throw new Error('API ไม่ได้ส่ง JSON กลับมา: ' + text.slice(0, 250));
+                }
+                if (!res.ok) {
+                    throw new Error('HTTP ' + res.status + ': ' + (data.message || data.error || text.slice(0, 250)));
+                }
+                return data;
+            })
             .then(response => {
                 if (!response.history) {
-                    throw new Error("ลิงก์ API ไม่ตรงกัน โปรด Deploy เป็นเวอร์ชันใหม่");
+                    throw new Error(response.message || response.error || 'API ตอบกลับแล้ว แต่ไม่มีฟิลด์ history');
                 }
                 
                 var dashboardSection = document.getElementById("dashboardSection");
@@ -1696,10 +1708,12 @@
             .catch(err => {
                 if (loadingOverlay) {
                     loadingOverlay.innerHTML = `
-                        <div class="text-center">
+                        <div class="text-center px-4" style="max-width:760px;">
                             <h4 class='text-danger fw-bold mb-3'><i class="fa-solid fa-triangle-exclamation"></i> เกิดข้อผิดพลาดในการโหลดข้อมูล</h4>
-                            <p class="text-secondary fw-bold">ระบบหน้าบ้านและหลังบ้านยังไม่เชื่อมต่อกันสมบูรณ์</p>
-                            <p class="text-secondary small"><b>วิธีแก้:</b> โปรดกลับไปที่ Google Apps Script<br>กด 'การทำให้ใช้งานได้' > 'การจัดการการทำให้ใช้งานได้' > ไอคอนดินสอ > <b>เลือก 'เวอร์ชันใหม่'</b></p>
+                            <p class="text-secondary fw-bold mb-2">ระบบเรียก API ไม่สำเร็จ หรือ API ส่งข้อมูลกลับมาไม่ครบ</p>
+                            <div class="alert alert-danger text-start small" style="white-space:pre-wrap; overflow-wrap:anywhere;"><b>รายละเอียดจริง:</b> ${err.message}</div>
+                            <p class="text-secondary small mb-1"><b>API ที่ใช้อยู่:</b><br>${API_URL}</p>
+                            <p class="text-secondary small mb-0">ให้เปิด URL นี้ในแท็บใหม่ ถ้าไม่เห็น JSON ที่มีคำว่า <b>history</b> แปลว่าฝั่ง Apps Script/สิทธิ์ Deploy ยังมีปัญหา</p>
                         </div>`;
                 }
             });
