@@ -775,7 +775,41 @@
             align-items: center; 
             flex-direction: column; 
         }
-    </style>
+    
+        /* Export ภาพเดียวแบบเต็ม Dashboard: เน้นไม่ให้ตารางถูกตัดคอลัมน์ท้าย */
+        .slide-container.export-full-image {
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            background: #ffffff !important;
+        }
+        .slide-container.export-full-image .table-wrapper,
+        .slide-container.export-full-image .detail-toggle {
+            overflow: visible !important;
+        }
+        .slide-container.export-full-image #mainTable,
+        .slide-container.export-full-image #kpiTable,
+        .slide-container.export-full-image #detailTable {
+            min-width: 0 !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+        .slide-container.export-full-image #mainTable th,
+        .slide-container.export-full-image #mainTable td {
+            padding: 6px 4px !important;
+            font-size: 12px !important;
+            line-height: 1.25 !important;
+            word-break: break-word !important;
+        }
+        .slide-container.export-full-image #mainTable th small,
+        .slide-container.export-full-image #mainTable td small {
+            font-size: 9.5px !important;
+        }
+        .slide-container.export-full-image .section-panel,
+        .slide-container.export-full-image .table-wrapper,
+        .slide-container.export-full-image .detail-toggle {
+            margin-top: 14px !important;
+        }
+</style>
 </head>
 <body>
 
@@ -1252,39 +1286,11 @@
         }
     }
 
-    // ฟังก์ชันสร้างรูปภาพ A4: ให้เลือกแนวนอน / แนวตั้ง
+    // ฟังก์ชันสร้างรูปภาพแบบเดิม: ดาวน์โหลดทั้ง Dashboard เป็นภาพเดียว ไม่บังคับ A4/แนวตั้ง/แนวนอน
     function downloadImage() {
-        Swal.fire({
-            title: 'เลือกรูปแบบการดาวน์โหลด',
-            html: '<div class="text-muted small">ระบบจะสร้างไฟล์ภาพขนาด A4 จริง และจะไม่บังคับเปิด/ปิดรายละเอียดเสริมเอง</div>',
-            icon: 'question',
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: '<i class="fa-solid fa-arrows-left-right"></i> A4 แนวนอน',
-            denyButtonText: '<i class="fa-solid fa-arrows-up-down"></i> A4 แนวตั้ง',
-            cancelButtonText: 'ยกเลิก',
-            confirmButtonColor: '#0f766e',
-            denyButtonColor: '#0284c7',
-            cancelButtonColor: '#64748b'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                downloadA4Image('landscape');
-            } else if (result.isDenied) {
-                downloadA4Image('portrait');
-            }
-        });
-    }
-
-    function downloadA4Image(orientation) {
-        var isPortrait = orientation === 'portrait';
-        var a4CssWidth = isPortrait ? 794 : 1123;
-        var a4CssHeight = isPortrait ? 1123 : 794;
-        var exportScale = 2;
-        var pageLabel = isPortrait ? 'A4_Portrait' : 'A4_Landscape';
-
         Swal.fire({ 
             title: 'กำลังสร้างรูปภาพ...', 
-            text: isPortrait ? 'กำลังจัดหน้า A4 แนวตั้ง' : 'กำลังจัดหน้า A4 แนวนอน', 
+            text: 'ระบบกำลังจัดภาพให้ครบทุกคอลัมน์ โดยไม่บังคับขยายรายละเอียดเสริม', 
             allowOutsideClick: false, 
             didOpen: () => { Swal.showLoading(); }
         });
@@ -1319,49 +1325,34 @@
         if (viewToggleGroup) { viewToggleGroup.style.display = 'none'; }
         if (dateFilter) { dateFilter.style.display = 'none'; }
         
-        element.className = original.className + ' exporting ' + (isPortrait ? 'export-portrait' : 'export-landscape');
-        element.style.width = a4CssWidth + 'px';
-        element.style.maxWidth = a4CssWidth + 'px';
+        // ใช้ความกว้างมากพอสำหรับตารางหลัก เพื่อไม่ให้คอลัมน์ท้ายสุดถูกตัด
+        element.className = original.className + ' exporting export-full-image';
+        element.style.width = '1320px';
+        element.style.maxWidth = '1320px';
         element.style.minHeight = 'auto';
         element.style.margin = '0';
-        element.style.padding = isPortrait ? '18px' : '18px';
+        element.style.padding = '22px';
         
         setTimeout(() => {
+            var captureWidth = Math.max(element.scrollWidth, 1320);
+            var captureHeight = element.scrollHeight;
             html2canvas(element, { 
-                scale: exportScale, 
+                scale: 2, 
                 useCORS: true, 
                 backgroundColor: '#ffffff',
-                width: element.scrollWidth,
-                height: element.scrollHeight,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight,
+                width: captureWidth,
+                height: captureHeight,
+                windowWidth: captureWidth,
+                windowHeight: captureHeight,
                 scrollX: 0,
                 scrollY: 0
             }).then(canvas => {
-                var finalCanvas = document.createElement('canvas');
-                finalCanvas.width = a4CssWidth * exportScale;
-                finalCanvas.height = a4CssHeight * exportScale;
-                var ctx = finalCanvas.getContext('2d');
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-                // Fit ทั้ง dashboard ลงใน A4 โดยรักษาอัตราส่วน ไม่ตัดขอบ และให้แนวนอน/แนวตั้งต่างกันจริง
-                var margin = 22 * exportScale;
-                var usableW = finalCanvas.width - (margin * 2);
-                var usableH = finalCanvas.height - (margin * 2);
-                var ratio = Math.min(usableW / canvas.width, usableH / canvas.height);
-                var drawW = canvas.width * ratio;
-                var drawH = canvas.height * ratio;
-                var dx = (finalCanvas.width - drawW) / 2;
-                var dy = (finalCanvas.height - drawH) / 2;
-                ctx.drawImage(canvas, dx, dy, drawW, drawH);
-
                 restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, displayBackup);
                 
                 var link = document.createElement('a');
                 var selectedDate = dateFilter ? dateFilter.value : 'latest';
-                link.download = 'Dashboard_Telemedicine_' + selectedDate + '_' + pageLabel + '.png';
-                link.href = finalCanvas.toDataURL('image/png');
+                link.download = 'Dashboard_Telemedicine_' + selectedDate + '.png';
+                link.href = canvas.toDataURL('image/png');
                 link.click(); 
                 Swal.close();
             }).catch(err => {
