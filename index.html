@@ -623,6 +623,86 @@
             color: #065f46;
         }
 
+
+
+        /* =======================================================
+           7. A4 IMAGE EXPORT HELPERS
+           ======================================================= */
+        .slide-container.exporting {
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            background: #ffffff !important;
+        }
+        .slide-container.export-landscape {
+            width: 1123px !important;
+            max-width: 1123px !important;
+            padding: 22px !important;
+        }
+        .slide-container.export-portrait {
+            width: 794px !important;
+            max-width: 794px !important;
+            padding: 20px !important;
+        }
+        .slide-container.exporting .table-wrapper,
+        .slide-container.exporting .detail-toggle {
+            overflow: visible !important;
+        }
+        .slide-container.exporting #mainTable,
+        .slide-container.exporting #kpiTable {
+            min-width: 0 !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+        .slide-container.exporting #mainTable th,
+        .slide-container.exporting #mainTable td,
+        .slide-container.exporting #kpiTable th,
+        .slide-container.exporting #kpiTable td {
+            padding: 5px 3px !important;
+            font-size: 11px !important;
+            line-height: 1.25 !important;
+            word-break: break-word !important;
+        }
+        .slide-container.exporting #mainTable th small,
+        .slide-container.exporting #mainTable td small {
+            font-size: 9.5px !important;
+        }
+        .slide-container.exporting .dash-table .main-row td:first-child {
+            font-size: 12px !important;
+        }
+        .slide-container.export-portrait .kpi-container {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .slide-container.export-portrait .charts-row {
+            gap: 12px !important;
+        }
+        .slide-container.export-portrait .chart-section {
+            min-width: 0 !important;
+            flex-basis: 100% !important;
+        }
+        .slide-container.export-portrait .district-card-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .slide-container.export-portrait .mini-chart-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .slide-container.export-portrait .dashboard-header {
+            gap: 10px !important;
+        }
+        .slide-container.export-portrait .dashboard-header-text h1 {
+            font-size: 21px !important;
+        }
+        .slide-container.export-portrait #mainTable th,
+        .slide-container.export-portrait #mainTable td {
+            padding: 4px 2px !important;
+            font-size: 10px !important;
+        }
+        .slide-container.export-portrait #mainTable th small,
+        .slide-container.export-portrait #mainTable td small {
+            font-size: 8.5px !important;
+        }
+
         /* Auth & Loading Styles */
         .auth-container { 
             max-width: 450px; 
@@ -1102,76 +1182,121 @@
         }
     }
 
-    // ฟังก์ชันสร้างรูปภาพ (ซ่อนปุ่มอัตโนมัติ)
+    // ฟังก์ชันสร้างรูปภาพ A4: ให้เลือกแนวนอน / แนวตั้ง
     function downloadImage() {
+        Swal.fire({
+            title: 'เลือกรูปแบบการดาวน์โหลด',
+            html: '<div class="text-muted small">ระบบจะจัดหน้าเป็นขนาด A4 และปรับตารางไม่ให้คอลัมน์ถูกตัด</div>',
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: '<i class="fa-solid fa-arrows-left-right"></i> A4 แนวนอน',
+            denyButtonText: '<i class="fa-solid fa-arrows-up-down"></i> A4 แนวตั้ง',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#0f766e',
+            denyButtonColor: '#0284c7',
+            cancelButtonColor: '#64748b'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                downloadA4Image('landscape');
+            } else if (result.isDenied) {
+                downloadA4Image('portrait');
+            }
+        });
+    }
+
+    function downloadA4Image(orientation) {
+        var isPortrait = orientation === 'portrait';
+        var pageWidth = isPortrait ? 794 : 1123;
+        var pageLabel = isPortrait ? 'A4_Portrait' : 'A4_Landscape';
+
         Swal.fire({ 
             title: 'กำลังสร้างรูปภาพ...', 
-            text: 'รอสักครู่ ระบบกำลังปรับขยายภาพให้คมชัดเต็ม A4', 
+            text: isPortrait ? 'กำลังจัดหน้า A4 แนวตั้ง' : 'กำลังจัดหน้า A4 แนวนอน', 
             allowOutsideClick: false, 
-            didOpen: () => { 
-                Swal.showLoading(); 
-            }
+            didOpen: () => { Swal.showLoading(); }
         });
         
         var element = document.getElementById('slide1');
-        var origWidth = element.style.width; 
-        var origMaxWidth = element.style.maxWidth; 
-        var origMargin = element.style.margin;
+        var original = {
+            width: element.style.width,
+            maxWidth: element.style.maxWidth,
+            minHeight: element.style.minHeight,
+            margin: element.style.margin,
+            padding: element.style.padding,
+            className: element.className
+        };
         
         var guestMenu = document.getElementById('guestMenu'); 
         var userMenu = document.getElementById('userMenu');
         var diffToggleLabel = document.getElementById('diffToggle') ? document.getElementById('diffToggle').closest('label') : null; 
         var viewToggleGroup = document.querySelector('.btn-group');
+        var dateFilter = document.getElementById('dateFilter');
+        var detailToggle = document.querySelector('.detail-toggle');
         
-        var origGuestDisplay = guestMenu ? guestMenu.style.display : 'none'; 
-        var origUserDisplay = userMenu ? userMenu.style.display : 'none';
-        var origDiffToggleDisplay = diffToggleLabel ? diffToggleLabel.style.display : 'none';
-        var origViewToggleDisplay = viewToggleGroup ? viewToggleGroup.style.display : 'none';
+        var displayBackup = {
+            guest: guestMenu ? guestMenu.style.display : '',
+            user: userMenu ? userMenu.style.display : '',
+            diff: diffToggleLabel ? diffToggleLabel.style.display : '',
+            viewToggle: viewToggleGroup ? viewToggleGroup.style.display : '',
+            dateFilter: dateFilter ? dateFilter.style.display : '',
+            detailOpen: detailToggle ? detailToggle.open : false
+        };
         
         if (guestMenu) { guestMenu.style.display = 'none'; }
         if (userMenu) { userMenu.style.display = 'none'; }
         if (diffToggleLabel) { diffToggleLabel.style.display = 'none'; }
         if (viewToggleGroup) { viewToggleGroup.style.display = 'none'; }
-        
-        var dateFilter = document.getElementById('dateFilter');
         if (dateFilter) { dateFilter.style.display = 'none'; }
+        if (detailToggle) { detailToggle.open = true; }
         
-        element.style.width = '1123px'; 
-        element.style.maxWidth = '1123px'; 
+        element.className = original.className + ' exporting ' + (isPortrait ? 'export-portrait' : 'export-landscape');
+        element.style.width = pageWidth + 'px';
+        element.style.maxWidth = pageWidth + 'px';
+        element.style.minHeight = 'auto';
         element.style.margin = '0';
+        element.style.padding = isPortrait ? '20px' : '22px';
         
         setTimeout(() => {
-            html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                element.style.width = origWidth; 
-                element.style.maxWidth = origMaxWidth; 
-                element.style.margin = origMargin;
-                
-                if (guestMenu) { guestMenu.style.display = origGuestDisplay; }
-                if (userMenu) { userMenu.style.display = origUserDisplay; }
-                if (diffToggleLabel) { diffToggleLabel.style.display = origDiffToggleDisplay; }
-                if (viewToggleGroup) { viewToggleGroup.style.display = origViewToggleDisplay; }
-                if (dateFilter) { dateFilter.style.display = 'inline-block'; }
+            html2canvas(element, { 
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: '#ffffff',
+                width: element.scrollWidth,
+                height: element.scrollHeight,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight,
+                scrollX: 0,
+                scrollY: 0
+            }).then(canvas => {
+                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup);
                 
                 var link = document.createElement('a');
                 var selectedDate = dateFilter ? dateFilter.value : 'latest';
-                link.download = 'Dashboard_Telemedicine_' + selectedDate + '.png';
+                link.download = 'Dashboard_Telemedicine_' + selectedDate + '_' + pageLabel + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click(); 
                 Swal.close();
             }).catch(err => {
-                element.style.width = origWidth; 
-                element.style.maxWidth = origMaxWidth; 
-                element.style.margin = origMargin;
-                
-                if (guestMenu) { guestMenu.style.display = origGuestDisplay; }
-                if (userMenu) { userMenu.style.display = origUserDisplay; }
-                if (diffToggleLabel) { diffToggleLabel.style.display = origDiffToggleDisplay; }
-                if (viewToggleGroup) { viewToggleGroup.style.display = origViewToggleDisplay; }
-                if (dateFilter) { dateFilter.style.display = 'inline-block'; }
-                
+                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup);
                 Swal.fire('Error', 'สร้างรูปภาพไม่สำเร็จ: ' + err.message, 'error');
             });
-        }, 800); 
+        }, 600); 
+    }
+
+    function restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup) {
+        element.className = original.className;
+        element.style.width = original.width;
+        element.style.maxWidth = original.maxWidth;
+        element.style.minHeight = original.minHeight;
+        element.style.margin = original.margin;
+        element.style.padding = original.padding;
+        if (guestMenu) { guestMenu.style.display = displayBackup.guest; }
+        if (userMenu) { userMenu.style.display = displayBackup.user; }
+        if (diffToggleLabel) { diffToggleLabel.style.display = displayBackup.diff; }
+        if (viewToggleGroup) { viewToggleGroup.style.display = displayBackup.viewToggle; }
+        if (dateFilter) { dateFilter.style.display = displayBackup.dateFilter || 'inline-block'; }
+        if (detailToggle) { detailToggle.open = displayBackup.detailOpen; }
     }
 
     function toggleAuthView(view) {
