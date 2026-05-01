@@ -495,7 +495,7 @@
                <label class="btn btn-outline-teal fw-bold px-4" for="viewDaily"><i class="fa-solid fa-calendar-day"></i> สรุปผลรายวัน</label>
              
                <input type="radio" class="btn-check" name="viewToggle" id="viewKpi" autocomplete="off" onchange="switchView('kpi')">
-               <label class="btn btn-outline-teal fw-bold px-4" for="viewKpi"><i class="fa-solid fa-bullseye"></i> เป้าหมาย KPI (+30%)</label>
+               <label class="btn btn-outline-teal fw-bold px-4" for="viewKpi"><i class="fa-solid fa-bullseye"></i> เป้าหมายเขต 30%</label>
              </div>
 
          </div>
@@ -595,7 +595,8 @@
                          <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
                          <th style="width: 6%;">Slot<br><small>(คิว)</small></th>
                          <th style="width: 6%;">จอง<br><small>(คิว)</small></th>
-                         <th style="width: 9%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง (%)</small></th>
+                         <th style="width: 9%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง / %เป้า</small></th>
+                         <th style="width: 7%;" class="table-info">สูตรเขต<br><small>% / 30%</small></th>
                          <th style="width: 8%;" class="table-danger">คงเหลือ<br><small>(ครั้ง)</small></th>
                       </tr>
                    </thead>
@@ -609,7 +610,7 @@
       <div id="viewKpiContainer" style="display: none;">
           
           <div class="alert alert-info border-0 shadow-sm mb-4">
-              <i class="fa-solid fa-circle-info me-2"></i> <b>การวิเคราะห์เป้าหมาย:</b> ระบบจะทำการดึงข้อมูล <b>จุดเริ่มต้นที่มีในระบบ (Baseline)</b> มาคำนวณหาสัดส่วนการให้บริการ แล้วบวกเป้าหมายเพิ่มขึ้น 30% เพื่อนำมาเปรียบเทียบกับ <b>ผลงานในปัจจุบัน (Current)</b>
+              <i class="fa-solid fa-circle-info me-2"></i> <b>การวิเคราะห์เป้าหมาย:</b> ใช้สูตรกลางของเขต <b>OPD visit typein 5 × 100 / OPD visit typein 2+3+5</b> โดยรับตัวเลขที่ Excel คำนวณไว้เป็นหลัก และคำนวณสำรองเฉพาะกรณีไม่มีคอลัมน์นั้นในไฟล์
           </div>
 
           <div class="kpi-container" id="kpiTargetCards">
@@ -627,16 +628,16 @@
 
              <div class="table-wrapper">
                 <h3>
-                    <span><i class="fa-solid fa-ranking-star" style="color:#0f766e; margin-right: 8px;"></i> สรุปผลการประเมินรายอำเภอ (เป้าหมาย +30%)</span>
+                    <span><i class="fa-solid fa-ranking-star" style="color:#0f766e; margin-right: 8px;"></i> สรุปผลการประเมินรายอำเภอ (สูตรเขต / เป้าหมาย 30%)</span>
                 </h3>
                 <table class="dash-table" id="kpiTable">
                    <thead>
                       <tr>
                          <th style="width: 20%;">อำเภอ</th>
-                         <th style="width: 15%;">ฐานเดิม (Baseline)</th>
-                         <th style="width: 15%;" class="table-warning">เป้าหมายที่ต้องทำได้</th>
-                         <th style="width: 15%;">ผลงานปัจจุบัน</th>
-                         <th style="width: 15%;">ผลต่างเทียบเป้าหมาย</th>
+                         <th style="width: 15%;">ฐานคำนวณ<br><small>typein 2+3+5</small></th>
+                         <th style="width: 15%;" class="table-warning">เป้าหมาย 30%</th>
+                         <th style="width: 15%;">ผลงานปัจจุบัน<br><small>typein 5</small></th>
+                         <th style="width: 15%;">สูตรเขต<br><small>% / 30%</small></th>
                          <th style="width: 20%;">สถานะการประเมิน</th>
                       </tr>
                    </thead>
@@ -824,24 +825,16 @@
               <thead class="table-light text-center align-middle">
                 <tr>
                   <th rowspan="2" class="align-middle">อำเภอ / ประเภท</th>
-                  <th colspan="3">ยอดผู้ใช้บริการ OPD (ครั้ง)</th>
-                  <th colspan="3" class="table-info">ยอด Telemedicine รวม (ครั้ง)</th>
-                  <th colspan="3" class="table-warning">Slot ที่เปิดให้จอง (คิว)</th>
-                  <th colspan="3" class="table-success">ยอดการจอง (คิว)</th>
+                  <th colspan="3">ผลงานรวม (ครั้ง)</th>
+                  <th colspan="3" class="table-warning">เป้าหมาย 30% (ครั้ง)</th>
+                  <th colspan="3" class="table-info">สูตรเขต (%)</th>
+                  <th colspan="3" class="table-danger">คงเหลือถึงเป้า (ครั้ง)</th>
                 </tr>
                 <tr>
-                  <th>ข้อมูลเดิม</th>
-                  <th>ข้อมูลปัจจุบัน</th>
-                  <th>ผลต่าง (+/-)</th>
-                  <th class="table-info">ข้อมูลเดิม</th>
-                  <th class="table-info">ข้อมูลปัจจุบัน</th>
-                  <th class="table-info">ผลต่าง (+/-)</th>
-                  <th class="table-warning">เดิม</th>
-                  <th class="table-warning">ปัจจุบัน</th>
-                  <th class="table-warning">ผลต่าง (+/-)</th>
-                  <th class="table-success">เดิม</th>
-                  <th class="table-success">ปัจจุบัน</th>
-                  <th class="table-success">ผลต่าง (+/-)</th>
+                  <th>เดิม</th><th>ปัจจุบัน</th><th>ผลต่าง</th>
+                  <th class="table-warning">เดิม</th><th class="table-warning">ปัจจุบัน</th><th class="table-warning">ผลต่าง</th>
+                  <th class="table-info">เดิม</th><th class="table-info">ปัจจุบัน</th><th class="table-info">ผลต่าง</th>
+                  <th class="table-danger">เดิม</th><th class="table-danger">ปัจจุบัน</th><th class="table-danger">ผลต่าง</th>
                 </tr>
               </thead>
               <tbody id="compareTableBody"></tbody>
@@ -1220,7 +1213,12 @@
                     morpromCount: findColumnIndex(headers, ['หมอพร้อม', 'หมอพร้อม ครั้ง', 'หมอพร้อม(ครั้ง)'], 7),
                     buddyCount: findColumnIndex(headers, ['สอน.บัดดี้', 'สอนบัดดี้', 'สอน.บัดดี้ ครั้ง', 'สอนบัดดี้ครั้ง'], 8),
                     slotCount: findColumnIndex(headers, ['Slot', 'จำนวนการเปิด Slot', 'Slot ที่เปิดให้จอง', 'เปิด Slot'], 9),
-                    bookingCount: findColumnIndex(headers, ['จอง', 'ยอดการจอง', 'จำนวนการจอง'], 10)
+                    bookingCount: findColumnIndex(headers, ['จอง', 'ยอดการจอง', 'จำนวนการจอง'], 10),
+                    baseCount: findColumnIndex(headers, ['ฐานคำนวณ', 'ฐานคํานวณ', 'OPD visit typein 2+3+5', 'typein2+3+5', 'typein 2+3+5'], -1),
+                    currentCount: findColumnIndex(headers, ['ผลงานปัจจุบัน', 'ยอดรวม Telemed', 'รวม Telemed ทุกช่องทาง', 'OPD visit typein 5', 'typein5', 'typein 5'], -1),
+                    regionPercent: findColumnIndex(headers, ['ร้อยละตามสูตรเขต', 'สูตรเขต', 'สัดส่วน (%)', 'สัดส่วน'], -1),
+                    progressPercent: findColumnIndex(headers, ['ร้อยละเทียบเป้าหมาย', '%เทียบเป้าหมาย', 'ความคืบหน้าต่อเป้าหมาย'], -1),
+                    remainCount: findColumnIndex(headers, ['คงเหลือ', 'ยอดคงเหลือ', 'คงเหลือถึงเป้า'], -1)
                 };
 
                 // กันเคส alias ชนกัน เช่น totalUnit ไปจับคอลัมน์ 'หน่วยบริการ' ที่เป็นข้อความ รพ./รพ.สต.
@@ -1250,19 +1248,29 @@
                         continue;
                     }
 
+                    var hdcVal = getNumberCell(row, col.hdcCount);
+                    var morpromVal = getNumberCell(row, col.morpromCount);
+                    var buddyVal = getNumberCell(row, col.buddyCount);
+                    var targetVal = getNumberCell(row, col.targetCount);
+                    var currentVal = getNumberCell(row, col.currentCount);
+                    if (currentVal === 0 && col.currentCount < 0) { currentVal = hdcVal + morpromVal + buddyVal; }
+                    var baseVal = getNumberCell(row, col.baseCount);
+                    if (baseVal === 0 && col.baseCount < 0 && targetVal > 0) { baseVal = targetVal / 0.30; }
+                    var regionPctVal = getNumberCell(row, col.regionPercent);
+                    if (regionPctVal === 0 && col.regionPercent < 0 && baseVal > 0) { regionPctVal = (currentVal / baseVal) * 100; }
+                    var progressPctVal = getNumberCell(row, col.progressPercent);
+                    if (progressPctVal === 0 && col.progressPercent < 0 && targetVal > 0) { progressPctVal = (currentVal / targetVal) * 100; }
+                    var remainVal = getNumberCell(row, col.remainCount);
+                    if (remainVal === 0 && col.remainCount < 0) { remainVal = Math.max(targetVal - currentVal, 0); }
+
                     updateData.push({
-                        districtName: districtName, 
-                        unitType: unitType, 
-                        totalUnit: getNumberCell(row, col.totalUnit),
-                        activeUnit: getNumberCell(row, col.activeUnit), 
-                        opdPerson: getNumberCell(row, col.opdPerson), 
-                        opdCount: getNumberCell(row, col.opdCount),
-                        targetCount: getNumberCell(row, col.targetCount),
-                        hdcCount: getNumberCell(row, col.hdcCount), 
-                        morpromCount: getNumberCell(row, col.morpromCount), 
-                        buddyCount: getNumberCell(row, col.buddyCount),
-                        slotCount: getNumberCell(row, col.slotCount), 
-                        bookingCount: getNumberCell(row, col.bookingCount)
+                        districtName: districtName, unitType: unitType,
+                        totalUnit: getNumberCell(row, col.totalUnit), activeUnit: getNumberCell(row, col.activeUnit),
+                        opdPerson: getNumberCell(row, col.opdPerson), opdCount: getNumberCell(row, col.opdCount),
+                        targetCount: targetVal, baseCount: baseVal, currentCount: currentVal,
+                        regionPercent: regionPctVal, progressPercent: progressPctVal, remainCount: remainVal,
+                        hdcCount: hdcVal, morpromCount: morpromVal, buddyCount: buddyVal,
+                        slotCount: getNumberCell(row, col.slotCount), bookingCount: getNumberCell(row, col.bookingCount)
                     });
                 }
 
@@ -1710,592 +1718,261 @@
         return ''; 
     }
 
+    function toNumberValue(value) {
+        if (value === null || value === undefined || value === '') { return 0; }
+        if (typeof value === 'string') { value = value.replace(/,/g, '').replace('%', '').trim(); }
+        return Number(value) || 0;
+    }
+    function hasValue(value) { return value !== null && value !== undefined && value !== ''; }
+    function getTelemedTotal(row) {
+        var imported = toNumberValue(row['ผลงานปัจจุบัน']);
+        if (imported > 0 || hasValue(row['ผลงานปัจจุบัน'])) { return imported; }
+        return toNumberValue(row['สอน.บัดดี้']) + toNumberValue(row['หมอพร้อม']) + toNumberValue(row['HDC']);
+    }
+    function getBaseCount(row) {
+        var imported = toNumberValue(row['ฐานคำนวณ']);
+        if (imported > 0 || hasValue(row['ฐานคำนวณ'])) { return imported; }
+        var target = toNumberValue(row['เป้าหมาย']);
+        if (target > 0) { return target / 0.30; }
+        return toNumberValue(row['OPD_ครั้ง']);
+    }
+    function getProgressPct(row) {
+        if (hasValue(row['ร้อยละเทียบเป้าหมาย'])) { return toNumberValue(row['ร้อยละเทียบเป้าหมาย']); }
+        var target = toNumberValue(row['เป้าหมาย']); var tele = getTelemedTotal(row);
+        return target > 0 ? (tele / target) * 100 : 0;
+    }
+    function getRegionPct(row) {
+        if (hasValue(row['ร้อยละตามสูตรเขต'])) { return toNumberValue(row['ร้อยละตามสูตรเขต']); }
+        var base = getBaseCount(row); var tele = getTelemedTotal(row);
+        return base > 0 ? (tele / base) * 100 : 0;
+    }
+    function getRemainCount(row) {
+        if (hasValue(row['คงเหลือ'])) { return toNumberValue(row['คงเหลือ']); }
+        return Math.max(toNumberValue(row['เป้าหมาย']) - getTelemedTotal(row), 0);
+    }
+
+
     function renderDashboard(data, prevData) {
         var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
-        var grandTotal = { opdPerson: 0, opdCount: 0, activeUnit: 0, totalUnit: 0, target: 0, buddy: 0, morprom: 0, hdc: 0, slot: 0, booking: 0, telemed: 0, remain: 0 };
-        var platformTotals = { hdc: 0, morprom: 0, buddy: 0 };
-        var typeTotals = { 
-            'รพ.': { telemed: 0, target: 0 }, 
-            'รพ.สต.': { telemed: 0, target: 0 } 
-        };
+        var grandTotal = { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, target:0, base:0, hdc:0, morprom:0, buddy:0, slot:0, booking:0, telemed:0, remain:0 };
+        var platformTotals = { hdc:0, morprom:0, buddy:0 };
+        var typeTotals = { 'รพ.': {telemed:0, target:0}, 'รพ.สต.': {telemed:0, target:0} };
         var distTotalsObj = {};
+        var tbody = document.getElementById("tableBody");
+        if (tbody) { tbody.innerHTML = ""; }
 
-        var tbody = document.getElementById("tableBody"); 
-        if (tbody) {
-            tbody.innerHTML = "";
+        function emptyTotal(){ return { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, target:0, base:0, hdc:0, morprom:0, buddy:0, slot:0, booking:0, telemed:0, remain:0 }; }
+        function addRow(total, r){
+            total.opdPerson += toNumberValue(r['OPD_คน']);
+            total.opdCount += toNumberValue(r['OPD_ครั้ง']);
+            total.activeUnit += toNumberValue(r['ให้บริการจริง']);
+            total.totalUnit += toNumberValue(r['หน่วยบริการทั้งหมด']);
+            total.target += toNumberValue(r['เป้าหมาย']);
+            total.base += getBaseCount(r);
+            total.hdc += toNumberValue(r['HDC']);
+            total.morprom += toNumberValue(r['หมอพร้อม']);
+            total.buddy += toNumberValue(r['สอน.บัดดี้']);
+            total.slot += toNumberValue(r['Slot']);
+            total.booking += toNumberValue(r['จอง']);
+            total.telemed += getTelemedTotal(r);
+            total.remain += getRemainCount(r);
         }
+        function addTotal(a,b){ Object.keys(a).forEach(function(k){ a[k] += b[k]; }); }
+        var prevGrandTotal = prevData ? emptyTotal() : null;
+        if (prevData) { prevData.forEach(function(r){ addRow(prevGrandTotal, r); }); }
 
-        var prevGrandTotal = prevData ? { opdPerson: 0, opdCount: 0, activeUnit: 0, totalUnit: 0, target: 0, buddy: 0, morprom: 0, hdc: 0, slot: 0, booking: 0, telemed: 0, remain: 0 } : null;
+        districts.forEach(function(dist){
+            var rows = data.filter(function(r){ return r['อำเภอ'] === dist; });
+            if (rows.length === 0) { return; }
+            var distSum = emptyTotal();
+            var prevDistSum = emptyTotal();
+            var subRowsHtml = '';
 
-        if (prevData) {
-            prevData.forEach(r => {
-                var pt = Number(r['เป้าหมาย']) || 0;
-                var ptele = (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
-                prevGrandTotal.opdPerson += Number(r['OPD_คน']) || 0;
-                prevGrandTotal.opdCount += Number(r['OPD_ครั้ง']) || 0;
-                prevGrandTotal.activeUnit += Number(r['ให้บริการจริง']) || 0;
-                prevGrandTotal.totalUnit += Number(r['หน่วยบริการทั้งหมด']) || 0;
-                prevGrandTotal.target += pt;
-                prevGrandTotal.hdc += Number(r['HDC']) || 0;
-                prevGrandTotal.morprom += Number(r['หมอพร้อม']) || 0;
-                prevGrandTotal.buddy += Number(r['สอน.บัดดี้']) || 0;
-                prevGrandTotal.slot += Number(r['Slot']) || 0;
-                prevGrandTotal.booking += Number(r['จอง']) || 0;
-                prevGrandTotal.telemed += ptele;
-                prevGrandTotal.remain += Math.max(pt - ptele, 0);
-            });
-        }
-
-        districts.forEach(dist => {
-            var rows = data.filter(r => r['อำเภอ'] === dist);
-            if (rows.length === 0) {
-                return;
-            }
-
-            var distSum = { opdPerson: 0, opdCount: 0, activeUnit: 0, totalUnit: 0, target: 0, buddy: 0, morprom: 0, hdc: 0, slot: 0, booking: 0, telemed: 0, remain: 0 };
-            var prevDistSum = { opdPerson: 0, opdCount: 0, activeUnit: 0, totalUnit: 0, target: 0, buddy: 0, morprom: 0, hdc: 0, slot: 0, booking: 0, telemed: 0, remain: 0 };
-            var subRowsHtml = "";
-
-            rows.forEach(r => {
+            rows.forEach(function(r){
                 var type = r['ประเภท'];
-                var tUnit = Number(r['หน่วยบริการทั้งหมด']) || 0; 
-                var aUnit = Number(r['ให้บริการจริง']) || 0;
-                var opdP = Number(r['OPD_คน']) || 0; 
-                var opdC = Number(r['OPD_ครั้ง']) || 0;
-                var targetCount = Number(r['เป้าหมาย']) || 0;
-                var h = Number(r['HDC']) || 0;
-                var m = Number(r['หมอพร้อม']) || 0; 
-                var b = Number(r['สอน.บัดดี้']) || 0; 
-                var slotCount = Number(r['Slot']) || 0;
-                var bookingCount = Number(r['จอง']) || 0;
-                var tTelemed = b + m + h;
-                var remain = Math.max(targetCount - tTelemed, 0);
-
-                distSum.totalUnit += tUnit; 
-                distSum.activeUnit += aUnit; 
-                distSum.opdPerson += opdP; 
-                distSum.opdCount += opdC;
-                distSum.target += targetCount;
-                distSum.hdc += h; 
-                distSum.morprom += m; 
-                distSum.buddy += b; 
-                distSum.slot += slotCount;
-                distSum.booking += bookingCount;
-                distSum.telemed += tTelemed;
-                distSum.remain += remain;
-
-                platformTotals.hdc += h; 
-                platformTotals.morprom += m; 
-                platformTotals.buddy += b;
-
-                if (type === 'รพ.') { 
-                    typeTotals['รพ.'].telemed += tTelemed; 
-                    typeTotals['รพ.'].target += targetCount; 
-                } else if (type === 'รพ.สต.') { 
-                    typeTotals['รพ.สต.'].telemed += tTelemed; 
-                    typeTotals['รพ.สต.'].target += targetCount; 
-                }
-
+                var tUnit = toNumberValue(r['หน่วยบริการทั้งหมด']);
+                var aUnit = toNumberValue(r['ให้บริการจริง']);
+                var opdP = toNumberValue(r['OPD_คน']);
+                var opdC = toNumberValue(r['OPD_ครั้ง']);
+                var targetCount = toNumberValue(r['เป้าหมาย']);
+                var h = toNumberValue(r['HDC']);
+                var m = toNumberValue(r['หมอพร้อม']);
+                var b = toNumberValue(r['สอน.บัดดี้']);
+                var slotCount = toNumberValue(r['Slot']);
+                var bookingCount = toNumberValue(r['จอง']);
+                var tTelemed = getTelemedTotal(r);
+                var remain = getRemainCount(r);
+                var progressPct = getProgressPct(r);
+                var regionPct = getRegionPct(r);
+                addRow(distSum, r);
+                platformTotals.hdc += h; platformTotals.morprom += m; platformTotals.buddy += b;
+                if (typeTotals[type]) { typeTotals[type].telemed += tTelemed; typeTotals[type].target += targetCount; }
                 var aPct = tUnit > 0 ? ((aUnit / tUnit) * 100).toFixed(0) : 0;
-                var tPct = targetCount > 0 ? ((tTelemed / targetCount) * 100).toFixed(2) : "0.00";
-
-                var p_opdP = null, p_opdC = null, p_aUnit = null, p_target = null, p_b = null, p_m = null, p_h = null, p_slot = null, p_booking = null, p_tTelemed = null, p_remain = null;
-
+                var p = { opdP:null, opdC:null, aUnit:null, target:null, h:null, m:null, b:null, slot:null, booking:null, tele:null, remain:null, region:null };
                 if (prevData) {
-                    var pr = prevData.find(x => x['อำเภอ'] === dist && x['ประเภท'] === type);
+                    var pr = prevData.find(function(x){ return x['อำเภอ'] === dist && x['ประเภท'] === type; });
                     if (pr) {
-                        p_opdP = Number(pr['OPD_คน']) || 0; 
-                        p_opdC = Number(pr['OPD_ครั้ง']) || 0;
-                        p_aUnit = Number(pr['ให้บริการจริง']) || 0;
-                        p_target = Number(pr['เป้าหมาย']) || 0;
-                        p_b = Number(pr['สอน.บัดดี้']) || 0; 
-                        p_m = Number(pr['หมอพร้อม']) || 0; 
-                        p_h = Number(pr['HDC']) || 0;
-                        p_slot = Number(pr['Slot']) || 0;
-                        p_booking = Number(pr['จอง']) || 0;
-                        p_tTelemed = p_b + p_m + p_h;
-                        p_remain = Math.max(p_target - p_tTelemed, 0);
-
-                        prevDistSum.opdPerson += p_opdP; 
-                        prevDistSum.opdCount += p_opdC;
-                        prevDistSum.activeUnit += p_aUnit; 
-                        prevDistSum.target += p_target;
-                        prevDistSum.hdc += p_h; 
-                        prevDistSum.morprom += p_m;
-                        prevDistSum.buddy += p_b; 
-                        prevDistSum.slot += p_slot;
-                        prevDistSum.booking += p_booking;
-                        prevDistSum.telemed += p_tTelemed;
-                        prevDistSum.remain += p_remain;
+                        p.opdP = toNumberValue(pr['OPD_คน']); p.opdC = toNumberValue(pr['OPD_ครั้ง']); p.aUnit = toNumberValue(pr['ให้บริการจริง']);
+                        p.target = toNumberValue(pr['เป้าหมาย']); p.h = toNumberValue(pr['HDC']); p.m = toNumberValue(pr['หมอพร้อม']); p.b = toNumberValue(pr['สอน.บัดดี้']);
+                        p.slot = toNumberValue(pr['Slot']); p.booking = toNumberValue(pr['จอง']); p.tele = getTelemedTotal(pr); p.remain = getRemainCount(pr); p.region = getRegionPct(pr);
+                        addRow(prevDistSum, pr);
                     }
                 }
-
-                subRowsHtml += `
-                    <tr class="sub-row">
-                        <td class="text-nowrap">- ${type} <small>(${tPct}%)</small></td>
-                        <td class="center">${tUnit}</td>
-                        <td class="right text-nowrap">${opdP.toLocaleString()}${getDiffHtml(opdP, p_opdP)} / ${opdC.toLocaleString()}${getDiffHtml(opdC, p_opdC)}</td>
-                        <td class="center">${aUnit}${getDiffHtml(aUnit, p_aUnit)} <small>(${aPct}%)</small></td>
-                        <td class="right table-warning">${targetCount.toLocaleString()}${getDiffHtml(targetCount, p_target)}</td>
-                        <td class="right">${h === 0 ? '-' : h.toLocaleString()}${getDiffHtml(h, p_h)}</td>
-                        <td class="right">${m.toLocaleString()}${getDiffHtml(m, p_m)}</td>
-                        <td class="right">${b.toLocaleString()}${getDiffHtml(b, p_b)}</td>
-                        <td class="right">${slotCount.toLocaleString()}${getDiffHtml(slotCount, p_slot)}</td>
-                        <td class="right">${bookingCount.toLocaleString()}${getDiffHtml(bookingCount, p_booking)}</td>
-                        <td class="center highlight-pink text-nowrap">${tTelemed.toLocaleString()}${getDiffHtml(tTelemed, p_tTelemed)} <small>(${tPct}%)</small></td>
-                        <td class="right table-danger">${remain.toLocaleString()}${getDiffHtml(remain, p_remain)}</td>
-                    </tr>`;
+                subRowsHtml += '<tr class="sub-row">' +
+                    '<td class="text-nowrap">- ' + type + ' <small>(' + progressPct.toFixed(2) + '% ของเป้า)</small></td>' +
+                    '<td class="center">' + tUnit + '</td>' +
+                    '<td class="right text-nowrap">' + opdP.toLocaleString() + getDiffHtml(opdP, p.opdP) + ' / ' + opdC.toLocaleString() + getDiffHtml(opdC, p.opdC) + '</td>' +
+                    '<td class="center">' + aUnit + getDiffHtml(aUnit, p.aUnit) + ' <small>(' + aPct + '%)</small></td>' +
+                    '<td class="right table-warning">' + targetCount.toLocaleString() + getDiffHtml(targetCount, p.target) + '</td>' +
+                    '<td class="right">' + (h === 0 ? '-' : h.toLocaleString()) + getDiffHtml(h, p.h) + '</td>' +
+                    '<td class="right">' + m.toLocaleString() + getDiffHtml(m, p.m) + '</td>' +
+                    '<td class="right">' + b.toLocaleString() + getDiffHtml(b, p.b) + '</td>' +
+                    '<td class="right">' + slotCount.toLocaleString() + getDiffHtml(slotCount, p.slot) + '</td>' +
+                    '<td class="right">' + bookingCount.toLocaleString() + getDiffHtml(bookingCount, p.booking) + '</td>' +
+                    '<td class="center highlight-pink text-nowrap">' + tTelemed.toLocaleString() + getDiffHtml(tTelemed, p.tele) + ' <small>(' + progressPct.toFixed(2) + '%)</small></td>' +
+                    '<td class="center table-info fw-bold">' + regionPct.toFixed(2) + '%' + (p.region !== null ? '' : '') + '</td>' +
+                    '<td class="right table-danger">' + remain.toLocaleString() + getDiffHtml(remain, p.remain) + '</td>' +
+                    '</tr>';
             });
-
-            grandTotal.totalUnit += distSum.totalUnit; 
-            grandTotal.activeUnit += distSum.activeUnit;
-            grandTotal.opdPerson += distSum.opdPerson; 
-            grandTotal.opdCount += distSum.opdCount;
-            grandTotal.target += distSum.target;
-            grandTotal.hdc += distSum.hdc; 
-            grandTotal.morprom += distSum.morprom; 
-            grandTotal.buddy += distSum.buddy; 
-            grandTotal.slot += distSum.slot;
-            grandTotal.booking += distSum.booking;
-            grandTotal.telemed += distSum.telemed;
-            grandTotal.remain += distSum.remain;
-
-            distTotalsObj[dist] = { 
-                telemed: distSum.telemed, 
-                target: distSum.target,
-                remain: distSum.remain 
-            };
-
+            addTotal(grandTotal, distSum);
+            var distProgressPct = distSum.target > 0 ? (distSum.telemed / distSum.target) * 100 : 0;
+            var distRegionPct = distSum.base > 0 ? (distSum.telemed / distSum.base) * 100 : 0;
+            distTotalsObj[dist] = { telemed: distSum.telemed, target: distSum.target, remain: distSum.remain, progressPct: distProgressPct, regionPct: distRegionPct };
             var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit / distSum.totalUnit) * 100).toFixed(0) : 0;
-            var tPctDist = distSum.target > 0 ? ((distSum.telemed / distSum.target) * 100).toFixed(2) : "0.00";
-
             if (tbody) {
-                tbody.innerHTML += `
-                    <tr class="main-row">
-                        <td class="text-nowrap">${dist}</td>
-                        <td class="center">${distSum.totalUnit}</td>
-                        <td class="right text-nowrap">${distSum.opdPerson.toLocaleString()}${getDiffHtml(distSum.opdPerson, prevData ? prevDistSum.opdPerson : null)} / ${distSum.opdCount.toLocaleString()}${getDiffHtml(distSum.opdCount, prevData ? prevDistSum.opdCount : null)}</td>
-                        <td class="center">${distSum.activeUnit}${getDiffHtml(distSum.activeUnit, prevData ? prevDistSum.activeUnit : null)} <small>(${aPctDist}%)</small></td>
-                        <td class="right table-warning">${distSum.target.toLocaleString()}${getDiffHtml(distSum.target, prevData ? prevDistSum.target : null)}</td>
-                        <td class="right">${distSum.hdc.toLocaleString()}${getDiffHtml(distSum.hdc, prevData ? prevDistSum.hdc : null)}</td>
-                        <td class="right">${distSum.morprom.toLocaleString()}${getDiffHtml(distSum.morprom, prevData ? prevDistSum.morprom : null)}</td>
-                        <td class="right">${distSum.buddy.toLocaleString()}${getDiffHtml(distSum.buddy, prevData ? prevDistSum.buddy : null)}</td>
-                        <td class="right">${distSum.slot.toLocaleString()}${getDiffHtml(distSum.slot, prevData ? prevDistSum.slot : null)}</td>
-                        <td class="right">${distSum.booking.toLocaleString()}${getDiffHtml(distSum.booking, prevData ? prevDistSum.booking : null)}</td>
-                        <td class="center highlight-pink text-nowrap">${distSum.telemed.toLocaleString()}${getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null)} <small>(${tPctDist}%)</small></td>
-                        <td class="right table-danger">${distSum.remain.toLocaleString()}${getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null)}</td>
-                    </tr>` + subRowsHtml;
+                tbody.innerHTML += '<tr class="main-row">' +
+                    '<td class="text-nowrap">' + dist + '</td>' +
+                    '<td class="center">' + distSum.totalUnit + '</td>' +
+                    '<td class="right text-nowrap">' + distSum.opdPerson.toLocaleString() + getDiffHtml(distSum.opdPerson, prevData ? prevDistSum.opdPerson : null) + ' / ' + distSum.opdCount.toLocaleString() + getDiffHtml(distSum.opdCount, prevData ? prevDistSum.opdCount : null) + '</td>' +
+                    '<td class="center">' + distSum.activeUnit + getDiffHtml(distSum.activeUnit, prevData ? prevDistSum.activeUnit : null) + ' <small>(' + aPctDist + '%)</small></td>' +
+                    '<td class="right table-warning">' + distSum.target.toLocaleString() + getDiffHtml(distSum.target, prevData ? prevDistSum.target : null) + '</td>' +
+                    '<td class="right">' + distSum.hdc.toLocaleString() + getDiffHtml(distSum.hdc, prevData ? prevDistSum.hdc : null) + '</td>' +
+                    '<td class="right">' + distSum.morprom.toLocaleString() + getDiffHtml(distSum.morprom, prevData ? prevDistSum.morprom : null) + '</td>' +
+                    '<td class="right">' + distSum.buddy.toLocaleString() + getDiffHtml(distSum.buddy, prevData ? prevDistSum.buddy : null) + '</td>' +
+                    '<td class="right">' + distSum.slot.toLocaleString() + getDiffHtml(distSum.slot, prevData ? prevDistSum.slot : null) + '</td>' +
+                    '<td class="right">' + distSum.booking.toLocaleString() + getDiffHtml(distSum.booking, prevData ? prevDistSum.booking : null) + '</td>' +
+                    '<td class="center highlight-pink text-nowrap">' + distSum.telemed.toLocaleString() + getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null) + ' <small>(' + distProgressPct.toFixed(2) + '%)</small></td>' +
+                    '<td class="center table-info fw-bold">' + distRegionPct.toFixed(2) + '%</td>' +
+                    '<td class="right table-danger">' + distSum.remain.toLocaleString() + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
+                    '</tr>' + subRowsHtml;
             }
         });
 
-        var tPctGrand = grandTotal.target > 0 ? ((grandTotal.telemed / grandTotal.target) * 100).toFixed(2) : "0.00";
-
+        var progressPctGrand = grandTotal.target > 0 ? (grandTotal.telemed / grandTotal.target) * 100 : 0;
+        var regionPctGrand = grandTotal.base > 0 ? (grandTotal.telemed / grandTotal.base) * 100 : 0;
         var tableFoot = document.getElementById("tableFoot");
         if (tableFoot) {
-            tableFoot.innerHTML = `
-                <tr>
-                    <td class="center fw-bold">รวมทั้งจังหวัด</td>
-                    <td class="center">${grandTotal.totalUnit}</td>
-                    <td class="right text-nowrap">${grandTotal.opdPerson.toLocaleString()}${getDiffHtml(grandTotal.opdPerson, prevData ? prevGrandTotal.opdPerson : null)} / ${grandTotal.opdCount.toLocaleString()}${getDiffHtml(grandTotal.opdCount, prevData ? prevGrandTotal.opdCount : null)}</td>
-                    <td class="center fw-bold text-success">${grandTotal.activeUnit}${getDiffHtml(grandTotal.activeUnit, prevData ? prevGrandTotal.activeUnit : null)}</td>
-                    <td class="right table-warning">${grandTotal.target.toLocaleString()}${getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null)}</td>
-                    <td class="right">${grandTotal.hdc.toLocaleString()}${getDiffHtml(grandTotal.hdc, prevData ? prevGrandTotal.hdc : null)}</td>
-                    <td class="right">${grandTotal.morprom.toLocaleString()}${getDiffHtml(grandTotal.morprom, prevData ? prevGrandTotal.morprom : null)}</td>
-                    <td class="right">${grandTotal.buddy.toLocaleString()}${getDiffHtml(grandTotal.buddy, prevData ? prevGrandTotal.buddy : null)}</td>
-                    <td class="right">${grandTotal.slot.toLocaleString()}${getDiffHtml(grandTotal.slot, prevData ? prevGrandTotal.slot : null)}</td>
-                    <td class="right">${grandTotal.booking.toLocaleString()}${getDiffHtml(grandTotal.booking, prevData ? prevGrandTotal.booking : null)}</td>
-                    <td class="center highlight-pink text-nowrap">${grandTotal.telemed.toLocaleString()}${getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null)} <small style="color: #9d174d;">(${tPctGrand}%)</small></td>
-                    <td class="right table-danger">${grandTotal.remain.toLocaleString()}${getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null)}</td>
-                </tr>`;
+            tableFoot.innerHTML = '<tr>' +
+                '<td class="center fw-bold">รวมทั้งจังหวัด</td>' +
+                '<td class="center">' + grandTotal.totalUnit + '</td>' +
+                '<td class="right text-nowrap">' + grandTotal.opdPerson.toLocaleString() + getDiffHtml(grandTotal.opdPerson, prevData ? prevGrandTotal.opdPerson : null) + ' / ' + grandTotal.opdCount.toLocaleString() + getDiffHtml(grandTotal.opdCount, prevData ? prevGrandTotal.opdCount : null) + '</td>' +
+                '<td class="center fw-bold text-success">' + grandTotal.activeUnit + getDiffHtml(grandTotal.activeUnit, prevData ? prevGrandTotal.activeUnit : null) + '</td>' +
+                '<td class="right table-warning">' + grandTotal.target.toLocaleString() + getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null) + '</td>' +
+                '<td class="right">' + grandTotal.hdc.toLocaleString() + getDiffHtml(grandTotal.hdc, prevData ? prevGrandTotal.hdc : null) + '</td>' +
+                '<td class="right">' + grandTotal.morprom.toLocaleString() + getDiffHtml(grandTotal.morprom, prevData ? prevGrandTotal.morprom : null) + '</td>' +
+                '<td class="right">' + grandTotal.buddy.toLocaleString() + getDiffHtml(grandTotal.buddy, prevData ? prevGrandTotal.buddy : null) + '</td>' +
+                '<td class="right">' + grandTotal.slot.toLocaleString() + getDiffHtml(grandTotal.slot, prevData ? prevGrandTotal.slot : null) + '</td>' +
+                '<td class="right">' + grandTotal.booking.toLocaleString() + getDiffHtml(grandTotal.booking, prevData ? prevGrandTotal.booking : null) + '</td>' +
+                '<td class="center highlight-pink text-nowrap">' + grandTotal.telemed.toLocaleString() + getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null) + ' <small style="color:#9d174d;">(' + progressPctGrand.toFixed(2) + '%)</small></td>' +
+                '<td class="center table-info fw-bold">' + regionPctGrand.toFixed(2) + '%</td>' +
+                '<td class="right table-danger">' + grandTotal.remain.toLocaleString() + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
+                '</tr>';
         }
 
         var hospPct = typeTotals['รพ.'].target > 0 ? ((typeTotals['รพ.'].telemed / typeTotals['รพ.'].target) * 100).toFixed(2) : "0.00";
         var rpstPct = typeTotals['รพ.สต.'].target > 0 ? ((typeTotals['รพ.สต.'].telemed / typeTotals['รพ.สต.'].target) * 100).toFixed(2) : "0.00";
-
         var kpiCards = document.getElementById("kpiCards");
         if (kpiCards) {
-            kpiCards.innerHTML = `
-                <div class="kpi-card kpi-card-target">
-                    <i class="fa-solid fa-bullseye"></i>
-                    <div class="kpi-data">
-                        <span class="kpi-value">${grandTotal.target.toLocaleString()}${getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null)} <small>ครั้ง</small></span>
-                        <span class="kpi-label">เป้าหมายการทำ Telemedicine</span>
-                    </div>
-                </div>
-                <div class="kpi-card kpi-card-success">
-                    <i class="fa-solid fa-stethoscope"></i>
-                    <div class="kpi-data">
-                        <span class="kpi-value">${grandTotal.telemed.toLocaleString()}${getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null)} <span class="percent-badge">${tPctGrand}%</span></span>
-                        <span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมาย</span>
-                        <span style="font-size: 11.5px; color: #0284c7; font-weight: 600; margin-top: 3px;">รพ. ${hospPct}% | รพ.สต. ${rpstPct}%</span>
-                    </div>
-                </div>
-                <div class="kpi-card kpi-card-danger">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                    <div class="kpi-data">
-                        <span class="kpi-value">${grandTotal.remain.toLocaleString()}${getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null)} <small>ครั้ง</small></span>
-                        <span class="kpi-label">ยอดคงเหลือเพื่อถึงเป้าหมาย</span>
-                    </div>
-                </div>
-                <div class="kpi-card">
-                    <i class="fa-solid fa-users"></i>
-                    <div class="kpi-data">
-                        <span class="kpi-value">${grandTotal.opdPerson.toLocaleString()}${getDiffHtml(grandTotal.opdPerson, prevData ? prevGrandTotal.opdPerson : null)} <small>คน</small></span>
-                        <span class="kpi-label">ผู้รับบริการ OPD รวม (${grandTotal.opdCount.toLocaleString()} ครั้ง)</span>
-                    </div>
-                </div>
-            `;
+            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.target.toLocaleString() + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel</span></div></div>' +
+            '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString() + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมายจำนวนครั้ง</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
+            '<div class="kpi-card ' + (regionPctGrand >= 30 ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + regionPctGrand.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต / เป้า 30%</span></div></div>' +
+            '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.remain.toLocaleString() + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
         }
 
         var hdcPct = grandTotal.telemed > 0 ? ((platformTotals.hdc / grandTotal.telemed) * 100).toFixed(1) : 0;
         var morPct = grandTotal.telemed > 0 ? ((platformTotals.morprom / grandTotal.telemed) * 100).toFixed(1) : 0;
         var budPct = grandTotal.telemed > 0 ? ((platformTotals.buddy / grandTotal.telemed) * 100).toFixed(1) : 0;
-
         var platformChart = document.getElementById("platformChart");
         if (platformChart) {
-            platformChart.innerHTML = `
-                <h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>
-                <div class="compact-bar">
-                    <div class="c-label">HDC</div>
-                    <div class="c-track">
-                        <div class="c-fill" style="width: ${hdcPct}%; background: #0ea5e9;"></div>
-                    </div>
-                    <div class="c-val">${platformTotals.hdc.toLocaleString()} <small>(${hdcPct}%)</small></div>
-                </div>
-                <div class="compact-bar">
-                    <div class="c-label">หมอพร้อม</div>
-                    <div class="c-track">
-                        <div class="c-fill" style="width: ${morPct}%; background: #38bdf8;"></div>
-                    </div>
-                    <div class="c-val">${platformTotals.morprom.toLocaleString()} <small>(${morPct}%)</small></div>
-                </div>
-                <div class="compact-bar">
-                    <div class="c-label">สอน.บัดดี้</div>
-                    <div class="c-track">
-                        <div class="c-fill" style="width: ${budPct}%; background: #94a3b8;"></div>
-                    </div>
-                    <div class="c-val">${platformTotals.buddy.toLocaleString()} <small>(${budPct}%)</small></div>
-                </div>`;
+            platformChart.innerHTML = '<h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>' +
+                '<div class="compact-bar"><div class="c-label">HDC</div><div class="c-track"><div class="c-fill" style="width:' + hdcPct + '%; background:#0ea5e9;"></div></div><div class="c-val">' + platformTotals.hdc.toLocaleString() + ' <small>(' + hdcPct + '%)</small></div></div>' +
+                '<div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width:' + morPct + '%; background:#38bdf8;"></div></div><div class="c-val">' + platformTotals.morprom.toLocaleString() + ' <small>(' + morPct + '%)</small></div></div>' +
+                '<div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width:' + budPct + '%; background:#94a3b8;"></div></div><div class="c-val">' + platformTotals.buddy.toLocaleString() + ' <small>(' + budPct + '%)</small></div></div>';
         }
-
         var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine เทียบเป้าหมาย แยกตามอำเภอ</h3>';
-        var distColors = { 'เมืองนครนายก': '#0f766e', 'ปากพลี': '#14b8a6', 'องครักษ์': '#2dd4bf', 'บ้านนา': '#99f6e4' };
-
-        var sortedDists = Object.keys(distTotalsObj).sort((a, b) => distTotalsObj[b].telemed - distTotalsObj[a].telemed);
-
-        sortedDists.forEach(dist => {
-            var dVal = distTotalsObj[dist].telemed;
-            var dTarget = distTotalsObj[dist].target;
-            var targetPct = dTarget > 0 ? ((dVal / dTarget) * 100).toFixed(2) : "0.00";
-            var visualWidth = Math.min(Number(targetPct), 100).toFixed(1);
-
-            distChartHtml += `
-                <div class="compact-bar">
-                    <div class="c-label">${dist}</div>
-                    <div class="c-track">
-                        <div class="c-fill" style="width: ${visualWidth}%; background: ${distColors[dist] || '#94a3b8'};"></div>
-                    </div>
-                    <div class="c-val">${dVal.toLocaleString()} <small>(${targetPct}%)</small></div>
-                </div>`;
+        var distColors = { 'เมืองนครนายก':'#0f766e', 'ปากพลี':'#14b8a6', 'องครักษ์':'#2dd4bf', 'บ้านนา':'#99f6e4' };
+        Object.keys(distTotalsObj).sort(function(a,b){ return distTotalsObj[b].telemed - distTotalsObj[a].telemed; }).forEach(function(dist){
+            var d = distTotalsObj[dist]; var visualWidth = Math.min(d.progressPct, 100).toFixed(1);
+            distChartHtml += '<div class="compact-bar"><div class="c-label">' + dist + '</div><div class="c-track"><div class="c-fill" style="width:' + visualWidth + '%; background:' + (distColors[dist] || '#94a3b8') + ';"></div></div><div class="c-val">' + d.telemed.toLocaleString() + ' <small>(' + d.progressPct.toFixed(2) + '%เป้า / ' + d.regionPct.toFixed(2) + '%เขต)</small></div></div>';
         });
-
         var districtChart = document.getElementById("districtChart");
-        if (districtChart) {
-            districtChart.innerHTML = distChartHtml;
-        }
+        if (districtChart) { districtChart.innerHTML = distChartHtml; }
     }
 
     // ==========================================
     // ฟังก์ชันใหม่: เรนเดอร์หน้า KPI เป้าหมาย (+30%)
     // ==========================================
     function renderKpiDashboard() {
-        if (availableDates.length === 0) {
-            return;
-        }
-        
-        var selectedDate = document.getElementById('dateFilter').value;
-        if (!selectedDate) {
-            selectedDate = availableDates[0];
-        }
-        
-        // ฐานข้อมูลเริ่มต้น คือ วันที่เก่าที่สุดที่มีในระบบ
-        var baselineDate = availableDates[availableDates.length - 1]; 
-        
-        // ข้อมูลปัจจุบัน (ตามที่เลือกใน Dropdown)
-        var currentDate = selectedDate;
-        
-        var baselineRaw = appHistoryData[baselineDate] || [];
-        var currentRaw = appHistoryData[currentDate] || [];
-        
-        var baseData = getUniqueData(baselineRaw);
-        var currData = getUniqueData(currentRaw);
-        
+        if (availableDates.length === 0) { return; }
+        var selectedDate = document.getElementById('dateFilter').value || availableDates[0];
+        var currData = getUniqueData(appHistoryData[selectedDate] || []);
         var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
-        
-        var baseTotalOpd = 0;
-        var baseTotalTelemed = 0;
-        
-        var currTotalOpd = 0;
-        var currTotalTelemed = 0;
-        
         var kpiTbody = document.getElementById("kpiTableBody");
-        if (kpiTbody) {
-            kpiTbody.innerHTML = "";
-        }
-        
-        var chartLabels = [];
-        var chartBaseData = [];
-        var chartCurrData = [];
-        var chartTargetData = [];
-
-        districts.forEach(dist => {
-            var bRows = baseData.filter(r => r['อำเภอ'] === dist);
-            var bOpd = 0;
-            var bTel = 0;
-            bRows.forEach(r => {
-                bOpd += Number(r['OPD_ครั้ง']) || 0;
-                bTel += (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
-            });
-            var bPct = bOpd > 0 ? (bTel / bOpd) * 100 : 0;
-            
-            var cRows = currData.filter(r => r['อำเภอ'] === dist);
-            var cOpd = 0;
-            var cTel = 0;
-            cRows.forEach(r => {
-                cOpd += Number(r['OPD_ครั้ง']) || 0;
-                cTel += (Number(r['สอน.บัดดี้']) || 0) + (Number(r['หมอพร้อม']) || 0) + (Number(r['HDC']) || 0);
-            });
-            var cPct = cOpd > 0 ? (cTel / cOpd) * 100 : 0;
-            
-            // เป้าหมายคือ +30% จากฐานเดิม
-            var targetPct = bPct * 1.30;
-            
-            var diffPct = cPct - targetPct;
-            var isPass = cPct >= targetPct;
-            
-            baseTotalOpd += bOpd;
-            baseTotalTelemed += bTel;
-            currTotalOpd += cOpd;
-            currTotalTelemed += cTel;
-            
-            chartLabels.push(dist);
-            chartBaseData.push(bPct.toFixed(2));
-            chartCurrData.push(cPct.toFixed(2));
-            chartTargetData.push(targetPct.toFixed(2));
-            
-            var statusHtml = isPass 
-                ? `<span class="badge bg-success"><i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์</span>` 
-                : `<span class="badge bg-danger"><i class="fa-solid fa-circle-xmark"></i> ต้องพัฒนา</span>`;
-                
-            var diffHtml = diffPct >= 0 
-                ? `<span class="text-success fw-bold">+${diffPct.toFixed(2)}%</span>` 
-                : `<span class="text-danger fw-bold">${diffPct.toFixed(2)}%</span>`;
-
-            if (kpiTbody) {
-                kpiTbody.innerHTML += `
-                    <tr class="center align-middle">
-                        <td class="text-start fw-bold">${dist}</td>
-                        <td class="text-secondary">${bPct.toFixed(2)}%</td>
-                        <td class="table-warning fw-bold">${targetPct.toFixed(2)}%</td>
-                        <td class="fw-bold" style="color: #0f766e;">${cPct.toFixed(2)}%</td>
-                        <td>${diffHtml}</td>
-                        <td>${statusHtml}</td>
-                    </tr>
-                `;
-            }
+        if (kpiTbody) { kpiTbody.innerHTML = ""; }
+        var labels = [], currentPctData = [], targetPctData = [];
+        var totalBase = 0, totalTarget = 0, totalCurrent = 0, totalRemain = 0;
+        districts.forEach(function(dist){
+            var rows = currData.filter(function(r){ return r['อำเภอ'] === dist; });
+            var base = 0, target = 0, current = 0, remain = 0;
+            rows.forEach(function(r){ base += getBaseCount(r); target += toNumberValue(r['เป้าหมาย']); current += getTelemedTotal(r); remain += getRemainCount(r); });
+            totalBase += base; totalTarget += target; totalCurrent += current; totalRemain += remain;
+            var regionPct = base > 0 ? (current / base) * 100 : 0;
+            var progressPct = target > 0 ? (current / target) * 100 : 0;
+            labels.push(dist); currentPctData.push(regionPct.toFixed(2)); targetPctData.push(30);
+            var pass = regionPct >= 30;
+            var diff = regionPct - 30;
+            var diffHtml = diff >= 0 ? '<span class="text-success fw-bold">+' + diff.toFixed(2) + '%</span>' : '<span class="text-danger fw-bold">' + diff.toFixed(2) + '%</span>';
+            var statusHtml = pass ? '<span class="badge bg-success"><i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-circle-xmark"></i> ต้องพัฒนา</span>';
+            if (kpiTbody) { kpiTbody.innerHTML += '<tr class="center align-middle"><td class="text-start fw-bold">' + dist + '</td><td class="text-secondary">' + Math.round(base).toLocaleString() + '</td><td class="table-warning fw-bold">' + target.toLocaleString() + '</td><td class="fw-bold" style="color:#0f766e;">' + current.toLocaleString() + ' <small>(' + progressPct.toFixed(2) + '% ของเป้า)</small></td><td>' + regionPct.toFixed(2) + '% <small>/ ' + diffHtml + '</small></td><td>' + statusHtml + '</td></tr>'; }
         });
-
-        // สรุปรวมระดับจังหวัด
-        var bTotalPct = baseTotalOpd > 0 ? (baseTotalTelemed / baseTotalOpd) * 100 : 0;
-        var cTotalPct = currTotalOpd > 0 ? (currTotalTelemed / currTotalOpd) * 100 : 0;
-        var tTotalPct = bTotalPct * 1.30;
-        var totalDiff = cTotalPct - tTotalPct;
-        var totalPass = cTotalPct >= tTotalPct;
-
+        var totalRegionPct = totalBase > 0 ? (totalCurrent / totalBase) * 100 : 0;
+        var totalProgressPct = totalTarget > 0 ? (totalCurrent / totalTarget) * 100 : 0;
+        var totalPass = totalRegionPct >= 30;
         var kpiTfoot = document.getElementById("kpiTableFoot");
-        if (kpiTfoot) {
-            kpiTfoot.innerHTML = `
-                <tr class="center align-middle">
-                    <td class="text-start fw-bold">รวมทั้งจังหวัด</td>
-                    <td>${bTotalPct.toFixed(2)}%</td>
-                    <td class="fw-bold" style="color: #d97706;">${tTotalPct.toFixed(2)}%</td>
-                    <td class="fw-bold" style="color: #065f46;">${cTotalPct.toFixed(2)}%</td>
-                    <td>${totalDiff >= 0 ? '<span class="text-success fw-bold">+' + totalDiff.toFixed(2) + '%</span>' : '<span class="text-danger fw-bold">' + totalDiff.toFixed(2) + '%</span>'}</td>
-                    <td>${totalPass ? '<span class="badge bg-success"><i class="fa-solid fa-star"></i> บรรลุเป้าหมายจังหวัด</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ถึงเป้าหมาย</span>'}</td>
-                </tr>
-            `;
-        }
-
-        // อัปเดต KPI Cards ด้านบน
+        if (kpiTfoot) { kpiTfoot.innerHTML = '<tr class="center align-middle"><td class="text-start fw-bold">รวมทั้งจังหวัด</td><td>' + Math.round(totalBase).toLocaleString() + '</td><td class="fw-bold" style="color:#d97706;">' + totalTarget.toLocaleString() + '</td><td class="fw-bold" style="color:#065f46;">' + totalCurrent.toLocaleString() + ' <small>(' + totalProgressPct.toFixed(2) + '% ของเป้า)</small></td><td class="fw-bold">' + totalRegionPct.toFixed(2) + '%</td><td>' + (totalPass ? '<span class="badge bg-success"><i class="fa-solid fa-star"></i> บรรลุเป้า 30%</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ถึง 30%</span>') + '</td></tr>'; }
         var kpiTargetCards = document.getElementById("kpiTargetCards");
-        if (kpiTargetCards) {
-            kpiTargetCards.innerHTML = `
-                <div class="kpi-card">
-                   <i class="fa-solid fa-flag-flag"></i>
-                   <div class="kpi-data">
-                      <span class="kpi-value">${bTotalPct.toFixed(2)}%</span>
-                      <span class="kpi-label">ฐานเดิม (Baseline)</span>
-                   </div>
-                </div>
-                <div class="kpi-card kpi-card-target">
-                   <i class="fa-solid fa-bullseye"></i>
-                   <div class="kpi-data">
-                      <span class="kpi-value" style="color:#d97706;">${tTotalPct.toFixed(2)}%</span>
-                      <span class="kpi-label">เป้าหมายจังหวัด (+30%)</span>
-                   </div>
-                </div>
-                <div class="kpi-card ${totalPass ? 'kpi-card-success' : 'kpi-card-danger'}">
-                   <i class="fa-solid ${totalPass ? 'fa-award' : 'fa-chart-line'}"></i>
-                   <div class="kpi-data">
-                      <span class="kpi-value" style="color:${totalPass ? '#059669' : '#dc2626'};">${cTotalPct.toFixed(2)}%</span>
-                      <span class="kpi-label">ผลงานปัจจุบัน (Current)</span>
-                   </div>
-                </div>
-            `;
-        }
-
-        // วาดกราฟแท่งเปรียบเทียบ
+        if (kpiTargetCards) { kpiTargetCards.innerHTML = '<div class="kpi-card"><i class="fa-solid fa-database"></i><div class="kpi-data"><span class="kpi-value">' + Math.round(totalBase).toLocaleString() + '</span><span class="kpi-label">ฐานคำนวณ typein 2+3+5</span></div></div><div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value" style="color:#d97706;">30%</span><span class="kpi-label">เป้าหมายตามข้อสั่งการเขต</span></div></div><div class="kpi-card ' + (totalPass ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + totalRegionPct.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต</span></div></div><div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + totalRemain.toLocaleString() + '</span><span class="kpi-label">คงเหลือถึงเป้าหมาย</span></div></div>'; }
         var ctx = document.getElementById('kpiBarChart');
-        if (ctx) {
-            if (kpiChartInstance) {
-                kpiChartInstance.destroy();
-            }
-            kpiChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartLabels,
-                    datasets: [
-                        {
-                            label: 'ฐานเดิม (Baseline) %',
-                            data: chartBaseData,
-                            backgroundColor: '#cbd5e1',
-                            borderColor: '#94a3b8',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'เป้าหมาย (+30%) %',
-                            data: chartTargetData,
-                            backgroundColor: '#fde68a',
-                            borderColor: '#f59e0b',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'ผลงานปัจจุบัน %',
-                            data: chartCurrData,
-                            backgroundColor: '#5eead4',
-                            borderColor: '#14b8a6',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'สัดส่วน Telemedicine (%)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    }
-                }
-            });
-        }
+        if (ctx) { if (kpiChartInstance) { kpiChartInstance.destroy(); } kpiChartInstance = new Chart(ctx, { type:'bar', data:{ labels:labels, datasets:[{label:'เป้าหมายเขต 30%', data:targetPctData, backgroundColor:'#fde68a', borderColor:'#f59e0b', borderWidth:1},{label:'ผลงานตามสูตรเขต %', data:currentPctData, backgroundColor:'#5eead4', borderColor:'#14b8a6', borderWidth:1}]}, options:{responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true, suggestedMax:35, title:{display:true,text:'สูตรเขต (%)'}}}, plugins:{legend:{position:'top'}}} }); }
     }
 
     function openCompareModal() {
         var dateFilter = document.getElementById('dateFilter');
         var selectedDate = dateFilter ? dateFilter.value : null;
-        
-        if (!selectedDate) {
-            return;
-        }
-        
+        if (!selectedDate) { return; }
         var currentIndex = availableDates.indexOf(selectedDate);
-        if (currentIndex === -1 || currentIndex === availableDates.length - 1) {
-            Swal.fire('ไม่มีข้อมูลเปรียบเทียบ', 'ไม่พบข้อมูลของวันก่อนหน้าในระบบ (คุณกำลังดูข้อมูลวันที่เก่าที่สุดที่มีในระบบ)', 'info');
-            return;
-        }
-        
+        if (currentIndex === -1 || currentIndex === availableDates.length - 1) { Swal.fire('ไม่มีข้อมูลเปรียบเทียบ', 'ไม่พบข้อมูลของวันก่อนหน้าในระบบ (คุณกำลังดูข้อมูลวันที่เก่าที่สุดที่มีในระบบ)', 'info'); return; }
         var prevDate = availableDates[currentIndex + 1];
         var currentData = getUniqueData(appHistoryData[selectedDate]);
         var prevData = getUniqueData(appHistoryData[prevDate]);
-        
         var tbody = document.getElementById("compareTableBody");
-        if (!tbody) {
-            return;
-        }
-        
+        if (!tbody) { return; }
         tbody.innerHTML = "";
-        
+        function diffStr(curr, prev, isPct) { var diff = curr - prev; if (Math.abs(diff) < 0.005) { return '-'; } var txt = isPct ? diff.toFixed(2) + '%' : Math.round(diff).toLocaleString(); return diff > 0 ? '<span class="text-success fw-bold">+' + txt + '</span>' : '<span class="text-danger fw-bold">' + txt + '</span>'; }
         var districts = ['เมืองนครนายก', 'บ้านนา', 'องครักษ์', 'ปากพลี'];
-        
-        districts.forEach(dist => {
-            ['รพ.', 'รพ.สต.'].forEach(type => {
-                var cRow = currentData.find(r => r['อำเภอ'] === dist && r['ประเภท'] === type);
-                var pRow = prevData.find(r => r['อำเภอ'] === dist && r['ประเภท'] === type);
-                
-                if (cRow && pRow) {
-                    var cOpd = Number(cRow['OPD_ครั้ง']) || 0;
-                    var pOpd = Number(pRow['OPD_ครั้ง']) || 0;
-                    
-                    var cTel = (Number(cRow['สอน.บัดดี้']) || 0) + (Number(cRow['หมอพร้อม']) || 0) + (Number(cRow['HDC']) || 0);
-                    var pTel = (Number(pRow['สอน.บัดดี้']) || 0) + (Number(pRow['หมอพร้อม']) || 0) + (Number(pRow['HDC']) || 0);
-                    
-                    var cSlot = Number(cRow['Slot']) || 0;
-                    var pSlot = Number(pRow['Slot']) || 0;
-                    
-                    var cBook = Number(cRow['จอง']) || 0;
-                    var pBook = Number(pRow['จอง']) || 0;
-                    
-                    var diffOpd = cOpd - pOpd;
-                    var diffOpdStr = diffOpd > 0 ? `<span class="text-success fw-bold">+${diffOpd}</span>` : (diffOpd < 0 ? `<span class="text-danger fw-bold">${diffOpd}</span>` : "-");
-                    
-                    var diffTel = cTel - pTel;
-                    var diffTelStr = diffTel > 0 ? `<span class="text-success fw-bold">+${diffTel}</span>` : (diffTel < 0 ? `<span class="text-danger fw-bold">${diffTel}</span>` : "-");
-                    
-                    var diffSlot = cSlot - pSlot;
-                    var diffSlotStr = diffSlot > 0 ? `<span class="text-success fw-bold">+${diffSlot}</span>` : (diffSlot < 0 ? `<span class="text-danger fw-bold">${diffSlot}</span>` : "-");
-                    
-                    var diffBook = cBook - pBook;
-                    var diffBookStr = diffBook > 0 ? `<span class="text-success fw-bold">+${diffBook}</span>` : (diffBook < 0 ? `<span class="text-danger fw-bold">${diffBook}</span>` : "-");
-
-                    tbody.innerHTML += `
-                        <tr class="text-center align-middle">
-                            <td class="text-start fw-bold">${dist} <small class="text-muted">(${type})</small></td>
-                            <td>${pOpd.toLocaleString()}</td>
-                            <td class="fw-bold">${cOpd.toLocaleString()}</td>
-                            <td>${diffOpdStr}</td>
-                            <td class="table-info">${pTel.toLocaleString()}</td>
-                            <td class="table-info fw-bold">${cTel.toLocaleString()}</td>
-                            <td class="table-info">${diffTelStr}</td>
-                            <td class="table-warning">${pSlot.toLocaleString()}</td>
-                            <td class="table-warning fw-bold">${cSlot.toLocaleString()}</td>
-                            <td class="table-warning">${diffSlotStr}</td>
-                            <td class="table-success">${pBook.toLocaleString()}</td>
-                            <td class="table-success fw-bold">${cBook.toLocaleString()}</td>
-                            <td class="table-success">${diffBookStr}</td>
-                        </tr>
-                    `;
-                }
-            });
-        });
-
-        var compModalEl = document.getElementById('compareModal');
-        if (compModalEl) {
-            var compModal = bootstrap.Modal.getInstance(compModalEl);
-            if (!compModal) { 
-                compModal = new bootstrap.Modal(compModalEl); 
+        districts.forEach(function(dist){ ['รพ.', 'รพ.สต.'].forEach(function(type){
+            var cRow = currentData.find(function(r){ return r['อำเภอ'] === dist && r['ประเภท'] === type; });
+            var pRow = prevData.find(function(r){ return r['อำเภอ'] === dist && r['ประเภท'] === type; });
+            if (cRow && pRow) {
+                var cTel = getTelemedTotal(cRow), pTel = getTelemedTotal(pRow);
+                var cTarget = toNumberValue(cRow['เป้าหมาย']), pTarget = toNumberValue(pRow['เป้าหมาย']);
+                var cRegion = getRegionPct(cRow), pRegion = getRegionPct(pRow);
+                var cRemain = getRemainCount(cRow), pRemain = getRemainCount(pRow);
+                tbody.innerHTML += '<tr class="text-center align-middle"><td class="text-start fw-bold">' + dist + ' <small class="text-muted">(' + type + ')</small></td><td>' + pTel.toLocaleString() + '</td><td class="fw-bold">' + cTel.toLocaleString() + '</td><td>' + diffStr(cTel,pTel,false) + '</td><td class="table-warning">' + pTarget.toLocaleString() + '</td><td class="table-warning fw-bold">' + cTarget.toLocaleString() + '</td><td class="table-warning">' + diffStr(cTarget,pTarget,false) + '</td><td class="table-info">' + pRegion.toFixed(2) + '%</td><td class="table-info fw-bold">' + cRegion.toFixed(2) + '%</td><td class="table-info">' + diffStr(cRegion,pRegion,true) + '</td><td class="table-danger">' + pRemain.toLocaleString() + '</td><td class="table-danger fw-bold">' + cRemain.toLocaleString() + '</td><td class="table-danger">' + diffStr(cRemain,pRemain,false) + '</td></tr>';
             }
-            compModal.show();
-        }
+        }); });
+        var compModalEl = document.getElementById('compareModal');
+        if (compModalEl) { var compModal = bootstrap.Modal.getInstance(compModalEl); if (!compModal) { compModal = new bootstrap.Modal(compModalEl); } compModal.show(); }
     }
   </script>
 </body>
