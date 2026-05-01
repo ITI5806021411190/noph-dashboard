@@ -1328,7 +1328,7 @@
                             diffs.push(`OPD (ครั้ง): ${Number(oldItem['OPD_ครั้ง']).toLocaleString()} ➔ <b class="text-danger">${newItem.opdCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['เป้าหมาย'] || 0) !== newItem.targetCount) {
-                            diffs.push(`เป้าหมาย Telemed: ${Number(oldItem['เป้าหมาย'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.targetCount.toLocaleString()}</b>`);
+                            diffs.push(`เป้าหมาย Telemed: ${Number(oldItem['เป้าหมาย'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.fmtCount(targetCount)}</b>`);
                         }
                         if (Number(oldItem['HDC']) !== newItem.hdcCount) {
                             diffs.push(`HDC: ${Number(oldItem['HDC']).toLocaleString()} ➔ <b class="text-danger">${newItem.hdcCount.toLocaleString()}</b>`);
@@ -1735,10 +1735,10 @@
         }
         var diff = currVal - prevVal;
         if (diff > 0) {
-            return `<span class="diff-marker text-success ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> ${diff.toLocaleString()}</span>`;
+            return `<span class="diff-marker text-success ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> ${Math.round(diff).toLocaleString(q{th-TH})}</span>`;
         }
         if (diff < 0) {
-            return `<span class="diff-marker text-danger ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${Math.abs(diff).toLocaleString()}</span>`;
+            return `<span class="diff-marker text-danger ms-1" style="font-size:10px; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${Math.round(Math.abs(diff)).toLocaleString(q{th-TH})}</span>`;
         }
         return ''; 
     }
@@ -1857,7 +1857,7 @@
                     '<td class="center">' + tUnit + '</td>' +
                     '<td class="right text-nowrap">' + opdP.toLocaleString() + getDiffHtml(opdP, p.opdP) + ' / ' + opdC.toLocaleString() + getDiffHtml(opdC, p.opdC) + '</td>' +
                     '<td class="center">' + aUnit + getDiffHtml(aUnit, p.aUnit) + ' <small>(' + aPct + '%)</small></td>' +
-                    '<td class="right table-warning">' + targetCount.toLocaleString() + getDiffHtml(targetCount, p.target) + '</td>' +
+                    '<td class="right table-warning">' + fmtCount(targetCount) + getDiffHtml(targetCount, p.target) + '</td>' +
                     '<td class="right">' + (h === 0 ? '-' : h.toLocaleString()) + getDiffHtml(h, p.h) + '</td>' +
                     '<td class="right">' + m.toLocaleString() + getDiffHtml(m, p.m) + '</td>' +
                     '<td class="right">' + b.toLocaleString() + getDiffHtml(b, p.b) + '</td>' +
@@ -1865,7 +1865,7 @@
                     '<td class="right">' + bookingCount.toLocaleString() + getDiffHtml(bookingCount, p.booking) + '</td>' +
                     '<td class="center highlight-pink text-nowrap">' + tTelemed.toLocaleString() + getDiffHtml(tTelemed, p.tele) + ' <small>(' + progressPct.toFixed(2) + '%)</small></td>' +
                     '<td class="center table-info fw-bold">' + regionPct.toFixed(2) + '%' + (p.region !== null ? '' : '') + '</td>' +
-                    '<td class="right table-danger">' + remain.toLocaleString() + getDiffHtml(remain, p.remain) + '</td>' +
+                    '<td class="right table-danger">' + fmtCount(remain) + getDiffHtml(remain, p.remain) + '</td>' +
                     '</tr>';
             });
             addTotal(grandTotal, distSum);
@@ -1879,7 +1879,7 @@
                     '<td class="center">' + distSum.totalUnit + '</td>' +
                     '<td class="right text-nowrap">' + distSum.opdPerson.toLocaleString() + getDiffHtml(distSum.opdPerson, prevData ? prevDistSum.opdPerson : null) + ' / ' + distSum.opdCount.toLocaleString() + getDiffHtml(distSum.opdCount, prevData ? prevDistSum.opdCount : null) + '</td>' +
                     '<td class="center">' + distSum.activeUnit + getDiffHtml(distSum.activeUnit, prevData ? prevDistSum.activeUnit : null) + ' <small>(' + aPctDist + '%)</small></td>' +
-                    '<td class="right table-warning">' + distSum.target.toLocaleString() + getDiffHtml(distSum.target, prevData ? prevDistSum.target : null) + '</td>' +
+                    '<td class="right table-warning">' + fmtCount(distSum.target) + getDiffHtml(distSum.target, prevData ? prevDistSum.target : null) + '</td>' +
                     '<td class="right">' + distSum.hdc.toLocaleString() + getDiffHtml(distSum.hdc, prevData ? prevDistSum.hdc : null) + '</td>' +
                     '<td class="right">' + distSum.morprom.toLocaleString() + getDiffHtml(distSum.morprom, prevData ? prevDistSum.morprom : null) + '</td>' +
                     '<td class="right">' + distSum.buddy.toLocaleString() + getDiffHtml(distSum.buddy, prevData ? prevDistSum.buddy : null) + '</td>' +
@@ -1887,7 +1887,7 @@
                     '<td class="right">' + distSum.booking.toLocaleString() + getDiffHtml(distSum.booking, prevData ? prevDistSum.booking : null) + '</td>' +
                     '<td class="center highlight-pink text-nowrap">' + distSum.telemed.toLocaleString() + getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null) + ' <small>(' + distProgressPct.toFixed(2) + '%)</small></td>' +
                     '<td class="center table-info fw-bold">' + distRegionPct.toFixed(2) + '%</td>' +
-                    '<td class="right table-danger">' + distSum.remain.toLocaleString() + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
+                    '<td class="right table-danger">' + distSum.fmtCount(remain) + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
                     '</tr>' + subRowsHtml;
             }
         });
@@ -1901,7 +1901,7 @@
                 '<td class="center">' + grandTotal.totalUnit + '</td>' +
                 '<td class="right text-nowrap">' + grandTotal.opdPerson.toLocaleString() + getDiffHtml(grandTotal.opdPerson, prevData ? prevGrandTotal.opdPerson : null) + ' / ' + grandTotal.opdCount.toLocaleString() + getDiffHtml(grandTotal.opdCount, prevData ? prevGrandTotal.opdCount : null) + '</td>' +
                 '<td class="center fw-bold text-success">' + grandTotal.activeUnit + getDiffHtml(grandTotal.activeUnit, prevData ? prevGrandTotal.activeUnit : null) + '</td>' +
-                '<td class="right table-warning">' + grandTotal.target.toLocaleString() + getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null) + '</td>' +
+                '<td class="right table-warning">' + fmtCount(grandTotal.target) + getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null) + '</td>' +
                 '<td class="right">' + grandTotal.hdc.toLocaleString() + getDiffHtml(grandTotal.hdc, prevData ? prevGrandTotal.hdc : null) + '</td>' +
                 '<td class="right">' + grandTotal.morprom.toLocaleString() + getDiffHtml(grandTotal.morprom, prevData ? prevGrandTotal.morprom : null) + '</td>' +
                 '<td class="right">' + grandTotal.buddy.toLocaleString() + getDiffHtml(grandTotal.buddy, prevData ? prevGrandTotal.buddy : null) + '</td>' +
@@ -1909,7 +1909,7 @@
                 '<td class="right">' + grandTotal.booking.toLocaleString() + getDiffHtml(grandTotal.booking, prevData ? prevGrandTotal.booking : null) + '</td>' +
                 '<td class="center highlight-pink text-nowrap">' + grandTotal.telemed.toLocaleString() + getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null) + ' <small style="color:#9d174d;">(' + progressPctGrand.toFixed(2) + '%)</small></td>' +
                 '<td class="center table-info fw-bold">' + regionPctGrand.toFixed(2) + '%</td>' +
-                '<td class="right table-danger">' + grandTotal.remain.toLocaleString() + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
+                '<td class="right table-danger">' + grandTotal.fmtCount(remain) + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
                 '</tr>';
         }
 
@@ -1917,10 +1917,10 @@
         var rpstPct = typeTotals['รพ.สต.'].target > 0 ? ((typeTotals['รพ.สต.'].telemed / typeTotals['รพ.สต.'].target) * 100).toFixed(2) : "0.00";
         var kpiCards = document.getElementById("kpiCards");
         if (kpiCards) {
-            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.target.toLocaleString() + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel</span></div></div>' +
+            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel (แสดงจำนวนเต็ม)</span></div></div>' +
             '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString() + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมายจำนวนครั้ง</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
             '<div class="kpi-card ' + (regionPctGrand >= 30 ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + regionPctGrand.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต / เป้า 30%</span></div></div>' +
-            '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.remain.toLocaleString() + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
+            '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.fmtCount(remain) + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
         }
 
         var hdcPct = grandTotal.telemed > 0 ? ((platformTotals.hdc / grandTotal.telemed) * 100).toFixed(1) : 0;
@@ -1967,15 +1967,15 @@
             var diff = regionPct - 30;
             var diffHtml = diff >= 0 ? '<span class="text-success fw-bold">+' + diff.toFixed(2) + '%</span>' : '<span class="text-danger fw-bold">' + diff.toFixed(2) + '%</span>';
             var statusHtml = pass ? '<span class="badge bg-success"><i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-circle-xmark"></i> ต้องพัฒนา</span>';
-            if (kpiTbody) { kpiTbody.innerHTML += '<tr class="center align-middle"><td class="text-start fw-bold">' + dist + '</td><td class="text-secondary">' + Math.round(base).toLocaleString() + '</td><td class="table-warning fw-bold">' + target.toLocaleString() + '</td><td class="fw-bold" style="color:#0f766e;">' + current.toLocaleString() + ' <small>(' + progressPct.toFixed(2) + '% ของเป้า)</small></td><td>' + regionPct.toFixed(2) + '% <small>/ ' + diffHtml + '</small></td><td>' + statusHtml + '</td></tr>'; }
+            if (kpiTbody) { kpiTbody.innerHTML += '<tr class="center align-middle"><td class="text-start fw-bold">' + dist + '</td><td class="text-secondary">' + Math.round(base).toLocaleString() + '</td><td class="table-warning fw-bold">' + fmtCount(target) + '</td><td class="fw-bold" style="color:#0f766e;">' + current.toLocaleString() + ' <small>(' + progressPct.toFixed(2) + '% ของเป้า)</small></td><td>' + regionPct.toFixed(2) + '% <small>/ ' + diffHtml + '</small></td><td>' + statusHtml + '</td></tr>'; }
         });
         var totalRegionPct = totalBase > 0 ? (totalCurrent / totalBase) * 100 : 0;
         var totalProgressPct = totalTarget > 0 ? (totalCurrent / totalTarget) * 100 : 0;
         var totalPass = totalRegionPct >= 30;
         var kpiTfoot = document.getElementById("kpiTableFoot");
-        if (kpiTfoot) { kpiTfoot.innerHTML = '<tr class="center align-middle"><td class="text-start fw-bold">รวมทั้งจังหวัด</td><td>' + Math.round(totalBase).toLocaleString() + '</td><td class="fw-bold" style="color:#d97706;">' + totalTarget.toLocaleString() + '</td><td class="fw-bold" style="color:#065f46;">' + totalCurrent.toLocaleString() + ' <small>(' + totalProgressPct.toFixed(2) + '% ของเป้า)</small></td><td class="fw-bold">' + totalRegionPct.toFixed(2) + '%</td><td>' + (totalPass ? '<span class="badge bg-success"><i class="fa-solid fa-star"></i> บรรลุเป้า 30%</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ถึง 30%</span>') + '</td></tr>'; }
+        if (kpiTfoot) { kpiTfoot.innerHTML = '<tr class="center align-middle"><td class="text-start fw-bold">รวมทั้งจังหวัด</td><td>' + Math.round(totalBase).toLocaleString() + '</td><td class="fw-bold" style="color:#d97706;">' + fmtCount(totalTarget) + '</td><td class="fw-bold" style="color:#065f46;">' + totalCurrent.toLocaleString() + ' <small>(' + totalProgressPct.toFixed(2) + '% ของเป้า)</small></td><td class="fw-bold">' + totalRegionPct.toFixed(2) + '%</td><td>' + (totalPass ? '<span class="badge bg-success"><i class="fa-solid fa-star"></i> บรรลุเป้า 30%</span>' : '<span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ถึง 30%</span>') + '</td></tr>'; }
         var kpiTargetCards = document.getElementById("kpiTargetCards");
-        if (kpiTargetCards) { kpiTargetCards.innerHTML = '<div class="kpi-card"><i class="fa-solid fa-database"></i><div class="kpi-data"><span class="kpi-value">' + Math.round(totalBase).toLocaleString() + '</span><span class="kpi-label">ฐานคำนวณ typein 2+3+5</span></div></div><div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value" style="color:#d97706;">30%</span><span class="kpi-label">เป้าหมายตามข้อสั่งการเขต</span></div></div><div class="kpi-card ' + (totalPass ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + totalRegionPct.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต</span></div></div><div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + totalRemain.toLocaleString() + '</span><span class="kpi-label">คงเหลือถึงเป้าหมาย</span></div></div>'; }
+        if (kpiTargetCards) { kpiTargetCards.innerHTML = '<div class="kpi-card"><i class="fa-solid fa-database"></i><div class="kpi-data"><span class="kpi-value">' + Math.round(totalBase).toLocaleString() + '</span><span class="kpi-label">ฐานคำนวณ typein 2+3+5</span></div></div><div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value" style="color:#d97706;">30%</span><span class="kpi-label">เป้าหมายตามข้อสั่งการเขต</span></div></div><div class="kpi-card ' + (totalPass ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + totalRegionPct.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต</span></div></div><div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(totalRemain) + '</span><span class="kpi-label">คงเหลือถึงเป้าหมาย</span></div></div>'; }
         var ctx = document.getElementById('kpiBarChart');
         if (ctx) { if (kpiChartInstance) { kpiChartInstance.destroy(); } kpiChartInstance = new Chart(ctx, { type:'bar', data:{ labels:labels, datasets:[{label:'เป้าหมายเขต 30%', data:targetPctData, backgroundColor:'#fde68a', borderColor:'#f59e0b', borderWidth:1},{label:'ผลงานตามสูตรเขต %', data:currentPctData, backgroundColor:'#5eead4', borderColor:'#14b8a6', borderWidth:1}]}, options:{responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true, suggestedMax:35, title:{display:true,text:'สูตรเขต (%)'}}}, plugins:{legend:{position:'top'}}} }); }
     }
@@ -2002,7 +2002,7 @@
                 var cTarget = toNumberValue(cRow['เป้าหมาย']), pTarget = toNumberValue(pRow['เป้าหมาย']);
                 var cRegion = getRegionPct(cRow), pRegion = getRegionPct(pRow);
                 var cRemain = getRemainCount(cRow), pRemain = getRemainCount(pRow);
-                tbody.innerHTML += '<tr class="text-center align-middle"><td class="text-start fw-bold">' + dist + ' <small class="text-muted">(' + type + ')</small></td><td>' + pTel.toLocaleString() + '</td><td class="fw-bold">' + cTel.toLocaleString() + '</td><td>' + diffStr(cTel,pTel,false) + '</td><td class="table-warning">' + pTarget.toLocaleString() + '</td><td class="table-warning fw-bold">' + cTarget.toLocaleString() + '</td><td class="table-warning">' + diffStr(cTarget,pTarget,false) + '</td><td class="table-info">' + pRegion.toFixed(2) + '%</td><td class="table-info fw-bold">' + cRegion.toFixed(2) + '%</td><td class="table-info">' + diffStr(cRegion,pRegion,true) + '</td><td class="table-danger">' + pRemain.toLocaleString() + '</td><td class="table-danger fw-bold">' + cRemain.toLocaleString() + '</td><td class="table-danger">' + diffStr(cRemain,pRemain,false) + '</td></tr>';
+                tbody.innerHTML += '<tr class="text-center align-middle"><td class="text-start fw-bold">' + dist + ' <small class="text-muted">(' + type + ')</small></td><td>' + pTel.toLocaleString() + '</td><td class="fw-bold">' + cTel.toLocaleString() + '</td><td>' + diffStr(cTel,pTel,false) + '</td><td class="table-warning">' + fmtCount(pTarget) + '</td><td class="table-warning fw-bold">' + fmtCount(cTarget) + '</td><td class="table-warning">' + diffStr(cTarget,pTarget,false) + '</td><td class="table-info">' + pRegion.toFixed(2) + '%</td><td class="table-info fw-bold">' + cRegion.toFixed(2) + '%</td><td class="table-info">' + diffStr(cRegion,pRegion,true) + '</td><td class="table-danger">' + fmtCount(pRemain) + '</td><td class="table-danger fw-bold">' + fmtCount(cRemain) + '</td><td class="table-danger">' + diffStr(cRemain,pRemain,false) + '</td></tr>';
             }
         }); });
         var compModalEl = document.getElementById('compareModal');
