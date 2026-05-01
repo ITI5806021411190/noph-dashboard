@@ -550,23 +550,28 @@
         .mini-bars {
             display: flex;
             align-items: flex-end;
-            gap: 14px;
-            height: 120px;
+            gap: 18px;
+            height: 150px;
             border-bottom: 1px solid #e2e8f0;
-            padding: 0 6px 0 6px;
+            padding: 8px 10px 0 10px;
         }
         .mini-bar-wrap {
             flex: 1;
             min-width: 0;
+            height: 100%;
             text-align: center;
+            display: grid;
+            grid-template-rows: 1fr auto auto;
+            align-items: end;
         }
         .mini-bar {
             width: 100%;
-            max-width: 34px;
-            min-height: 4px;
-            margin: 0 auto 6px auto;
-            border-radius: 8px 8px 0 0;
+            max-width: 42px;
+            min-height: 10px;
+            margin: 0 auto 7px auto;
+            border-radius: 10px 10px 0 0;
             background: linear-gradient(180deg, #2dd4bf, #0f766e);
+            box-shadow: 0 6px 12px rgba(15, 118, 110, 0.14);
         }
         .mini-bar-wrap:nth-child(2) .mini-bar {
             background: linear-gradient(180deg, #38bdf8, #0284c7);
@@ -625,6 +630,43 @@
 
 
 
+
+        .info-btn {
+            border: none;
+            background: #e0f2fe;
+            color: #0284c7;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+            vertical-align: middle;
+            transition: 0.2s;
+        }
+        .info-btn:hover {
+            background: #0284c7;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        .section-title .info-btn,
+        .chart-section h3 .info-btn,
+        .table-wrapper h3 .info-btn,
+        .detail-toggle summary .info-btn {
+            flex: 0 0 auto;
+        }
+        .section-title,
+        .chart-section h3 {
+            justify-content: flex-start;
+        }
+        .export-canvas-bg {
+            background: #ffffff;
+        }
+
+
         /* =======================================================
            7. A4 IMAGE EXPORT HELPERS
            ======================================================= */
@@ -637,12 +679,17 @@
         .slide-container.export-landscape {
             width: 1123px !important;
             max-width: 1123px !important;
-            padding: 22px !important;
+            padding: 18px !important;
         }
         .slide-container.export-portrait {
             width: 794px !important;
             max-width: 794px !important;
-            padding: 20px !important;
+            padding: 18px !important;
+        }
+        .slide-container.export-landscape .section-panel,
+        .slide-container.export-landscape .table-wrapper,
+        .slide-container.export-landscape .detail-toggle {
+            margin-top: 12px !important;
         }
         .slide-container.exporting .table-wrapper,
         .slide-container.exporting .detail-toggle {
@@ -743,7 +790,7 @@
       <div class="dashboard-header">
          <div class="dashboard-header-text">
              <h1>สรุปผลการดำเนินงาน Telemedicine จังหวัดนครนายก</h1>
-             <p>ข้อมูลการให้บริการผู้ป่วยนอก (OPD) และระบบการแพทย์ทางไกล จำแนกระดับ อำเภอ | รพ. และ รพ.สต.</p>
+             <p>ข้อมูลการให้บริการผู้ป่วยนอก (OPD) และระบบการแพทย์ทางไกล จำแนกระดับ อำเภอ | รพ. และ รพ.สต. <button type="button" class="info-btn no-print" onclick="showInfo('ภาพรวม Dashboard', INFO_TEXT.overview)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></p>
              
              <div class="btn-group mt-3 no-print" role="group">
                <input type="radio" class="btn-check" name="viewToggle" id="viewDaily" autocomplete="off" checked onchange="switchView('daily')">
@@ -826,25 +873,25 @@
           <div class="dashboard-body">
              <div class="charts-row">
                 <div class="chart-section" id="platformChart">
-                   <h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>
+                   <h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง) <button type="button" class="info-btn no-print" onclick="showInfo('ประเภทแพลตฟอร์ม', INFO_TEXT.platform)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>
                 </div>
                 <div class="chart-section" id="districtChart">
-                   <h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine แยกตามอำเภอ</h3>
+                   <h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine เทียบเป้าหมาย แยกตามอำเภอ <button type="button" class="info-btn no-print" onclick="showInfo('Telemedicine แยกตามอำเภอ', INFO_TEXT.district)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>
                 </div>
              </div>
 
              <div class="section-panel">
-                <h3 class="section-title"><i class="fa-solid fa-location-dot"></i> สรุปผลงานรายอำเภอ</h3>
+                <h3 class="section-title"><i class="fa-solid fa-location-dot"></i> สรุปผลงานรายอำเภอ <button type="button" class="info-btn no-print" onclick="showInfo('สรุปผลงานรายอำเภอ', INFO_TEXT.districtCards)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>
                 <div class="district-card-grid" id="districtCards"></div>
              </div>
 
              <div class="section-panel">
-                <h3 class="section-title"><i class="fa-solid fa-chart-simple"></i> กราฟย่อยรายอำเภอ: รวม / รพ. / รพ.สต.</h3>
+                <h3 class="section-title"><i class="fa-solid fa-chart-simple"></i> กราฟย่อยรายอำเภอ: รวม / รพ. / รพ.สต. <button type="button" class="info-btn no-print" onclick="showInfo('กราฟย่อยรายอำเภอ', INFO_TEXT.miniChart)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>
                 <div class="mini-chart-grid" id="miniDistrictCharts"></div>
              </div>
 
              <details class="detail-toggle">
-                <summary><i class="fa-solid fa-circle-plus me-2"></i>ดูรายละเอียดเสริม: OPD / Slot / จอง / สูตรเขต</summary>
+                <summary><i class="fa-solid fa-circle-plus me-2"></i>ดูรายละเอียดเสริม: OPD / Slot / จอง / สูตรเขต <button type="button" class="info-btn no-print" onclick="event.preventDefault(); event.stopPropagation(); showInfo('รายละเอียดเสริม', INFO_TEXT.detail)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></summary>
                 <div class="table-responsive">
                    <table class="detail-table" id="detailTable">
                       <thead>
@@ -866,7 +913,7 @@
 
              <div class="table-wrapper">
                 <h3>
-                    <span><i class="fa-solid fa-table-list" style="color:#0f766e; margin-right: 8px;"></i> ตารางข้อมูลการให้บริการจำแนกรายหน่วยบริการ</span>
+                    <span><i class="fa-solid fa-table-list" style="color:#0f766e; margin-right: 8px;"></i> ตารางข้อมูลการให้บริการจำแนกรายหน่วยบริการ <button type="button" class="info-btn no-print" onclick="showInfo('ตารางจำแนกรายหน่วยบริการ', INFO_TEXT.mainTable)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></span>
                 </h3>
                 <table class="dash-table" id="mainTable">
                    <thead>
@@ -1136,6 +1183,29 @@
     let showDiffMode = true; 
     let kpiChartInstance = null; // ตัวแปรเก็บกราฟ KPI
 
+    const INFO_TEXT = {
+        overview: '<div class="text-start"><b>Dashboard นี้ใช้ทำอะไร</b><br>ใช้ติดตามผลการดำเนินงาน Telemedicine จังหวัดนครนายก แยกภาพรวมจังหวัด อำเภอ และประเภทหน่วยบริการ รพ./รพ.สต.<br><br><b>ที่มาข้อมูล</b><br>ข้อมูลนำเข้าจากไฟล์ Excel รายวันที่เจ้าหน้าที่อัปโหลดเข้าสู่ระบบ และบันทึกลง Google Sheet ผ่าน Google Apps Script<br><br><b>สูตรหลัก</b><br>ผลงานปัจจุบัน = HDC + หมอพร้อม + สอน.บัดดี้<br>คงเหลือ = เป้าหมาย 30% - ผลงานปัจจุบัน<br>% ของเป้าหมาย = ผลงานปัจจุบัน ÷ เป้าหมาย × 100<br>สูตรเขต = OPD visit typein 5 × 100 ÷ OPD visit typein 2+3+5</div>',
+        kpi: '<div class="text-start"><b>กล่อง KPI ด้านบน</b><br>สรุปตัวเลขบริหาร 4 ค่า ได้แก่ เป้าหมาย 30%, ผลงานปัจจุบัน, ผลงานตามสูตรเขต และยอดคงเหลือถึงเป้าหมาย<br><br><b>หมายเหตุ</b><br>ตัวเลขจำนวนครั้งแสดงเป็นจำนวนเต็ม ส่วนเปอร์เซ็นต์แสดง 2 ตำแหน่งเพื่อดูแนวโน้ม</div>',
+        platform: '<div class="text-start"><b>กราฟประเภทแพลตฟอร์ม</b><br>แสดงสัดส่วนผลงาน Telemedicine ตามช่องทางบริการ ได้แก่ HDC, หมอพร้อม และสอน.บัดดี้<br><br><b>สูตร</b><br>สัดส่วนแต่ละแพลตฟอร์ม = ยอดแพลตฟอร์มนั้น ÷ ผลงานรวม × 100<br><br><b>ที่มาข้อมูล</b><br>คอลัมน์ HDC, หมอพร้อม และสอน.บัดดี้ จากไฟล์ Excel ที่ import</div>',
+        district: '<div class="text-start"><b>Telemedicine เทียบเป้าหมายรายอำเภอ</b><br>แสดงผลงานรวมของแต่ละอำเภอเทียบกับเป้าหมาย 30% และสูตรเขต<br><br><b>สูตร</b><br>ผลงานอำเภอ = HDC + หมอพร้อม + สอน.บัดดี้ ของอำเภอนั้น<br>% ของเป้า = ผลงานอำเภอ ÷ เป้าหมายอำเภอ × 100<br>สูตรเขต = ผลงานปัจจุบัน ÷ ฐานคำนวณ × 100</div>',
+        districtCards: '<div class="text-start"><b>สรุปผลงานรายอำเภอ</b><br>เป็นการ์ดอ่านเร็วสำหรับผู้บริหาร แสดงผลงานรวม เป้าหมาย % ของเป้า สูตรเขต และคงเหลือของแต่ละอำเภอ<br><br><b>วัตถุประสงค์</b><br>ช่วยดูทันทีว่าอำเภอใดนำหน้า อำเภอใดยังเหลือ gap มาก</div>',
+        miniChart: '<div class="text-start"><b>กราฟย่อยรายอำเภอ</b><br>เปรียบเทียบผลงานภายในแต่ละอำเภอ 3 กลุ่ม คือ รวม, รพ., และ รพ.สต.<br><br><b>สูตร</b><br>รวม = ผลงาน รพ. + รพ.สต.<br>รพ. = HDC + หมอพร้อม + สอน.บัดดี้ ของแถว รพ.<br>รพ.สต. = HDC + หมอพร้อม + สอน.บัดดี้ ของแถว รพ.สต.<br><br><b>การแสดงผล</b><br>ความสูงแท่งกราฟปรับตามค่าสูงสุดภายในอำเภอนั้น เพื่อให้เห็นความต่างชัดเจน</div>',
+        detail: '<div class="text-start"><b>รายละเอียดเสริม</b><br>แสดงข้อมูลสนับสนุนที่ไม่จำเป็นต้องอยู่บนตารางหลัก ได้แก่ OPD คน, OPD ครั้ง, Slot, จอง, % ของเป้า และสูตรเขต<br><br><b>ที่มาข้อมูล</b><br>มาจากไฟล์ Excel รายวัน และใช้ประกอบการตรวจสอบข้อมูล/ตอบคำถามเชิงรายละเอียด</div>',
+        mainTable: '<div class="text-start"><b>ตารางจำแนกรายหน่วยบริการ</b><br>ตารางหลักแบบกระชับ แสดงข้อมูลที่ต้องใช้ติดตามงานจริงรายอำเภอและรายประเภทหน่วยบริการ<br><br><b>สูตร</b><br>ยอดรวม = HDC + หมอพร้อม + สอน.บัดดี้<br>คงเหลือ = เป้าหมาย - ยอดรวม<br>% ของเป้า = ยอดรวม ÷ เป้าหมาย × 100</div>'
+    };
+
+    function showInfo(title, html) {
+        Swal.fire({
+            title: '<i class="fa-solid fa-circle-info text-info me-2"></i>' + title,
+            html: html,
+            icon: undefined,
+            confirmButtonText: 'เข้าใจแล้ว',
+            confirmButtonColor: '#0f766e',
+            width: '640px'
+        });
+    }
+
+
     // ฟังก์ชันกรองข้อมูลที่ซ้ำกันออก (เลือกตัวที่อัปเดตล่าสุด)
     function getUniqueData(dataArray) {
         if (!dataArray || dataArray.length === 0) {
@@ -1186,7 +1256,7 @@
     function downloadImage() {
         Swal.fire({
             title: 'เลือกรูปแบบการดาวน์โหลด',
-            html: '<div class="text-muted small">ระบบจะจัดหน้าเป็นขนาด A4 และปรับตารางไม่ให้คอลัมน์ถูกตัด</div>',
+            html: '<div class="text-muted small">ระบบจะสร้างไฟล์ภาพขนาด A4 จริง และจะไม่บังคับเปิด/ปิดรายละเอียดเสริมเอง</div>',
             icon: 'question',
             showCancelButton: true,
             showDenyButton: true,
@@ -1207,7 +1277,9 @@
 
     function downloadA4Image(orientation) {
         var isPortrait = orientation === 'portrait';
-        var pageWidth = isPortrait ? 794 : 1123;
+        var a4CssWidth = isPortrait ? 794 : 1123;
+        var a4CssHeight = isPortrait ? 1123 : 794;
+        var exportScale = 2;
         var pageLabel = isPortrait ? 'A4_Portrait' : 'A4_Landscape';
 
         Swal.fire({ 
@@ -1232,15 +1304,13 @@
         var diffToggleLabel = document.getElementById('diffToggle') ? document.getElementById('diffToggle').closest('label') : null; 
         var viewToggleGroup = document.querySelector('.btn-group');
         var dateFilter = document.getElementById('dateFilter');
-        var detailToggle = document.querySelector('.detail-toggle');
         
         var displayBackup = {
             guest: guestMenu ? guestMenu.style.display : '',
             user: userMenu ? userMenu.style.display : '',
             diff: diffToggleLabel ? diffToggleLabel.style.display : '',
             viewToggle: viewToggleGroup ? viewToggleGroup.style.display : '',
-            dateFilter: dateFilter ? dateFilter.style.display : '',
-            detailOpen: detailToggle ? detailToggle.open : false
+            dateFilter: dateFilter ? dateFilter.style.display : ''
         };
         
         if (guestMenu) { guestMenu.style.display = 'none'; }
@@ -1248,18 +1318,17 @@
         if (diffToggleLabel) { diffToggleLabel.style.display = 'none'; }
         if (viewToggleGroup) { viewToggleGroup.style.display = 'none'; }
         if (dateFilter) { dateFilter.style.display = 'none'; }
-        if (detailToggle) { detailToggle.open = true; }
         
         element.className = original.className + ' exporting ' + (isPortrait ? 'export-portrait' : 'export-landscape');
-        element.style.width = pageWidth + 'px';
-        element.style.maxWidth = pageWidth + 'px';
+        element.style.width = a4CssWidth + 'px';
+        element.style.maxWidth = a4CssWidth + 'px';
         element.style.minHeight = 'auto';
         element.style.margin = '0';
-        element.style.padding = isPortrait ? '20px' : '22px';
+        element.style.padding = isPortrait ? '18px' : '18px';
         
         setTimeout(() => {
             html2canvas(element, { 
-                scale: 2, 
+                scale: exportScale, 
                 useCORS: true, 
                 backgroundColor: '#ffffff',
                 width: element.scrollWidth,
@@ -1269,22 +1338,40 @@
                 scrollX: 0,
                 scrollY: 0
             }).then(canvas => {
-                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup);
+                var finalCanvas = document.createElement('canvas');
+                finalCanvas.width = a4CssWidth * exportScale;
+                finalCanvas.height = a4CssHeight * exportScale;
+                var ctx = finalCanvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+                // Fit ทั้ง dashboard ลงใน A4 โดยรักษาอัตราส่วน ไม่ตัดขอบ และให้แนวนอน/แนวตั้งต่างกันจริง
+                var margin = 22 * exportScale;
+                var usableW = finalCanvas.width - (margin * 2);
+                var usableH = finalCanvas.height - (margin * 2);
+                var ratio = Math.min(usableW / canvas.width, usableH / canvas.height);
+                var drawW = canvas.width * ratio;
+                var drawH = canvas.height * ratio;
+                var dx = (finalCanvas.width - drawW) / 2;
+                var dy = (finalCanvas.height - drawH) / 2;
+                ctx.drawImage(canvas, dx, dy, drawW, drawH);
+
+                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, displayBackup);
                 
                 var link = document.createElement('a');
                 var selectedDate = dateFilter ? dateFilter.value : 'latest';
                 link.download = 'Dashboard_Telemedicine_' + selectedDate + '_' + pageLabel + '.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = finalCanvas.toDataURL('image/png');
                 link.click(); 
                 Swal.close();
             }).catch(err => {
-                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup);
+                restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, displayBackup);
                 Swal.fire('Error', 'สร้างรูปภาพไม่สำเร็จ: ' + err.message, 'error');
             });
         }, 600); 
     }
 
-    function restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, detailToggle, displayBackup) {
+    function restoreAfterExport(element, original, guestMenu, userMenu, diffToggleLabel, viewToggleGroup, dateFilter, displayBackup) {
         element.className = original.className;
         element.style.width = original.width;
         element.style.maxWidth = original.maxWidth;
@@ -1296,7 +1383,6 @@
         if (diffToggleLabel) { diffToggleLabel.style.display = displayBackup.diff; }
         if (viewToggleGroup) { viewToggleGroup.style.display = displayBackup.viewToggle; }
         if (dateFilter) { dateFilter.style.display = displayBackup.dateFilter || 'inline-block'; }
-        if (detailToggle) { detailToggle.open = displayBackup.detailOpen; }
     }
 
     function toggleAuthView(view) {
@@ -2294,7 +2380,7 @@
         var rpstPct = typeTotals['รพ.สต.'].target > 0 ? ((typeTotals['รพ.สต.'].telemed / typeTotals['รพ.สต.'].target) * 100).toFixed(2) : "0.00";
         var kpiCards = document.getElementById("kpiCards");
         if (kpiCards) {
-            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel</span></div></div>' +
+            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel <button type="button" class="info-btn no-print" onclick="showInfo(\'KPI Summary\', INFO_TEXT.kpi)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></span></div></div>' +
             '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString('th-TH') + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมาย</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
             '<div class="kpi-card ' + (regionPctGrand >= 30 ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + regionPctGrand.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต / เป้า 30%</span></div></div>' +
             '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.remain) + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
@@ -2305,12 +2391,12 @@
         var budPct = grandTotal.telemed > 0 ? ((platformTotals.buddy / grandTotal.telemed) * 100).toFixed(1) : 0;
         var platformChart = document.getElementById("platformChart");
         if (platformChart) {
-            platformChart.innerHTML = '<h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>' +
+            platformChart.innerHTML = '<h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง) <button type="button" class="info-btn no-print" onclick="showInfo(\'ประเภทแพลตฟอร์ม\', INFO_TEXT.platform)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>' +
                 '<div class="compact-bar"><div class="c-label">HDC</div><div class="c-track"><div class="c-fill" style="width:' + hdcPct + '%; background:#0ea5e9;"></div></div><div class="c-val">' + platformTotals.hdc.toLocaleString('th-TH') + ' <small>(' + hdcPct + '%)</small></div></div>' +
                 '<div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width:' + morPct + '%; background:#38bdf8;"></div></div><div class="c-val">' + platformTotals.morprom.toLocaleString('th-TH') + ' <small>(' + morPct + '%)</small></div></div>' +
                 '<div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width:' + budPct + '%; background:#94a3b8;"></div></div><div class="c-val">' + platformTotals.buddy.toLocaleString('th-TH') + ' <small>(' + budPct + '%)</small></div></div>';
         }
-        var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine เทียบเป้าหมาย แยกตามอำเภอ</h3>';
+        var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine เทียบเป้าหมาย แยกตามอำเภอ <button type="button" class="info-btn no-print" onclick="showInfo(\'Telemedicine แยกตามอำเภอ\', INFO_TEXT.district)" title="ดูคำอธิบาย"><i class="fa-solid fa-info"></i></button></h3>';
         var distColors = { 'เมืองนครนายก':'#0f766e', 'ปากพลี':'#14b8a6', 'องครักษ์':'#2dd4bf', 'บ้านนา':'#99f6e4' };
         Object.keys(distTotalsObj).sort(function(a,b){ return distTotalsObj[b].telemed - distTotalsObj[a].telemed; }).forEach(function(dist){
             var d = distTotalsObj[dist]; var visualWidth = Math.min(d.progressPct, 100).toFixed(1);
@@ -2345,8 +2431,8 @@
                 var stats = distTypeStats[dist] || { total:{telemed:0,target:0}, 'รพ.':{telemed:0,target:0}, 'รพ.สต.':{telemed:0,target:0} };
                 var maxVal = Math.max(stats.total.telemed, stats['รพ.'].telemed, stats['รพ.สต.'].telemed, 1);
                 function bar(label, val){
-                    var h = Math.max((val / maxVal) * 100, val > 0 ? 4 : 0).toFixed(1);
-                    return '<div class="mini-bar-wrap"><div class="mini-bar" style="height:' + h + '%;"></div><div class="mini-bar-label">' + label + '</div><div class="mini-bar-value">' + val.toLocaleString('th-TH') + '</div></div>';
+                    var h = Math.max((val / maxVal) * 118, val > 0 ? 24 : 0).toFixed(0);
+                    return '<div class="mini-bar-wrap"><div class="mini-bar" style="height:' + h + 'px;"></div><div class="mini-bar-label">' + label + '</div><div class="mini-bar-value">' + val.toLocaleString('th-TH') + '</div></div>';
                 }
                 var d = distTotalsObj[dist] || {progressPct:0, remain:0};
                 miniHtml += '<div class="mini-chart-card"><h4>' + dist + '</h4><div class="mini-chart-note">ผลงาน ' + d.progressPct.toFixed(2) + '% ของเป้าหมาย | คงเหลือ ' + fmtCount(d.remain) + '</div><div class="mini-bars">' + bar('รวม', stats.total.telemed) + bar('รพ.', stats['รพ.'].telemed) + bar('รพ.สต.', stats['รพ.สต.'].telemed) + '</div></div>';
