@@ -809,6 +809,12 @@
         .slide-container.export-full-image .detail-toggle {
             margin-top: 14px !important;
         }
+
+        /* v6.4: hide diff markers only while exporting image to prevent table overlap */
+        .slide-container.export-full-image .diff-marker,
+        .slide-container.exporting .diff-marker {
+            display: none !important;
+        }
 </style>
 </head>
 <body>
