@@ -448,6 +448,181 @@
             justify-content: space-between;
         }
 
+
+        /* =======================================================
+           6. V6 MODULAR DASHBOARD SECTIONS
+           ======================================================= */
+        .section-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+        }
+        .section-title {
+            font-size: 16px;
+            color: #0f766e;
+            font-weight: 800;
+            margin: 0 0 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .district-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+        }
+        .district-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            padding: 14px;
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+        .district-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: #0f766e;
+        }
+        .district-card h4 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f766e;
+            margin: 0 0 8px 0;
+        }
+        .district-card .main-number {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.1;
+        }
+        .district-card .sub-metric {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+        .progress-track {
+            width: 100%;
+            height: 11px;
+            border-radius: 99px;
+            background: #eef2f7;
+            overflow: hidden;
+            margin: 10px 0 8px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #0f766e, #2dd4bf);
+        }
+        .mini-chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 14px;
+        }
+        .mini-chart-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #ffffff;
+            padding: 14px;
+        }
+        .mini-chart-card h4 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f766e;
+            margin: 0 0 4px 0;
+        }
+        .mini-chart-note {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+        .mini-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 14px;
+            height: 120px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 6px 0 6px;
+        }
+        .mini-bar-wrap {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+        .mini-bar {
+            width: 100%;
+            max-width: 34px;
+            min-height: 4px;
+            margin: 0 auto 6px auto;
+            border-radius: 8px 8px 0 0;
+            background: linear-gradient(180deg, #2dd4bf, #0f766e);
+        }
+        .mini-bar-wrap:nth-child(2) .mini-bar {
+            background: linear-gradient(180deg, #38bdf8, #0284c7);
+        }
+        .mini-bar-wrap:nth-child(3) .mini-bar {
+            background: linear-gradient(180deg, #a7f3d0, #10b981);
+        }
+        .mini-bar-label {
+            font-size: 11px;
+            color: #475569;
+            white-space: nowrap;
+        }
+        .mini-bar-value {
+            font-size: 11px;
+            font-weight: 800;
+            color: #1e293b;
+            white-space: nowrap;
+        }
+        .detail-toggle {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+        .detail-toggle summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: #0f766e;
+            list-style: none;
+        }
+        .detail-toggle summary::-webkit-details-marker {
+            display: none;
+        }
+        .detail-table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .detail-table th, .detail-table td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 6px;
+            font-size: 12px;
+        }
+        .detail-table th {
+            background: #f8fafc;
+            color: #0f766e;
+            text-align: center;
+            font-weight: 800;
+        }
+        .detail-table tfoot td {
+            background: #ecfdf5;
+            font-weight: 800;
+            color: #065f46;
+        }
+
         /* Auth & Loading Styles */
         .auth-container { 
             max-width: 450px; 
@@ -578,6 +753,37 @@
                 </div>
              </div>
 
+             <div class="section-panel">
+                <h3 class="section-title"><i class="fa-solid fa-location-dot"></i> สรุปผลงานรายอำเภอ</h3>
+                <div class="district-card-grid" id="districtCards"></div>
+             </div>
+
+             <div class="section-panel">
+                <h3 class="section-title"><i class="fa-solid fa-chart-simple"></i> กราฟย่อยรายอำเภอ: รวม / รพ. / รพ.สต.</h3>
+                <div class="mini-chart-grid" id="miniDistrictCharts"></div>
+             </div>
+
+             <details class="detail-toggle">
+                <summary><i class="fa-solid fa-circle-plus me-2"></i>ดูรายละเอียดเสริม: OPD / Slot / จอง / สูตรเขต</summary>
+                <div class="table-responsive">
+                   <table class="detail-table" id="detailTable">
+                      <thead>
+                         <tr>
+                            <th>อำเภอ / ประเภท</th>
+                            <th>OPD คน</th>
+                            <th>OPD ครั้ง</th>
+                            <th>Slot</th>
+                            <th>จอง</th>
+                            <th>% ของเป้า</th>
+                            <th>สูตรเขต</th>
+                         </tr>
+                      </thead>
+                      <tbody id="detailTableBody"></tbody>
+                      <tfoot id="detailTableFoot"></tfoot>
+                   </table>
+                </div>
+             </details>
+
              <div class="table-wrapper">
                 <h3>
                     <span><i class="fa-solid fa-table-list" style="color:#0f766e; margin-right: 8px;"></i> ตารางข้อมูลการให้บริการจำแนกรายหน่วยบริการ</span>
@@ -585,19 +791,15 @@
                 <table class="dash-table" id="mainTable">
                    <thead>
                       <tr>
-                         <th style="width: 13%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
-                         <th style="width: 6%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
-                         <th style="width: 13%;">ผู้มาใช้บริการ OPD<br><small>(คน / ครั้ง)</small></th>
-                         <th style="width: 9%;">เปิดให้บริการ<br><small>Telemed, แห่ง (%)</small></th>
-                         <th style="width: 9%;" class="table-warning">เป้าหมาย<br><small>Telemed (ครั้ง)</small></th>
-                         <th style="width: 7%;">HDC<br><small>(ครั้ง)</small></th>
-                         <th style="width: 7%;">หมอพร้อม<br><small>(ครั้ง)</small></th>
-                         <th style="width: 7%;">สอน.บัดดี้<br><small>(ครั้ง)</small></th>
-                         <th style="width: 6%;">Slot<br><small>(คิว)</small></th>
-                         <th style="width: 6%;">จอง<br><small>(คิว)</small></th>
-                         <th style="width: 9%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง / %เป้า</small></th>
-                         <th style="width: 7%;" class="table-info">สูตรเขต<br><small>% / 30%</small></th>
-                         <th style="width: 8%;" class="table-danger">คงเหลือ<br><small>(ครั้ง)</small></th>
+                         <th style="width: 18%;">อำเภอ/<br>ประเภทหน่วยบริการ</th>
+                         <th style="width: 8%;">หน่วยบริการ<br><small>(แห่ง)</small></th>
+                         <th style="width: 10%;">เปิดบริการ<br><small>แห่ง (%)</small></th>
+                         <th style="width: 12%;" class="table-warning">เป้าหมาย<br><small>Telemed</small></th>
+                         <th style="width: 9%;">HDC</th>
+                         <th style="width: 9%;">หมอพร้อม</th>
+                         <th style="width: 9%;">สอน.บัดดี้</th>
+                         <th style="width: 13%;" class="highlight-pink">ยอดรวม<br><small>ครั้ง / %เป้า</small></th>
+                         <th style="width: 12%;" class="table-danger">คงเหลือ<br><small>(ครั้ง)</small></th>
                       </tr>
                    </thead>
                    <tbody id="tableBody"></tbody>
@@ -1809,10 +2011,15 @@
         var platformTotals = { hdc:0, morprom:0, buddy:0 };
         var typeTotals = { 'รพ.': {telemed:0, target:0}, 'รพ.สต.': {telemed:0, target:0} };
         var distTotalsObj = {};
+        var distTypeStats = {};
         var tbody = document.getElementById("tableBody");
+        var detailTbody = document.getElementById("detailTableBody");
         if (tbody) { tbody.innerHTML = ""; }
+        if (detailTbody) { detailTbody.innerHTML = ""; }
 
-        function emptyTotal(){ return { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, target:0, base:0, hdc:0, morprom:0, buddy:0, slot:0, booking:0, telemed:0, remain:0 }; }
+        function emptyTotal(){
+            return { opdPerson:0, opdCount:0, activeUnit:0, totalUnit:0, target:0, base:0, hdc:0, morprom:0, buddy:0, slot:0, booking:0, telemed:0, remain:0 };
+        }
         function addRow(total, r){
             total.opdPerson += toNumberValue(r['OPD_คน']);
             total.opdCount += toNumberValue(r['OPD_ครั้ง']);
@@ -1835,9 +2042,16 @@
         districts.forEach(function(dist){
             var rows = data.filter(function(r){ return r['อำเภอ'] === dist; });
             if (rows.length === 0) { return; }
+
             var distSum = emptyTotal();
             var prevDistSum = emptyTotal();
             var subRowsHtml = '';
+            var detailRowsHtml = '';
+            distTypeStats[dist] = {
+                total: {telemed:0, target:0, remain:0},
+                'รพ.': {telemed:0, target:0},
+                'รพ.สต.': {telemed:0, target:0}
+            };
 
             rows.forEach(function(r){
                 var type = r['ประเภท'];
@@ -1858,6 +2072,7 @@
                 addRow(distSum, r);
                 platformTotals.hdc += h; platformTotals.morprom += m; platformTotals.buddy += b;
                 if (typeTotals[type]) { typeTotals[type].telemed += tTelemed; typeTotals[type].target += targetCount; }
+                if (distTypeStats[dist][type]) { distTypeStats[dist][type].telemed += tTelemed; distTypeStats[dist][type].target += targetCount; }
                 var aPct = tUnit > 0 ? ((aUnit / tUnit) * 100).toFixed(0) : 0;
                 var p = { opdP:null, opdC:null, aUnit:null, target:null, h:null, m:null, b:null, slot:null, booking:null, tele:null, remain:null, region:null };
                 if (prevData) {
@@ -1869,43 +2084,62 @@
                         addRow(prevDistSum, pr);
                     }
                 }
+
                 subRowsHtml += '<tr class="sub-row">' +
                     '<td class="text-nowrap">- ' + type + ' <small>(' + progressPct.toFixed(2) + '% ของเป้า)</small></td>' +
                     '<td class="center">' + tUnit + '</td>' +
-                    '<td class="right text-nowrap">' + opdP.toLocaleString() + getDiffHtml(opdP, p.opdP) + ' / ' + opdC.toLocaleString() + getDiffHtml(opdC, p.opdC) + '</td>' +
                     '<td class="center">' + aUnit + getDiffHtml(aUnit, p.aUnit) + ' <small>(' + aPct + '%)</small></td>' +
                     '<td class="right table-warning">' + fmtCount(targetCount) + getDiffHtml(targetCount, p.target) + '</td>' +
-                    '<td class="right">' + (h === 0 ? '-' : h.toLocaleString()) + getDiffHtml(h, p.h) + '</td>' +
-                    '<td class="right">' + m.toLocaleString() + getDiffHtml(m, p.m) + '</td>' +
-                    '<td class="right">' + b.toLocaleString() + getDiffHtml(b, p.b) + '</td>' +
-                    '<td class="right">' + slotCount.toLocaleString() + getDiffHtml(slotCount, p.slot) + '</td>' +
-                    '<td class="right">' + bookingCount.toLocaleString() + getDiffHtml(bookingCount, p.booking) + '</td>' +
-                    '<td class="center highlight-pink text-nowrap">' + tTelemed.toLocaleString() + getDiffHtml(tTelemed, p.tele) + ' <small>(' + progressPct.toFixed(2) + '%)</small></td>' +
-                    '<td class="center table-info fw-bold">' + regionPct.toFixed(2) + '%' + (p.region !== null ? '' : '') + '</td>' +
+                    '<td class="right">' + (h === 0 ? '-' : h.toLocaleString('th-TH')) + getDiffHtml(h, p.h) + '</td>' +
+                    '<td class="right">' + m.toLocaleString('th-TH') + getDiffHtml(m, p.m) + '</td>' +
+                    '<td class="right">' + b.toLocaleString('th-TH') + getDiffHtml(b, p.b) + '</td>' +
+                    '<td class="center highlight-pink text-nowrap">' + tTelemed.toLocaleString('th-TH') + getDiffHtml(tTelemed, p.tele) + ' <small>(' + progressPct.toFixed(2) + '%)</small></td>' +
                     '<td class="right table-danger">' + fmtCount(remain) + getDiffHtml(remain, p.remain) + '</td>' +
                     '</tr>';
+
+                detailRowsHtml += '<tr>' +
+                    '<td class="text-nowrap">- ' + dist + ' (' + type + ')</td>' +
+                    '<td class="right">' + opdP.toLocaleString('th-TH') + getDiffHtml(opdP, p.opdP) + '</td>' +
+                    '<td class="right">' + opdC.toLocaleString('th-TH') + getDiffHtml(opdC, p.opdC) + '</td>' +
+                    '<td class="right">' + slotCount.toLocaleString('th-TH') + getDiffHtml(slotCount, p.slot) + '</td>' +
+                    '<td class="right">' + bookingCount.toLocaleString('th-TH') + getDiffHtml(bookingCount, p.booking) + '</td>' +
+                    '<td class="center">' + progressPct.toFixed(2) + '%</td>' +
+                    '<td class="center">' + regionPct.toFixed(2) + '%</td>' +
+                    '</tr>';
             });
+
             addTotal(grandTotal, distSum);
+            distTotalsObj[dist] = {
+                telemed: distSum.telemed,
+                target: distSum.target,
+                base: distSum.base,
+                remain: distSum.remain,
+                activeUnit: distSum.activeUnit,
+                totalUnit: distSum.totalUnit,
+                progressPct: distSum.target > 0 ? (distSum.telemed / distSum.target) * 100 : 0,
+                regionPct: distSum.base > 0 ? (distSum.telemed / distSum.base) * 100 : 0
+            };
+            distTypeStats[dist].total.telemed = distSum.telemed;
+            distTypeStats[dist].total.target = distSum.target;
+            distTypeStats[dist].total.remain = distSum.remain;
+
             var distProgressPct = distSum.target > 0 ? (distSum.telemed / distSum.target) * 100 : 0;
-            var distRegionPct = distSum.base > 0 ? (distSum.telemed / distSum.base) * 100 : 0;
-            distTotalsObj[dist] = { telemed: distSum.telemed, target: distSum.target, remain: distSum.remain, progressPct: distProgressPct, regionPct: distRegionPct };
             var aPctDist = distSum.totalUnit > 0 ? ((distSum.activeUnit / distSum.totalUnit) * 100).toFixed(0) : 0;
             if (tbody) {
                 tbody.innerHTML += '<tr class="main-row">' +
                     '<td class="text-nowrap">' + dist + '</td>' +
                     '<td class="center">' + distSum.totalUnit + '</td>' +
-                    '<td class="right text-nowrap">' + distSum.opdPerson.toLocaleString() + getDiffHtml(distSum.opdPerson, prevData ? prevDistSum.opdPerson : null) + ' / ' + distSum.opdCount.toLocaleString() + getDiffHtml(distSum.opdCount, prevData ? prevDistSum.opdCount : null) + '</td>' +
                     '<td class="center">' + distSum.activeUnit + getDiffHtml(distSum.activeUnit, prevData ? prevDistSum.activeUnit : null) + ' <small>(' + aPctDist + '%)</small></td>' +
                     '<td class="right table-warning">' + fmtCount(distSum.target) + getDiffHtml(distSum.target, prevData ? prevDistSum.target : null) + '</td>' +
-                    '<td class="right">' + distSum.hdc.toLocaleString() + getDiffHtml(distSum.hdc, prevData ? prevDistSum.hdc : null) + '</td>' +
-                    '<td class="right">' + distSum.morprom.toLocaleString() + getDiffHtml(distSum.morprom, prevData ? prevDistSum.morprom : null) + '</td>' +
-                    '<td class="right">' + distSum.buddy.toLocaleString() + getDiffHtml(distSum.buddy, prevData ? prevDistSum.buddy : null) + '</td>' +
-                    '<td class="right">' + distSum.slot.toLocaleString() + getDiffHtml(distSum.slot, prevData ? prevDistSum.slot : null) + '</td>' +
-                    '<td class="right">' + distSum.booking.toLocaleString() + getDiffHtml(distSum.booking, prevData ? prevDistSum.booking : null) + '</td>' +
-                    '<td class="center highlight-pink text-nowrap">' + distSum.telemed.toLocaleString() + getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null) + ' <small>(' + distProgressPct.toFixed(2) + '%)</small></td>' +
-                    '<td class="center table-info fw-bold">' + distRegionPct.toFixed(2) + '%</td>' +
+                    '<td class="right">' + distSum.hdc.toLocaleString('th-TH') + getDiffHtml(distSum.hdc, prevData ? prevDistSum.hdc : null) + '</td>' +
+                    '<td class="right">' + distSum.morprom.toLocaleString('th-TH') + getDiffHtml(distSum.morprom, prevData ? prevDistSum.morprom : null) + '</td>' +
+                    '<td class="right">' + distSum.buddy.toLocaleString('th-TH') + getDiffHtml(distSum.buddy, prevData ? prevDistSum.buddy : null) + '</td>' +
+                    '<td class="center highlight-pink text-nowrap">' + distSum.telemed.toLocaleString('th-TH') + getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null) + ' <small>(' + distProgressPct.toFixed(2) + '%)</small></td>' +
                     '<td class="right table-danger">' + fmtCount(distSum.remain) + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
                     '</tr>' + subRowsHtml;
+            }
+            if (detailTbody) {
+                detailTbody.innerHTML += '<tr class="fw-bold" style="background:#f0fdf4;color:#065f46;"><td>' + dist + '</td><td class="right">' + distSum.opdPerson.toLocaleString('th-TH') + '</td><td class="right">' + distSum.opdCount.toLocaleString('th-TH') + '</td><td class="right">' + distSum.slot.toLocaleString('th-TH') + '</td><td class="right">' + distSum.booking.toLocaleString('th-TH') + '</td><td class="center">' + distProgressPct.toFixed(2) + '%</td><td class="center">' + distTotalsObj[dist].regionPct.toFixed(2) + '%</td></tr>' + detailRowsHtml;
             }
         });
 
@@ -1916,26 +2150,27 @@
             tableFoot.innerHTML = '<tr>' +
                 '<td class="center fw-bold">รวมทั้งจังหวัด</td>' +
                 '<td class="center">' + grandTotal.totalUnit + '</td>' +
-                '<td class="right text-nowrap">' + grandTotal.opdPerson.toLocaleString() + getDiffHtml(grandTotal.opdPerson, prevData ? prevGrandTotal.opdPerson : null) + ' / ' + grandTotal.opdCount.toLocaleString() + getDiffHtml(grandTotal.opdCount, prevData ? prevGrandTotal.opdCount : null) + '</td>' +
                 '<td class="center fw-bold text-success">' + grandTotal.activeUnit + getDiffHtml(grandTotal.activeUnit, prevData ? prevGrandTotal.activeUnit : null) + '</td>' +
                 '<td class="right table-warning">' + fmtCount(grandTotal.target) + getDiffHtml(grandTotal.target, prevData ? prevGrandTotal.target : null) + '</td>' +
-                '<td class="right">' + grandTotal.hdc.toLocaleString() + getDiffHtml(grandTotal.hdc, prevData ? prevGrandTotal.hdc : null) + '</td>' +
-                '<td class="right">' + grandTotal.morprom.toLocaleString() + getDiffHtml(grandTotal.morprom, prevData ? prevGrandTotal.morprom : null) + '</td>' +
-                '<td class="right">' + grandTotal.buddy.toLocaleString() + getDiffHtml(grandTotal.buddy, prevData ? prevGrandTotal.buddy : null) + '</td>' +
-                '<td class="right">' + grandTotal.slot.toLocaleString() + getDiffHtml(grandTotal.slot, prevData ? prevGrandTotal.slot : null) + '</td>' +
-                '<td class="right">' + grandTotal.booking.toLocaleString() + getDiffHtml(grandTotal.booking, prevData ? prevGrandTotal.booking : null) + '</td>' +
-                '<td class="center highlight-pink text-nowrap">' + grandTotal.telemed.toLocaleString() + getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null) + ' <small style="color:#9d174d;">(' + progressPctGrand.toFixed(2) + '%)</small></td>' +
-                '<td class="center table-info fw-bold">' + regionPctGrand.toFixed(2) + '%</td>' +
+                '<td class="right">' + grandTotal.hdc.toLocaleString('th-TH') + getDiffHtml(grandTotal.hdc, prevData ? prevGrandTotal.hdc : null) + '</td>' +
+                '<td class="right">' + grandTotal.morprom.toLocaleString('th-TH') + getDiffHtml(grandTotal.morprom, prevData ? prevGrandTotal.morprom : null) + '</td>' +
+                '<td class="right">' + grandTotal.buddy.toLocaleString('th-TH') + getDiffHtml(grandTotal.buddy, prevData ? prevGrandTotal.buddy : null) + '</td>' +
+                '<td class="center highlight-pink text-nowrap">' + grandTotal.telemed.toLocaleString('th-TH') + getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null) + ' <small style="color:#9d174d;">(' + progressPctGrand.toFixed(2) + '%)</small></td>' +
                 '<td class="right table-danger">' + fmtCount(grandTotal.remain) + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
                 '</tr>';
+        }
+
+        var detailFoot = document.getElementById("detailTableFoot");
+        if (detailFoot) {
+            detailFoot.innerHTML = '<tr><td class="center">รวมทั้งจังหวัด</td><td class="right">' + grandTotal.opdPerson.toLocaleString('th-TH') + '</td><td class="right">' + grandTotal.opdCount.toLocaleString('th-TH') + '</td><td class="right">' + grandTotal.slot.toLocaleString('th-TH') + '</td><td class="right">' + grandTotal.booking.toLocaleString('th-TH') + '</td><td class="center">' + progressPctGrand.toFixed(2) + '%</td><td class="center">' + regionPctGrand.toFixed(2) + '%</td></tr>';
         }
 
         var hospPct = typeTotals['รพ.'].target > 0 ? ((typeTotals['รพ.'].telemed / typeTotals['รพ.'].target) * 100).toFixed(2) : "0.00";
         var rpstPct = typeTotals['รพ.สต.'].target > 0 ? ((typeTotals['รพ.สต.'].telemed / typeTotals['รพ.สต.'].target) * 100).toFixed(2) : "0.00";
         var kpiCards = document.getElementById("kpiCards");
         if (kpiCards) {
-            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel (แสดงจำนวนเต็ม)</span></div></div>' +
-            '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString() + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมายจำนวนครั้ง</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
+            kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel</span></div></div>' +
+            '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString('th-TH') + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมาย</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
             '<div class="kpi-card ' + (regionPctGrand >= 30 ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + regionPctGrand.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต / เป้า 30%</span></div></div>' +
             '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.remain) + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
         }
@@ -1946,18 +2181,53 @@
         var platformChart = document.getElementById("platformChart");
         if (platformChart) {
             platformChart.innerHTML = '<h3><i class="fa-solid fa-chart-pie"></i> ประเภทแพลตฟอร์ม (ครั้ง)</h3>' +
-                '<div class="compact-bar"><div class="c-label">HDC</div><div class="c-track"><div class="c-fill" style="width:' + hdcPct + '%; background:#0ea5e9;"></div></div><div class="c-val">' + platformTotals.hdc.toLocaleString() + ' <small>(' + hdcPct + '%)</small></div></div>' +
-                '<div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width:' + morPct + '%; background:#38bdf8;"></div></div><div class="c-val">' + platformTotals.morprom.toLocaleString() + ' <small>(' + morPct + '%)</small></div></div>' +
-                '<div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width:' + budPct + '%; background:#94a3b8;"></div></div><div class="c-val">' + platformTotals.buddy.toLocaleString() + ' <small>(' + budPct + '%)</small></div></div>';
+                '<div class="compact-bar"><div class="c-label">HDC</div><div class="c-track"><div class="c-fill" style="width:' + hdcPct + '%; background:#0ea5e9;"></div></div><div class="c-val">' + platformTotals.hdc.toLocaleString('th-TH') + ' <small>(' + hdcPct + '%)</small></div></div>' +
+                '<div class="compact-bar"><div class="c-label">หมอพร้อม</div><div class="c-track"><div class="c-fill" style="width:' + morPct + '%; background:#38bdf8;"></div></div><div class="c-val">' + platformTotals.morprom.toLocaleString('th-TH') + ' <small>(' + morPct + '%)</small></div></div>' +
+                '<div class="compact-bar"><div class="c-label">สอน.บัดดี้</div><div class="c-track"><div class="c-fill" style="width:' + budPct + '%; background:#94a3b8;"></div></div><div class="c-val">' + platformTotals.buddy.toLocaleString('th-TH') + ' <small>(' + budPct + '%)</small></div></div>';
         }
         var distChartHtml = '<h3><i class="fa-solid fa-map-location-dot"></i> Telemedicine เทียบเป้าหมาย แยกตามอำเภอ</h3>';
         var distColors = { 'เมืองนครนายก':'#0f766e', 'ปากพลี':'#14b8a6', 'องครักษ์':'#2dd4bf', 'บ้านนา':'#99f6e4' };
         Object.keys(distTotalsObj).sort(function(a,b){ return distTotalsObj[b].telemed - distTotalsObj[a].telemed; }).forEach(function(dist){
             var d = distTotalsObj[dist]; var visualWidth = Math.min(d.progressPct, 100).toFixed(1);
-            distChartHtml += '<div class="compact-bar"><div class="c-label">' + dist + '</div><div class="c-track"><div class="c-fill" style="width:' + visualWidth + '%; background:' + (distColors[dist] || '#94a3b8') + ';"></div></div><div class="c-val">' + d.telemed.toLocaleString() + ' <small>(' + d.progressPct.toFixed(2) + '%เป้า / ' + d.regionPct.toFixed(2) + '%เขต)</small></div></div>';
+            distChartHtml += '<div class="compact-bar"><div class="c-label">' + dist + '</div><div class="c-track"><div class="c-fill" style="width:' + visualWidth + '%; background:' + (distColors[dist] || '#94a3b8') + ';"></div></div><div class="c-val">' + d.telemed.toLocaleString('th-TH') + ' <small>(' + d.progressPct.toFixed(2) + '%เป้า / ' + d.regionPct.toFixed(2) + '%เขต)</small></div></div>';
         });
         var districtChart = document.getElementById("districtChart");
         if (districtChart) { districtChart.innerHTML = distChartHtml; }
+
+        var districtCards = document.getElementById("districtCards");
+        if (districtCards) {
+            var cardHtml = '';
+            districts.forEach(function(dist){
+                var d = distTotalsObj[dist] || {telemed:0,target:0,remain:0,activeUnit:0,totalUnit:0,progressPct:0,regionPct:0};
+                var w = Math.min(d.progressPct, 100).toFixed(1);
+                cardHtml += '<div class="district-card">' +
+                    '<h4>' + dist + '</h4>' +
+                    '<div class="main-number">' + d.telemed.toLocaleString('th-TH') + ' <small style="font-size:12px;color:#64748b;">ครั้ง</small></div>' +
+                    '<div class="progress-track"><div class="progress-fill" style="width:' + w + '%;"></div></div>' +
+                    '<div class="sub-metric"><span>เป้าหมาย</span><b>' + fmtCount(d.target) + '</b></div>' +
+                    '<div class="sub-metric"><span>% ของเป้า</span><b>' + d.progressPct.toFixed(2) + '%</b></div>' +
+                    '<div class="sub-metric"><span>สูตรเขต</span><b>' + d.regionPct.toFixed(2) + '% / 30%</b></div>' +
+                    '<div class="sub-metric"><span>คงเหลือ</span><b>' + fmtCount(d.remain) + '</b></div>' +
+                    '</div>';
+            });
+            districtCards.innerHTML = cardHtml;
+        }
+
+        var miniCharts = document.getElementById("miniDistrictCharts");
+        if (miniCharts) {
+            var miniHtml = '';
+            districts.forEach(function(dist){
+                var stats = distTypeStats[dist] || { total:{telemed:0,target:0}, 'รพ.':{telemed:0,target:0}, 'รพ.สต.':{telemed:0,target:0} };
+                var maxVal = Math.max(stats.total.telemed, stats['รพ.'].telemed, stats['รพ.สต.'].telemed, 1);
+                function bar(label, val){
+                    var h = Math.max((val / maxVal) * 100, val > 0 ? 4 : 0).toFixed(1);
+                    return '<div class="mini-bar-wrap"><div class="mini-bar" style="height:' + h + '%;"></div><div class="mini-bar-label">' + label + '</div><div class="mini-bar-value">' + val.toLocaleString('th-TH') + '</div></div>';
+                }
+                var d = distTotalsObj[dist] || {progressPct:0, remain:0};
+                miniHtml += '<div class="mini-chart-card"><h4>' + dist + '</h4><div class="mini-chart-note">ผลงาน ' + d.progressPct.toFixed(2) + '% ของเป้าหมาย | คงเหลือ ' + fmtCount(d.remain) + '</div><div class="mini-bars">' + bar('รวม', stats.total.telemed) + bar('รพ.', stats['รพ.'].telemed) + bar('รพ.สต.', stats['รพ.สต.'].telemed) + '</div></div>';
+            });
+            miniCharts.innerHTML = miniHtml;
+        }
     }
 
     // ==========================================
