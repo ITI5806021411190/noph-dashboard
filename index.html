@@ -1328,7 +1328,7 @@
                             diffs.push(`OPD (ครั้ง): ${Number(oldItem['OPD_ครั้ง']).toLocaleString()} ➔ <b class="text-danger">${newItem.opdCount.toLocaleString()}</b>`);
                         }
                         if (Number(oldItem['เป้าหมาย'] || 0) !== newItem.targetCount) {
-                            diffs.push(`เป้าหมาย Telemed: ${Number(oldItem['เป้าหมาย'] || 0).toLocaleString()} ➔ <b class="text-danger">${newItem.fmtCount(targetCount)}</b>`);
+                            diffs.push(`เป้าหมาย Telemed: ${Number(oldItem['เป้าหมาย'] || 0).toLocaleString()} ➔ <b class="text-danger">${fmtCount(newItem.targetCount)}</b>`);
                         }
                         if (Number(oldItem['HDC']) !== newItem.hdcCount) {
                             diffs.push(`HDC: ${Number(oldItem['HDC']).toLocaleString()} ➔ <b class="text-danger">${newItem.hdcCount.toLocaleString()}</b>`);
@@ -1762,6 +1762,9 @@
         if (typeof value === 'string') { value = value.replace(/,/g, '').replace('%', '').trim(); }
         return Number(value) || 0;
     }
+    function fmtCount(value) {
+        return Math.round(toNumberValue(value)).toLocaleString('th-TH');
+    }
     function hasValue(value) { return value !== null && value !== undefined && value !== ''; }
     function getPlatformSum(row) {
         return toNumberValue(row['สอน.บัดดี้']) + toNumberValue(row['หมอพร้อม']) + toNumberValue(row['HDC']);
@@ -1901,7 +1904,7 @@
                     '<td class="right">' + distSum.booking.toLocaleString() + getDiffHtml(distSum.booking, prevData ? prevDistSum.booking : null) + '</td>' +
                     '<td class="center highlight-pink text-nowrap">' + distSum.telemed.toLocaleString() + getDiffHtml(distSum.telemed, prevData ? prevDistSum.telemed : null) + ' <small>(' + distProgressPct.toFixed(2) + '%)</small></td>' +
                     '<td class="center table-info fw-bold">' + distRegionPct.toFixed(2) + '%</td>' +
-                    '<td class="right table-danger">' + distSum.fmtCount(remain) + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
+                    '<td class="right table-danger">' + fmtCount(distSum.remain) + getDiffHtml(distSum.remain, prevData ? prevDistSum.remain : null) + '</td>' +
                     '</tr>' + subRowsHtml;
             }
         });
@@ -1923,7 +1926,7 @@
                 '<td class="right">' + grandTotal.booking.toLocaleString() + getDiffHtml(grandTotal.booking, prevData ? prevGrandTotal.booking : null) + '</td>' +
                 '<td class="center highlight-pink text-nowrap">' + grandTotal.telemed.toLocaleString() + getDiffHtml(grandTotal.telemed, prevData ? prevGrandTotal.telemed : null) + ' <small style="color:#9d174d;">(' + progressPctGrand.toFixed(2) + '%)</small></td>' +
                 '<td class="center table-info fw-bold">' + regionPctGrand.toFixed(2) + '%</td>' +
-                '<td class="right table-danger">' + grandTotal.fmtCount(remain) + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
+                '<td class="right table-danger">' + fmtCount(grandTotal.remain) + getDiffHtml(grandTotal.remain, prevData ? prevGrandTotal.remain : null) + '</td>' +
                 '</tr>';
         }
 
@@ -1934,7 +1937,7 @@
             kpiCards.innerHTML = '<div class="kpi-card kpi-card-target"><i class="fa-solid fa-bullseye"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.target) + (prevData ? getDiffHtml(grandTotal.target, prevGrandTotal.target) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">เป้าหมาย 30% จาก Excel (แสดงจำนวนเต็ม)</span></div></div>' +
             '<div class="kpi-card kpi-card-success"><i class="fa-solid fa-stethoscope"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.telemed.toLocaleString() + (prevData ? getDiffHtml(grandTotal.telemed, prevGrandTotal.telemed) : '') + ' <span class="percent-badge">' + progressPctGrand.toFixed(2) + '%</span></span><span class="kpi-label">ผลงานปัจจุบัน / เทียบเป้าหมายจำนวนครั้ง</span><span style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:3px;">รพ. ' + hospPct + '% | รพ.สต. ' + rpstPct + '%</span></div></div>' +
             '<div class="kpi-card ' + (regionPctGrand >= 30 ? 'kpi-card-success' : 'kpi-card-danger') + '"><i class="fa-solid fa-chart-line"></i><div class="kpi-data"><span class="kpi-value">' + regionPctGrand.toFixed(2) + '%</span><span class="kpi-label">ผลงานตามสูตรเขต / เป้า 30%</span></div></div>' +
-            '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + grandTotal.fmtCount(remain) + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
+            '<div class="kpi-card kpi-card-danger"><i class="fa-solid fa-hourglass-half"></i><div class="kpi-data"><span class="kpi-value">' + fmtCount(grandTotal.remain) + (prevData ? getDiffHtml(grandTotal.remain, prevGrandTotal.remain) : '') + ' <small>ครั้ง</small></span><span class="kpi-label">ยอดคงเหลือถึงเป้าหมาย</span></div></div>';
         }
 
         var hdcPct = grandTotal.telemed > 0 ? ((platformTotals.hdc / grandTotal.telemed) * 100).toFixed(1) : 0;
