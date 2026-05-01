@@ -810,10 +810,24 @@
             margin-top: 14px !important;
         }
 
-        /* v6.4: hide diff markers only while exporting image to prevent table overlap */
-        .slide-container.export-full-image .diff-marker,
-        .slide-container.exporting .diff-marker {
+        /* v6.5: export can choose with/without diff highlight */
+        .slide-container.export-full-image.export-no-diff .diff-marker {
             display: none !important;
+        }
+        .slide-container.export-full-image.export-with-diff .diff-marker {
+            display: block !important;
+            position: static !important;
+            margin-top: 2px !important;
+            margin-left: 0 !important;
+            font-size: 9px !important;
+            line-height: 1.05 !important;
+            white-space: nowrap !important;
+        }
+        .slide-container.export-full-image.export-with-diff #mainTable th,
+        .slide-container.export-full-image.export-with-diff #mainTable td {
+            padding-top: 7px !important;
+            padding-bottom: 7px !important;
+            line-height: 1.18 !important;
         }
 </style>
 </head>
@@ -1292,11 +1306,33 @@
         }
     }
 
-    // ฟังก์ชันสร้างรูปภาพแบบเดิม: ดาวน์โหลดทั้ง Dashboard เป็นภาพเดียว ไม่บังคับ A4/แนวตั้ง/แนวนอน
+    // ฟังก์ชันสร้างรูปภาพแบบเดิม: ดาวน์โหลดทั้ง Dashboard เป็นภาพเดียว
+    // v6.5 เพิ่มตัวเลือก: ดาวน์โหลดแบบมีไฮไลต์ / ไม่มีไฮไลต์
     function downloadImage() {
+        Swal.fire({
+            title: 'เลือกรูปแบบรูปภาพ',
+            text: 'ต้องการให้รูปที่ดาวน์โหลดแสดงไฮไลต์การเปลี่ยนแปลงหรือไม่?',
+            icon: 'question',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-arrow-trend-up"></i> มีไฮไลต์',
+            denyButtonText: '<i class="fa-solid fa-eye-slash"></i> ไม่มีไฮไลต์',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#0f766e',
+            denyButtonColor: '#64748b'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                createDashboardImage(true);
+            } else if (result.isDenied) {
+                createDashboardImage(false);
+            }
+        });
+    }
+
+    function createDashboardImage(includeDiffHighlight) {
         Swal.fire({ 
             title: 'กำลังสร้างรูปภาพ...', 
-            text: 'ระบบกำลังจัดภาพให้ครบทุกคอลัมน์ โดยไม่บังคับขยายรายละเอียดเสริม', 
+            text: includeDiffHighlight ? 'ระบบจะเก็บไฮไลต์การเปลี่ยนแปลงไว้ในรูปภาพ' : 'ระบบจะซ่อนไฮไลต์การเปลี่ยนแปลงเฉพาะในรูปภาพ', 
             allowOutsideClick: false, 
             didOpen: () => { Swal.showLoading(); }
         });
@@ -1332,7 +1368,8 @@
         if (dateFilter) { dateFilter.style.display = 'none'; }
         
         // ใช้ความกว้างมากพอสำหรับตารางหลัก เพื่อไม่ให้คอลัมน์ท้ายสุดถูกตัด
-        element.className = original.className + ' exporting export-full-image';
+        var exportModeClass = includeDiffHighlight ? ' export-with-diff' : ' export-no-diff';
+        element.className = original.className + ' exporting export-full-image' + exportModeClass;
         element.style.width = '1320px';
         element.style.maxWidth = '1320px';
         element.style.minHeight = 'auto';
@@ -1357,7 +1394,8 @@
                 
                 var link = document.createElement('a');
                 var selectedDate = dateFilter ? dateFilter.value : 'latest';
-                link.download = 'Dashboard_Telemedicine_' + selectedDate + '.png';
+                var suffix = includeDiffHighlight ? '_with_highlight' : '_no_highlight';
+                link.download = 'Dashboard_Telemedicine_' + selectedDate + suffix + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click(); 
                 Swal.close();
