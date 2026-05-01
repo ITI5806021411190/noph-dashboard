@@ -1177,6 +1177,21 @@
             return Number(raw) || 0;
         }
 
+        function getRawCell(row, idx) {
+            if (idx < 0 || idx >= row.length) {
+                return '';
+            }
+            return row[idx];
+        }
+
+        function hasImportCellValue(row, idx) {
+            if (idx < 0 || idx >= row.length) {
+                return false;
+            }
+            var raw = row[idx];
+            return raw !== null && raw !== undefined && String(raw).trim() !== '';
+        }
+
         function getStringCell(row, idx) {
             if (idx < 0 || idx >= row.length) {
                 return '';
@@ -1252,16 +1267,26 @@
                     var morpromVal = getNumberCell(row, col.morpromCount);
                     var buddyVal = getNumberCell(row, col.buddyCount);
                     var targetVal = getNumberCell(row, col.targetCount);
+                    var platformSumVal = hdcVal + morpromVal + buddyVal;
+
+                    // ค่าคำนวณจาก Excel ใช้เป็นหลักเมื่อมีค่าจริง (>0)
+                    // แต่ถ้า Excel เว้นว่าง/เป็น 0 ทั้งที่ HDC+หมอพร้อม+สอน.บัดดี้มีค่า ให้ fallback คำนวณเอง
+                    // เพื่อกันเคสสูตรในไฟล์ยังไม่ถูกลากลงแถว หรือชื่อหัวคอลัมน์ไม่ตรงจนอ่านได้เป็น 0
                     var currentVal = getNumberCell(row, col.currentCount);
-                    if (currentVal === 0 && col.currentCount < 0) { currentVal = hdcVal + morpromVal + buddyVal; }
+                    if (currentVal === 0 && platformSumVal > 0) { currentVal = platformSumVal; }
+                    if (currentVal === 0 && col.currentCount < 0) { currentVal = platformSumVal; }
+
                     var baseVal = getNumberCell(row, col.baseCount);
-                    if (baseVal === 0 && col.baseCount < 0 && targetVal > 0) { baseVal = targetVal / 0.30; }
+                    if (baseVal === 0 && targetVal > 0) { baseVal = targetVal / 0.30; }
+
                     var regionPctVal = getNumberCell(row, col.regionPercent);
-                    if (regionPctVal === 0 && col.regionPercent < 0 && baseVal > 0) { regionPctVal = (currentVal / baseVal) * 100; }
+                    if (regionPctVal === 0 && baseVal > 0) { regionPctVal = (currentVal / baseVal) * 100; }
+
                     var progressPctVal = getNumberCell(row, col.progressPercent);
-                    if (progressPctVal === 0 && col.progressPercent < 0 && targetVal > 0) { progressPctVal = (currentVal / targetVal) * 100; }
+                    if (progressPctVal === 0 && targetVal > 0) { progressPctVal = (currentVal / targetVal) * 100; }
+
                     var remainVal = getNumberCell(row, col.remainCount);
-                    if (remainVal === 0 && col.remainCount < 0) { remainVal = Math.max(targetVal - currentVal, 0); }
+                    if (remainVal === 0 && targetVal > 0) { remainVal = Math.max(targetVal - currentVal, 0); }
 
                     updateData.push({
                         districtName: districtName, unitType: unitType,
@@ -1724,30 +1749,39 @@
         return Number(value) || 0;
     }
     function hasValue(value) { return value !== null && value !== undefined && value !== ''; }
+    function getPlatformSum(row) {
+        return toNumberValue(row['สอน.บัดดี้']) + toNumberValue(row['หมอพร้อม']) + toNumberValue(row['HDC']);
+    }
     function getTelemedTotal(row) {
         var imported = toNumberValue(row['ผลงานปัจจุบัน']);
-        if (imported > 0 || hasValue(row['ผลงานปัจจุบัน'])) { return imported; }
-        return toNumberValue(row['สอน.บัดดี้']) + toNumberValue(row['หมอพร้อม']) + toNumberValue(row['HDC']);
+        var platformSum = getPlatformSum(row);
+        // ถ้า Excel มีค่าผลงานจริง ใช้ Excel; ถ้าเป็น 0 แต่ช่อง platform มีค่า ให้ใช้ผลรวม platform แทน
+        if (imported > 0) { return imported; }
+        if (platformSum > 0) { return platformSum; }
+        return imported;
     }
     function getBaseCount(row) {
         var imported = toNumberValue(row['ฐานคำนวณ']);
-        if (imported > 0 || hasValue(row['ฐานคำนวณ'])) { return imported; }
+        if (imported > 0) { return imported; }
         var target = toNumberValue(row['เป้าหมาย']);
         if (target > 0) { return target / 0.30; }
         return toNumberValue(row['OPD_ครั้ง']);
     }
     function getProgressPct(row) {
-        if (hasValue(row['ร้อยละเทียบเป้าหมาย'])) { return toNumberValue(row['ร้อยละเทียบเป้าหมาย']); }
+        var imported = toNumberValue(row['ร้อยละเทียบเป้าหมาย']);
+        if (imported > 0) { return imported; }
         var target = toNumberValue(row['เป้าหมาย']); var tele = getTelemedTotal(row);
         return target > 0 ? (tele / target) * 100 : 0;
     }
     function getRegionPct(row) {
-        if (hasValue(row['ร้อยละตามสูตรเขต'])) { return toNumberValue(row['ร้อยละตามสูตรเขต']); }
+        var imported = toNumberValue(row['ร้อยละตามสูตรเขต']);
+        if (imported > 0) { return imported; }
         var base = getBaseCount(row); var tele = getTelemedTotal(row);
         return base > 0 ? (tele / base) * 100 : 0;
     }
     function getRemainCount(row) {
-        if (hasValue(row['คงเหลือ'])) { return toNumberValue(row['คงเหลือ']); }
+        var imported = toNumberValue(row['คงเหลือ']);
+        if (imported > 0) { return imported; }
         return Math.max(toNumberValue(row['เป้าหมาย']) - getTelemedTotal(row), 0);
     }
 
