@@ -1210,8 +1210,9 @@
                 var col = {
                     district: findColumnIndex(headers, ['อำเภอ', 'อำเภอ/ประเภทหน่วยบริการ'], 0),
                     unitType: findColumnIndex(headers, ['ประเภท', 'ประเภทหน่วยบริการ', 'หน่วยบริการ/ประเภท'], 1),
-                    totalUnit: findColumnIndex(headers, ['หน่วยบริการ', 'หน่วยบริการทั้งหมด', 'จำนวนหน่วยบริการ'], 2),
-                    activeUnit: findColumnIndex(headers, ['เปิดให้บริการ', 'ให้บริการจริง', 'จำนวนที่เปิด Telemed', 'เปิดให้บริการ Telemed'], 3),
+                    // ห้ามใช้ alias กว้าง ๆ อย่าง 'หน่วยบริการ' กับ totalUnit เพราะจะชนกับคอลัมน์ประเภทหน่วยบริการ (รพ./รพ.สต.)
+                    totalUnit: findColumnIndex(headers, ['จำนวนรพ.สต. (แห่ง)', 'จำนวนรพ.สต.', 'จำนวนหน่วยบริการ', 'หน่วยบริการทั้งหมด', 'จำนวนแห่ง'], 2),
+                    activeUnit: findColumnIndex(headers, ['เปิดให้บริการ', 'ให้บริการจริง', 'จำนวนที่เปิด Telemed', 'เปิดให้บริการ Telemed', 'เปิดให้บริการ Telemed (แห่ง)'], 3),
                     opdPerson: findColumnIndex(headers, ['OPD_คน', 'ผู้มาใช้บริการ OPD คน', 'ผู้มาใช้บริการOPDคน', 'ผู้รับบริการ OPD คน'], 4),
                     opdCount: findColumnIndex(headers, ['OPD_ครั้ง', 'ผู้มาใช้บริการ OPD ครั้ง', 'ผู้มาใช้บริการOPDครั้ง', 'ผู้รับบริการ OPD ครั้ง'], 5),
                     targetCount: findColumnIndex(headers, ['เป้าหมาย', 'เป้าหมายการทำ Telemedicine', 'เป้าหมายการทำTelemedicine', 'target'], -1),
@@ -1221,6 +1222,10 @@
                     slotCount: findColumnIndex(headers, ['Slot', 'จำนวนการเปิด Slot', 'Slot ที่เปิดให้จอง', 'เปิด Slot'], 9),
                     bookingCount: findColumnIndex(headers, ['จอง', 'ยอดการจอง', 'จำนวนการจอง'], 10)
                 };
+
+                // กันเคส alias ชนกัน เช่น totalUnit ไปจับคอลัมน์ 'หน่วยบริการ' ที่เป็นข้อความ รพ./รพ.สต.
+                if (col.totalUnit === col.unitType || col.totalUnit < 0) { col.totalUnit = 2; }
+                if (col.activeUnit < 0) { col.activeUnit = 3; }
 
                 // ถ้าพบคอลัมน์เป้าหมายก่อน HDC ให้บังคับอ่าน HDC/หมอพร้อม/สอน.บัดดี้/Slot/จอง จากคอลัมน์ถัดไป
                 // ใช้กันเคสหัวคอลัมน์ไม่ตรง 100% แต่มีการแทรกเป้าหมายเข้ามาในไฟล์ใหม่
